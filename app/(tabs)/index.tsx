@@ -1,17 +1,15 @@
-import { StatusBar } from "expo-status-bar";
+import CustomStatusBar from "@/src/components/CustomStatusBar";
 import { Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const Home = () => {
   return (
-    <SafeAreaView
-      style={{
-        backgroundColor: "black",
-        flex: 1,
-      }}
-    >
-      <StatusBar backgroundColor="black" style="auto" />
-      <Text style={{ color: "white" }}>Home</Text>
+    <SafeAreaView className="bg-black flex-1" edges={["top"]}>
+      <CustomStatusBar bgColor="black" style="light" />
+      <Text className="text-green-300">Home</Text>
+      <Text className="text-xl font-bold text-blue-500">
+        Welcome to Nativewind!
+      </Text>
     </SafeAreaView>
   );
 };

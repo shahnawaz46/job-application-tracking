@@ -1,12 +1,13 @@
-import { StatusBar } from "expo-status-bar";
-import { Text, View } from "react-native";
+import CustomStatusBar from "@/src/components/CustomStatusBar";
+import { Text } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const Application = () => {
   return (
-    <View style={{ backgroundColor: "white", flex: 1 }}>
-      <StatusBar backgroundColor="white" style="dark" />
+    <SafeAreaView style={{ backgroundColor: "red", flex: 1 }}>
+      <CustomStatusBar bgColor="red" style="light" />
       <Text>Application page</Text>
-    </View>
+    </SafeAreaView>
   );
 };
 

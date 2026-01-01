@@ -1,5 +1,6 @@
 import { Stack } from "expo-router";
 import { useColorScheme } from "react-native";
+import "./global.css";
 
 function RootRoute() {
   const isAuthenticated: boolean = true;
