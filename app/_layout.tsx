@@ -1,9 +1,10 @@
+import { PortalHost } from "@rn-primitives/portal";
 import { Stack } from "expo-router";
 import { useColorScheme } from "react-native";
 import "./global.css";
 
 function RootRoute() {
-  const isAuthenticated: boolean = true;
+  const isAuthenticated: boolean = false;
 
   return (
     <Stack screenOptions={{ headerShown: false }}>
@@ -21,5 +22,10 @@ function RootRoute() {
 export default function RootLayout() {
   const theme = useColorScheme();
 
-  return <RootRoute />;
+  return (
+    <>
+      <RootRoute />
+      <PortalHost />
+    </>
+  );
 }

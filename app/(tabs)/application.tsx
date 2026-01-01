@@ -1,4 +1,4 @@
-import CustomStatusBar from "@/src/components/CustomStatusBar";
+import CustomStatusBar from "@/components/CustomStatusBar";
 import { Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 

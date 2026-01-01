@@ -1,4 +1,4 @@
-import TabBar from "@/src/components/navigation/TabBar";
+import TabBar from "@/components/navigation/TabBar";
 import { Tabs } from "expo-router";
 
 const TabsLayout = () => {

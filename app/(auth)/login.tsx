@@ -1,10 +1,13 @@
-import { Text, View } from "react-native";
+import CustomStatusBar from "@/components/CustomStatusBar";
+import { SignInForm } from "@/components/SignInForm";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const Login = () => {
   return (
-    <View>
-      <Text>Login</Text>
-    </View>
+    <SafeAreaView edges={["top"]} className="flex-1 bg-white">
+      <CustomStatusBar style="dark" />
+      <SignInForm />
+    </SafeAreaView>
   );
 };
 
