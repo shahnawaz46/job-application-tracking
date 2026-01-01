@@ -17,7 +17,7 @@ import { useRef, useState } from "react";
 import { Pressable, type TextInput, View } from "react-native";
 import { InputWithIcon } from "./ui/inputwithicon";
 
-const SignInForm = () => {
+const SignUpForm = () => {
   const passwordInputRef = useRef<TextInput>(null);
   const [email, setEmail] = useState<string>();
   const [password, setPassword] = useState<string>();
@@ -38,10 +38,10 @@ const SignInForm = () => {
       <Card className="border-border/0 sm:border-border shadow-none sm:shadow-sm sm:shadow-black/5">
         <CardHeader>
           <CardTitle className="text-center text-xl sm:text-left">
-            Sign in to your app
+            Create your account
           </CardTitle>
           <CardDescription className="text-center sm:text-left">
-            Welcome back! Please sign in to continue
+            Welcome! Please fill in the details to get started
           </CardDescription>
         </CardHeader>
         <CardContent className="gap-6">
@@ -65,19 +65,6 @@ const SignInForm = () => {
             <View className="gap-1.5">
               <View className="flex-row items-center">
                 <Label htmlFor="password">Password</Label>
-                <Button
-                  variant="link"
-                  size="sm"
-                  className="web:h-fit ml-auto h-4 px-1 py-0 sm:h-4"
-                  onPress={() => {
-                    console.log("redirect to forgot password screen");
-                    // TODO: Navigate to forgot password screen
-                  }}
-                >
-                  <Text className="font-normal leading-4 text-xs">
-                    Forgot your password?
-                  </Text>
-                </Button>
               </View>
 
               <InputWithIcon
@@ -101,13 +88,13 @@ const SignInForm = () => {
 
           {/* text for navigation */}
           <View className="text-center flex-row justify-center items-center">
-            <Text className="text-sm">Don&apos;t have an account? </Text>
+            <Text className="text-sm">Already have an account? </Text>
             <Pressable
               className="items-center"
-              onPress={() => router.push("/signup")}
+              onPress={() => router.push("/signin")}
             >
               <Text className="text-sm underline underline-offset-4">
-                Sign up
+                Sign in
               </Text>
             </Pressable>
           </View>
@@ -127,4 +114,4 @@ const SignInForm = () => {
   );
 };
 
-export default SignInForm;
+export default SignUpForm;

@@ -1,10 +1,9 @@
 import CustomStatusBar from "@/components/CustomStatusBar";
-import SignUpForm from "@/components/SignUpForm";
-import React from "react";
+import SignInForm from "@/components/SignInForm";
 import { ScrollView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-const Signup = () => {
+const SignIn = () => {
   return (
     <SafeAreaView edges={["top"]} className="flex-1 bg-white">
       <CustomStatusBar style="dark" />
@@ -14,11 +13,11 @@ const Signup = () => {
         keyboardDismissMode="interactive"
       >
         <View className="w-full flex-1">
-          <SignUpForm />
+          <SignInForm />
         </View>
       </ScrollView>
     </SafeAreaView>
   );
 };
 
-export default Signup;
+export default SignIn;
