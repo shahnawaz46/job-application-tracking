@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     gap: 3,
-    height: 50,
+    height: 52,
   },
   tabBarLabel: {
     fontSize: 11,

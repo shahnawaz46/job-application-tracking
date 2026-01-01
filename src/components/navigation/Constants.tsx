@@ -1,4 +1,4 @@
-import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
+import Feather from "@expo/vector-icons/Feather";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import Octicons from "@expo/vector-icons/Octicons";
@@ -23,11 +23,7 @@ export const TabBarIcons = {
     <FontAwesome6 name={"add"} size={18} color={color} />
   ),
   profile: ({ isFocused, color }: IIconsProps) => (
-    <FontAwesome5
-      name={isFocused ? "user-alt" : "user"}
-      size={18}
-      color={color}
-    />
+    <Feather name={"user"} size={18} color={color} />
   ),
 };
 
