@@ -11,27 +11,41 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Text } from "@/components/ui/text";
+import {
+  authSchema,
+  type IInitialState,
+  initialState,
+} from "@/validation/auth.yup";
 import { Ionicons } from "@expo/vector-icons";
+import { yupResolver } from "@hookform/resolvers/yup";
 import { useRouter } from "expo-router";
 import { useRef, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 import { Pressable, type TextInput, View } from "react-native";
+import ReactHookFormError from "./fallback/ReactHookFormError";
 import { InputWithIcon } from "./ui/inputwithicon";
 
 const SignUpForm = () => {
   const passwordInputRef = useRef<TextInput>(null);
-  const [email, setEmail] = useState<string>();
-  const [password, setPassword] = useState<string>();
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const router = useRouter();
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    defaultValues: initialState,
+    resolver: yupResolver(authSchema),
+  });
 
   function onEmailSubmitEditing() {
     passwordInputRef.current?.focus();
   }
 
-  function onSubmit() {
-    console.log(email, password);
-    // TODO: Submit form and navigate to protected screen if successful
-  }
+  const onSubmit = async (data: IInitialState) => {
+    console.log("Sign up onSubmit data: ", data);
+  };
 
   return (
     <View className="gap-6 flex-1 justify-center">
@@ -45,43 +59,62 @@ const SignUpForm = () => {
           </CardDescription>
         </CardHeader>
         <CardContent className="gap-6">
-          {/* login form */}
+          {/* Signup form */}
           <View className="gap-6">
             <View className="gap-1.5">
               <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                placeholder="m@example.com"
-                keyboardType="email-address"
-                autoComplete="email"
-                autoCapitalize="none"
-                onSubmitEditing={onEmailSubmitEditing}
-                returnKeyType="next"
-                submitBehavior="submit"
-                value={email}
-                onChangeText={setEmail}
+              <Controller
+                control={control}
+                name="email"
+                render={({ field: { value, onChange } }) => (
+                  <Input
+                    id="email"
+                    placeholder="m@example.com"
+                    keyboardType="email-address"
+                    autoComplete="email"
+                    autoCapitalize="none"
+                    onSubmitEditing={onEmailSubmitEditing}
+                    returnKeyType="next"
+                    submitBehavior="submit"
+                    value={value}
+                    onChangeText={onChange}
+                  />
+                )}
               />
+
+              <ReactHookFormError errorMessage={errors?.email?.message} />
             </View>
+
             <View className="gap-1.5">
               <View className="flex-row items-center">
                 <Label htmlFor="password">Password</Label>
               </View>
-
-              <InputWithIcon
-                ref={passwordInputRef}
-                id="password"
-                secureTextEntry={!showPassword}
-                returnKeyType="send"
-                value={password}
-                onChangeText={setPassword}
-                onSubmitEditing={onSubmit}
-                rightIcon={
-                  <Ionicons name={showPassword ? "eye-off" : "eye"} size={18} />
-                }
-                onRightIconPress={() => setShowPassword((prev) => !prev)}
+              <Controller
+                control={control}
+                name="password"
+                render={({ field: { value, onChange } }) => (
+                  <InputWithIcon
+                    ref={passwordInputRef}
+                    id="password"
+                    secureTextEntry={!showPassword}
+                    returnKeyType="send"
+                    value={value}
+                    onChangeText={onChange}
+                    onSubmitEditing={handleSubmit(onSubmit)}
+                    rightIcon={
+                      <Ionicons
+                        name={showPassword ? "eye-off" : "eye"}
+                        size={18}
+                      />
+                    }
+                    onRightIconPress={() => setShowPassword((prev) => !prev)}
+                  />
+                )}
               />
+
+              <ReactHookFormError errorMessage={errors?.password?.message} />
             </View>
-            <Button className="w-full" onPress={onSubmit}>
+            <Button className="w-full" onPress={handleSubmit(onSubmit)}>
               <Text>Continue</Text>
             </Button>
           </View>
