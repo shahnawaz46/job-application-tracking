@@ -11,10 +11,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Text } from "@/components/ui/text";
+import useAsyncAction from "@/hooks/useAsyncAction";
 import {
-  authSchema,
   type IInitialState,
   initialState,
+  signInSchema,
 } from "@/validation/auth.yup";
 import { Ionicons } from "@expo/vector-icons";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -23,12 +24,14 @@ import { useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Pressable, type TextInput, View } from "react-native";
 import ReactHookFormError from "./fallback/ReactHookFormError";
+import ButtonLoading from "./loaders/ButtonLoading";
 import { InputWithIcon } from "./ui/inputwithicon";
 
 const SignInForm = () => {
+  const router = useRouter();
   const passwordInputRef = useRef<TextInput>(null);
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  const router = useRouter();
+  const { isPending, execute } = useAsyncAction();
 
   const {
     control,
@@ -36,25 +39,31 @@ const SignInForm = () => {
     formState: { errors },
   } = useForm({
     defaultValues: initialState,
-    resolver: yupResolver(authSchema),
+    resolver: yupResolver(signInSchema),
   });
 
   function onEmailSubmitEditing() {
     passwordInputRef.current?.focus();
   }
 
-  const onSubmit = async (data: IInitialState) => {
-    console.log("Sign in onSubmit data: ", data);
+  const onSubmit = (userData: IInitialState) => {
+    execute(async () => {
+      // console.log("user", data);
+      await new Promise((resolve, reject) =>
+        setTimeout(() => resolve("done"), 3000)
+      );
+      router.push("/(tabs)");
+    });
   };
 
   return (
     <View className="gap-6 flex-1 justify-center">
-      <Card className="border-border/0 sm:border-border shadow-none sm:shadow-sm sm:shadow-black/5">
+      <Card className="border-border/0 shadow-none">
         <CardHeader>
-          <CardTitle className="text-center text-xl sm:text-left">
+          <CardTitle className="text-center text-xl">
             Sign in to your app
           </CardTitle>
-          <CardDescription className="text-center sm:text-left">
+          <CardDescription className="text-center">
             Welcome back! Please sign in to continue
           </CardDescription>
         </CardHeader>
@@ -92,7 +101,7 @@ const SignInForm = () => {
                 <Button
                   variant="link"
                   size="sm"
-                  className="web:h-fit ml-auto h-4 px-1 py-0 sm:h-4"
+                  className="web:h-fit ml-auto h-4 px-1 py-0"
                   onPress={() => {
                     console.log("redirect to forgot password screen");
                     // TODO: Navigate to forgot password screen
@@ -129,8 +138,16 @@ const SignInForm = () => {
 
               <ReactHookFormError errorMessage={errors?.password?.message} />
             </View>
-            <Button className="w-full" onPress={handleSubmit(onSubmit)}>
-              <Text>Continue</Text>
+            <Button
+              className="w-full"
+              onPress={handleSubmit(onSubmit)}
+              disabled={isPending}
+            >
+              {isPending ? (
+                <ButtonLoading text="Signing..." />
+              ) : (
+                <Text>Continue</Text>
+              )}
             </Button>
           </View>
 

@@ -11,10 +11,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Text } from "@/components/ui/text";
+import useAsyncAction from "@/hooks/useAsyncAction";
 import {
-  authSchema,
   type IInitialState,
   initialState,
+  signUpSchema,
 } from "@/validation/auth.yup";
 import { Ionicons } from "@expo/vector-icons";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -23,12 +24,14 @@ import { useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Pressable, type TextInput, View } from "react-native";
 import ReactHookFormError from "./fallback/ReactHookFormError";
+import ButtonLoading from "./loaders/ButtonLoading";
 import { InputWithIcon } from "./ui/inputwithicon";
 
 const SignUpForm = () => {
-  const passwordInputRef = useRef<TextInput>(null);
-  const [showPassword, setShowPassword] = useState<boolean>(false);
   const router = useRouter();
+  const passwordInputRef = useRef<TextInput>(null);
+  const { isPending, execute } = useAsyncAction();
+  const [showPassword, setShowPassword] = useState<boolean>(false);
 
   const {
     control,
@@ -36,25 +39,34 @@ const SignUpForm = () => {
     formState: { errors },
   } = useForm({
     defaultValues: initialState,
-    resolver: yupResolver(authSchema),
+    resolver: yupResolver(signUpSchema),
   });
 
   function onEmailSubmitEditing() {
     passwordInputRef.current?.focus();
   }
 
-  const onSubmit = async (data: IInitialState) => {
-    console.log("Sign up onSubmit data: ", data);
+  const onSubmit = (userData: IInitialState) => {
+    execute(async () => {
+      // console.log("user", data);
+      await new Promise((resolve, reject) =>
+        setTimeout(() => resolve("done"), 3000)
+      );
+      router.push({
+        pathname: "/(auth)/verify-email",
+        params: { email: userData.email, id: "adasdr" },
+      });
+    });
   };
 
   return (
     <View className="gap-6 flex-1 justify-center">
-      <Card className="border-border/0 sm:border-border shadow-none sm:shadow-sm sm:shadow-black/5">
+      <Card className="border-border/0 shadow-none">
         <CardHeader>
-          <CardTitle className="text-center text-xl sm:text-left">
+          <CardTitle className="text-center text-xl">
             Create your account
           </CardTitle>
-          <CardDescription className="text-center sm:text-left">
+          <CardDescription className="text-center">
             Welcome! Please fill in the details to get started
           </CardDescription>
         </CardHeader>
@@ -114,8 +126,16 @@ const SignUpForm = () => {
 
               <ReactHookFormError errorMessage={errors?.password?.message} />
             </View>
-            <Button className="w-full" onPress={handleSubmit(onSubmit)}>
-              <Text>Continue</Text>
+            <Button
+              className="w-full"
+              onPress={handleSubmit(onSubmit)}
+              disabled={isPending}
+            >
+              {isPending ? (
+                <ButtonLoading text="Creating account..." />
+              ) : (
+                <Text>Continue</Text>
+              )}
             </Button>
           </View>
 

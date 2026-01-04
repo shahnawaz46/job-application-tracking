@@ -1,3 +1,4 @@
+import ToastSetup from "@/components/Toast";
 import { PortalHost } from "@rn-primitives/portal";
 import { Stack } from "expo-router";
 import { useColorScheme } from "react-native";
@@ -26,6 +27,7 @@ export default function RootLayout() {
     <>
       <RootRoute />
       <PortalHost />
+      <ToastSetup />
     </>
   );
 }
