@@ -12,20 +12,22 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Text } from "@/components/ui/text";
 import useAsyncAction from "@/hooks/useAsyncAction";
-import {
-  type IInitialState,
-  initialState,
-  signUpSchema,
-} from "@/validation/auth.yup";
+import { supabase } from "@/lib/supabase";
+import { initialState, signUpSchema } from "@/validation/auth.yup";
 import { Ionicons } from "@expo/vector-icons";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useRouter } from "expo-router";
 import { useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { Pressable, type TextInput, View } from "react-native";
+import { Pressable, View } from "react-native";
 import ReactHookFormError from "./fallback/ReactHookFormError";
 import ButtonLoading from "./loaders/ButtonLoading";
+import { ToastMessage } from "./Toast";
 import { InputWithIcon } from "./ui/inputwithicon";
+
+// types/interfaces
+import type { IInitialState } from "@/validation/auth.yup";
+import type { TextInput } from "react-native";
 
 const SignUpForm = () => {
   const router = useRouter();
@@ -48,13 +50,23 @@ const SignUpForm = () => {
 
   const onSubmit = (userData: IInitialState) => {
     execute(async () => {
-      // console.log("user", data);
-      await new Promise((resolve, reject) =>
-        setTimeout(() => resolve("done"), 3000)
-      );
+      const {
+        data: { user },
+        error,
+      } = await supabase.auth.signUp(userData);
+      if (error) {
+        ToastMessage({
+          type: "error",
+          text1:
+            error?.message ||
+            "Signup failed, please try again after some time!",
+        });
+        return;
+      }
+
       router.push({
         pathname: "/(auth)/verify-email",
-        params: { email: userData.email, id: "adasdr" },
+        params: { email: user?.user_metadata?.email || userData.email },
       });
     });
   };

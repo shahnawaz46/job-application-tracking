@@ -1,11 +1,28 @@
+import CustomStatusBar from "@/components/CustomStatusBar";
+import { ToastMessage } from "@/components/Toast";
+import { Button } from "@/components/ui/button";
+import { supabase } from "@/lib/supabase";
 import React from "react";
-import { Text, View } from "react-native";
+import { Text } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const Profile = () => {
+  const logout = async () => {
+    const { error } = await supabase.auth.signOut();
+
+    if (error) {
+      ToastMessage({ type: "error", text1: error.message });
+    }
+  };
+
   return (
-    <View>
+    <SafeAreaView edges={["top"]} className="flex-1 bg-white">
+      <CustomStatusBar style="dark" />
       <Text>Profile</Text>
-    </View>
+      <Button className="full" variant={"destructive"} onPress={logout}>
+        <Text>Logout</Text>
+      </Button>
+    </SafeAreaView>
   );
 };
 

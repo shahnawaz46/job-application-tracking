@@ -11,7 +11,10 @@
 */
 
 import { useIsFocused } from "@react-navigation/native";
-import { StatusBar, type StatusBarStyle } from "expo-status-bar";
+import { StatusBar } from "expo-status-bar";
+
+// types/interfaces
+import type { StatusBarStyle } from "expo-status-bar";
 
 interface ICustomStatusBarProps {
   bgColor?: string;

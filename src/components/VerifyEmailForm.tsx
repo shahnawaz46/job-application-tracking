@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Text } from "@/components/ui/text";
 import useAsyncAction from "@/hooks/useAsyncAction";
 import useCountdown from "@/hooks/useCountdown";
+import { supabase } from "@/lib/supabase";
 import { otpSchema } from "@/validation/auth.yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useLocalSearchParams, useRouter } from "expo-router";
@@ -51,9 +52,20 @@ const VerifyEmailForm = () => {
     }
 
     execute(async () => {
-      await new Promise((resolve, reject) =>
-        setTimeout(() => resolve("done"), 3000)
-      );
+      const { error } = await supabase.auth.verifyOtp({
+        email: email,
+        token: otp,
+        type: "email",
+      });
+
+      if (error) {
+        ToastMessage({
+          type: "error",
+          text1: error?.message || "Otp verification failed",
+        });
+        return;
+      }
+
       router.push("/(tabs)");
     });
   };

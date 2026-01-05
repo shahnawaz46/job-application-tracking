@@ -1,8 +1,7 @@
-import Toast, {
-  BaseToast,
-  type ToastProps,
-  type ToastType,
-} from "react-native-toast-message";
+import Toast, { BaseToast } from "react-native-toast-message";
+
+// types/interfaces
+import type { ToastProps, ToastType } from "react-native-toast-message";
 
 const CustomBaseToast = ({
   props,
