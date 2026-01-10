@@ -1,4 +1,3 @@
-import { SocialConnections } from "@/components/SocialConnections";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -9,59 +8,91 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
 import { Text } from "@/components/ui/text";
 import useAsyncAction from "@/hooks/useAsyncAction";
 import { supabase } from "@/lib/supabase";
-import { initialState, signInSchema } from "@/validation/auth.yup";
-import { Ionicons } from "@expo/vector-icons";
+import {
+  forgotPasswordInitialState,
+  forgotPasswordSchema,
+} from "@/validation/auth.yup";
+import { EMAIL_REGEX } from "@/validation/regex";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useRouter } from "expo-router";
-import { useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Pressable, View } from "react-native";
 import ReactHookFormError from "./fallback/ReactHookFormError";
 import ButtonLoading from "./loaders/ButtonLoading";
 import { ToastMessage } from "./Toast";
-import { InputWithIcon } from "./ui/inputwithicon";
 
 // types/interfaces
-import type { IInitialState } from "@/validation/auth.yup";
-import type { TextInput } from "react-native";
+import type { IForgotPasswordState } from "@/validation/auth.yup";
 
-const SignInForm = () => {
+const ForgotPasswordForm = () => {
   const router = useRouter();
-  const passwordInputRef = useRef<TextInput>(null);
-  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const { isPending: isOtpPending, execute: otpExecute } = useAsyncAction();
   const { isPending, execute } = useAsyncAction();
 
   const {
     control,
     handleSubmit,
     formState: { errors },
+    getValues,
+    setError,
+    clearErrors,
   } = useForm({
-    defaultValues: initialState,
-    resolver: yupResolver(signInSchema),
+    defaultValues: forgotPasswordInitialState,
+    resolver: yupResolver(forgotPasswordSchema),
   });
 
-  function onEmailSubmitEditing() {
-    passwordInputRef.current?.focus();
-  }
+  const handleOTP = () => {
+    otpExecute(async () => {
+      const email = getValues("email");
 
-  const onSubmit = (userData: IInitialState) => {
-    execute(async () => {
-      const { error } = await supabase.auth.signInWithPassword(userData);
+      if (!email) {
+        setError("email", { message: "Email is required" });
+        return;
+      }
+
+      if (!EMAIL_REGEX.test(email)) {
+        setError("email", { message: "Please provide a valid email address" });
+        return;
+      }
+
+      clearErrors("email");
+      const { error, data } = await supabase.auth.resetPasswordForEmail(email);
 
       if (error) {
         ToastMessage({
           type: "error",
-          text1:
-            error?.message || "Login failed, please try again after some time!",
+          text1: error?.message || "Something went wrong. Please try again",
         });
         return;
       }
 
-      router.push("/(tabs)");
+      ToastMessage({
+        type: "success",
+        text1:
+          "We've sent a verification code to your email. Please check your inbox",
+      });
+    });
+  };
+
+  const onSubmit = ({ email, otp }: IForgotPasswordState) => {
+    execute(async () => {
+      const { error } = await supabase.auth.verifyOtp({
+        email: email,
+        token: otp,
+        type: "recovery",
+      });
+
+      if (error) {
+        ToastMessage({
+          type: "error",
+          text1: error?.message || "Something went wrong. Please try again",
+        });
+      }
+
+      router.replace("/update-password");
     });
   };
 
@@ -70,14 +101,15 @@ const SignInForm = () => {
       <Card className="border-border/0 shadow-none">
         <CardHeader>
           <CardTitle className="text-center text-xl">
-            Sign in to your app
+            Forgot your password?
           </CardTitle>
           <CardDescription className="text-center">
-            Welcome back! Please sign in to continue
+            Enter your email address and we'll send you a one-time code to reset
+            your password
           </CardDescription>
         </CardHeader>
         <CardContent className="gap-6">
-          {/* Signin form */}
+          {/* form */}
 
           <View className="gap-6">
             <View className="gap-1.5">
@@ -92,9 +124,8 @@ const SignInForm = () => {
                     keyboardType="email-address"
                     autoComplete="email"
                     autoCapitalize="none"
-                    onSubmitEditing={onEmailSubmitEditing}
-                    returnKeyType="next"
-                    submitBehavior="submit"
+                    returnKeyType="send"
+                    onSubmitEditing={handleOTP}
                     value={value}
                     onChangeText={onChange}
                   />
@@ -104,87 +135,72 @@ const SignInForm = () => {
               <ReactHookFormError errorMessage={errors?.email?.message} />
             </View>
 
+            <Button
+              className="w-full"
+              onPress={handleOTP}
+              disabled={isOtpPending}
+            >
+              {isOtpPending ? (
+                <ButtonLoading text="Sending code..." />
+              ) : (
+                <Text>Send reset code</Text>
+              )}
+            </Button>
+
             <View className="gap-1.5">
-              <View className="flex-row items-center">
-                <Label htmlFor="password">Password</Label>
-                <Button
-                  variant="link"
-                  size="sm"
-                  className="web:h-fit ml-auto h-4 px-1 py-0"
-                  onPress={() => {
-                    router.push("/(auth)/forgot-password");
-                  }}
-                >
-                  <Text className="font-normal leading-4 text-xs">
-                    Forgot your password?
-                  </Text>
-                </Button>
-              </View>
+              <Label htmlFor="code">Enter verification code</Label>
 
               <Controller
                 control={control}
-                name="password"
+                name="otp"
                 render={({ field: { value, onChange } }) => (
-                  <InputWithIcon
-                    ref={passwordInputRef}
-                    id="password"
-                    secureTextEntry={!showPassword}
+                  <Input
+                    id="code"
+                    autoCapitalize="none"
                     returnKeyType="send"
+                    keyboardType="numeric"
+                    autoComplete="sms-otp"
+                    textContentType="oneTimeCode"
+                    maxLength={6}
                     value={value}
                     onChangeText={onChange}
                     onSubmitEditing={handleSubmit(onSubmit)}
-                    rightIcon={
-                      <Ionicons
-                        name={showPassword ? "eye-off" : "eye"}
-                        size={18}
-                      />
-                    }
-                    onRightIconPress={() => setShowPassword((prev) => !prev)}
                   />
                 )}
               />
 
-              <ReactHookFormError errorMessage={errors?.password?.message} />
+              <ReactHookFormError errorMessage={errors?.otp?.message} />
             </View>
+
             <Button
               className="w-full"
               onPress={handleSubmit(onSubmit)}
               disabled={isPending}
             >
               {isPending ? (
-                <ButtonLoading text="Signing..." />
+                <ButtonLoading text="Verifying..." />
               ) : (
-                <Text>Continue</Text>
+                <Text>Verify code</Text>
               )}
             </Button>
           </View>
 
           {/* text for navigation */}
           <View className="text-center flex-row justify-center items-center">
-            <Text className="text-sm">Don&apos;t have an account? </Text>
+            <Text className="text-sm">Already have an account? </Text>
             <Pressable
               className="items-center"
-              onPress={() => router.push("/signup")}
+              onPress={() => router.push("/signin")}
             >
               <Text className="text-sm underline underline-offset-4">
-                Sign up
+                Sign in
               </Text>
             </Pressable>
           </View>
-
-          {/* or separator */}
-          <View className="flex-row items-center">
-            <Separator className="flex-1" />
-            <Text className="text-muted-foreground px-4 text-sm">or</Text>
-            <Separator className="flex-1" />
-          </View>
-
-          {/* social logins */}
-          <SocialConnections />
         </CardContent>
       </Card>
     </View>
   );
 };
 
-export default SignInForm;
+export default ForgotPasswordForm;
