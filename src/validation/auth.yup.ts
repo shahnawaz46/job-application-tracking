@@ -1,5 +1,6 @@
 import * as Yup from "yup";
-import { EMAIL_REGEX, PASSWORD_REGEX } from "./regex";
+import { EMAIL_MESSAGES, OTP_MESSAGES, PASSWORD_MESSAGES } from "./messages";
+import { EMAIL_REGEX, OTP_REGEX, PASSWORD_REGEX } from "./regex";
 
 export interface IInitialState {
   email: string;
@@ -14,37 +15,34 @@ export const initialState: IInitialState = {
 // SIGN UP
 export const signUpSchema = Yup.object({
   email: Yup.string()
-    .required("Email is required")
-    .matches(EMAIL_REGEX, "Please provide a valid email address")
+    .required(EMAIL_MESSAGES.REQUIRED)
+    .matches(EMAIL_REGEX, EMAIL_MESSAGES.INVALID)
     .trim(),
 
   password: Yup.string()
-    .required("Password is required")
-    .min(6, "Password must be at least 6 characters")
-    .max(128, "Password cannot be more than 128 characters")
-    .matches(
-      PASSWORD_REGEX,
-      "Password must contain at least one lowercase letter, one uppercase letter, one number, and one special character"
-    ),
+    .required(PASSWORD_MESSAGES.REQUIRED)
+    .min(6, PASSWORD_MESSAGES.MIN)
+    .max(128, PASSWORD_MESSAGES.MAX)
+    .matches(PASSWORD_REGEX, PASSWORD_MESSAGES.INVALID),
 });
 
 // SIGN IN
 export const signInSchema = Yup.object({
   email: Yup.string()
-    .required("Email is required")
-    .matches(EMAIL_REGEX, "Please provide a valid email address")
+    .required(EMAIL_MESSAGES.REQUIRED)
+    .matches(EMAIL_REGEX, EMAIL_MESSAGES.INVALID)
     .trim(),
 
   password: Yup.string()
-    .required("Password is required")
-    .max(128, "Password cannot be more than 128 characters"),
+    .required(PASSWORD_MESSAGES.REQUIRED)
+    .max(128, PASSWORD_MESSAGES.MAX),
 });
 
+// VERIFY EMAIL/ACCOUNT
 export const otpSchema = Yup.object({
   otp: Yup.string()
-    .required("OTP is required")
-    .min(6, "OTP must be 6 digit long")
-    .max(6, "OTP must be 6 digit long"),
+    .required(OTP_MESSAGES.REQUIRED)
+    .matches(OTP_REGEX, OTP_MESSAGES.INVALID),
 });
 
 // FORGOT PASSWORD
@@ -60,13 +58,12 @@ export const forgotPasswordInitialState: IForgotPasswordState = {
 
 export const forgotPasswordSchema = Yup.object({
   email: Yup.string()
-    .required("Email is required")
-    .matches(EMAIL_REGEX, "Please provide a valid email address")
+    .required(EMAIL_MESSAGES.REQUIRED)
+    .matches(EMAIL_REGEX, EMAIL_MESSAGES.INVALID)
     .trim(),
   otp: Yup.string()
-    .required("OTP is required")
-    .min(6, "OTP must be 6 digit long")
-    .max(6, "OTP must be 6 digit long"),
+    .required(OTP_MESSAGES.REQUIRED)
+    .matches(OTP_REGEX, OTP_MESSAGES.INVALID),
 });
 
 // Update Password/Reset New Password
@@ -82,13 +79,10 @@ export const updatePasswordInitialState: IUpdatePassword = {
 
 export const updatePasswordSchema = Yup.object({
   newPassword: Yup.string()
-    .required("Password is required")
-    .min(6, "Password must be at least 6 characters")
-    .max(128, "Password cannot be more than 128 characters")
-    .matches(
-      PASSWORD_REGEX,
-      "Password must contain at least one lowercase letter, one uppercase letter, one number, and one special character"
-    ),
+    .required(PASSWORD_MESSAGES.REQUIRED)
+    .min(6, PASSWORD_MESSAGES.MIN)
+    .max(128, PASSWORD_MESSAGES.MAX)
+    .matches(PASSWORD_REGEX, PASSWORD_MESSAGES.INVALID),
   confirmPassword: Yup.string()
     .required("Please confirm your password")
     .oneOf([Yup.ref("newPassword")], "Passwords do not match"),

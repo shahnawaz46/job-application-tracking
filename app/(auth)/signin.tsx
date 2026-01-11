@@ -1,5 +1,5 @@
 import CustomStatusBar from "@/components/CustomStatusBar";
-import SignInForm from "@/components/SignInForm";
+import SignInForm from "@/components/forms/SignInForm";
 import { ScrollView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 

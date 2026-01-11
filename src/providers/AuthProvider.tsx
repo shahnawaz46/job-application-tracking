@@ -20,8 +20,8 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
     const init = async () => {
       const { data, error } = await supabase.auth.getSession();
       if (error) console.log("getSession Error: ", error);
-      console.log("getSession Data: ", data);
       if (!error) setSession(data.session);
+      console.log("getSession Data: ", data);
       setIsLoading(false);
     };
 

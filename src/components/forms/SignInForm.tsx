@@ -20,10 +20,10 @@ import { useRouter } from "expo-router";
 import { useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Pressable, View } from "react-native";
-import ReactHookFormError from "./fallback/ReactHookFormError";
-import ButtonLoading from "./loaders/ButtonLoading";
-import { ToastMessage } from "./Toast";
-import { InputWithIcon } from "./ui/inputwithicon";
+import ReactHookFormError from "../fallback/ReactHookFormError";
+import ButtonLoading from "../loaders/ButtonLoading";
+import { ToastMessage } from "../Toast";
+import { InputWithIcon } from "../ui/inputwithicon";
 
 // types/interfaces
 import type { IInitialState } from "@/validation/auth.yup";

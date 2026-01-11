@@ -1,4 +1,3 @@
-import { SocialConnections } from "@/components/SocialConnections";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -9,65 +8,91 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
 import { Text } from "@/components/ui/text";
 import useAsyncAction from "@/hooks/useAsyncAction";
 import { supabase } from "@/lib/supabase";
-import { initialState, signUpSchema } from "@/validation/auth.yup";
-import { Ionicons } from "@expo/vector-icons";
+import {
+  forgotPasswordInitialState,
+  forgotPasswordSchema,
+} from "@/validation/auth.yup";
+import { EMAIL_REGEX } from "@/validation/regex";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useRouter } from "expo-router";
-import { useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Pressable, View } from "react-native";
-import ReactHookFormError from "./fallback/ReactHookFormError";
-import ButtonLoading from "./loaders/ButtonLoading";
-import { ToastMessage } from "./Toast";
-import { InputWithIcon } from "./ui/inputwithicon";
+import ReactHookFormError from "./../fallback/ReactHookFormError";
+import ButtonLoading from "./../loaders/ButtonLoading";
+import { ToastMessage } from "./../Toast";
 
 // types/interfaces
-import type { IInitialState } from "@/validation/auth.yup";
-import type { TextInput } from "react-native";
+import type { IForgotPasswordState } from "@/validation/auth.yup";
 
-const SignUpForm = () => {
+const ForgotPasswordForm = () => {
   const router = useRouter();
-  const passwordInputRef = useRef<TextInput>(null);
+  const { isPending: isOtpPending, execute: otpExecute } = useAsyncAction();
   const { isPending, execute } = useAsyncAction();
-  const [showPassword, setShowPassword] = useState<boolean>(false);
 
   const {
     control,
     handleSubmit,
     formState: { errors },
+    getValues,
+    setError,
+    clearErrors,
   } = useForm({
-    defaultValues: initialState,
-    resolver: yupResolver(signUpSchema),
+    defaultValues: forgotPasswordInitialState,
+    resolver: yupResolver(forgotPasswordSchema),
   });
 
-  function onEmailSubmitEditing() {
-    passwordInputRef.current?.focus();
-  }
+  const handleOTP = () => {
+    otpExecute(async () => {
+      const email = getValues("email");
 
-  const onSubmit = (userData: IInitialState) => {
-    execute(async () => {
-      const {
-        data: { user },
-        error,
-      } = await supabase.auth.signUp(userData);
+      if (!email) {
+        setError("email", { message: "Email is required" });
+        return;
+      }
+
+      if (!EMAIL_REGEX.test(email)) {
+        setError("email", { message: "Please provide a valid email address" });
+        return;
+      }
+
+      clearErrors("email");
+      const { error, data } = await supabase.auth.resetPasswordForEmail(email);
+
       if (error) {
         ToastMessage({
           type: "error",
-          text1:
-            error?.message ||
-            "Signup failed, please try again after some time!",
+          text1: error?.message || "Something went wrong. Please try again",
         });
         return;
       }
 
-      router.push({
-        pathname: "/(auth)/verify-email",
-        params: { email: user?.user_metadata?.email || userData.email },
+      ToastMessage({
+        type: "success",
+        text1:
+          "We've sent a verification code to your email. Please check your inbox",
       });
+    });
+  };
+
+  const onSubmit = ({ email, otp }: IForgotPasswordState) => {
+    execute(async () => {
+      const { error } = await supabase.auth.verifyOtp({
+        email: email,
+        token: otp,
+        type: "recovery",
+      });
+
+      if (error) {
+        ToastMessage({
+          type: "error",
+          text1: error?.message || "Something went wrong. Please try again",
+        });
+      }
+
+      router.replace("/update-password");
     });
   };
 
@@ -76,14 +101,16 @@ const SignUpForm = () => {
       <Card className="border-border/0 shadow-none">
         <CardHeader>
           <CardTitle className="text-center text-xl">
-            Create your account
+            Forgot your password?
           </CardTitle>
           <CardDescription className="text-center">
-            Welcome! Please fill in the details to get started
+            Enter your email address and we'll send you a one-time code to reset
+            your password
           </CardDescription>
         </CardHeader>
         <CardContent className="gap-6">
-          {/* Signup form */}
+          {/* form */}
+
           <View className="gap-6">
             <View className="gap-1.5">
               <Label htmlFor="email">Email</Label>
@@ -97,9 +124,8 @@ const SignUpForm = () => {
                     keyboardType="email-address"
                     autoComplete="email"
                     autoCapitalize="none"
-                    onSubmitEditing={onEmailSubmitEditing}
-                    returnKeyType="next"
-                    submitBehavior="submit"
+                    returnKeyType="send"
+                    onSubmitEditing={handleOTP}
                     value={value}
                     onChangeText={onChange}
                   />
@@ -109,44 +135,52 @@ const SignUpForm = () => {
               <ReactHookFormError errorMessage={errors?.email?.message} />
             </View>
 
+            <Button
+              className="w-full"
+              onPress={handleOTP}
+              disabled={isOtpPending}
+            >
+              {isOtpPending ? (
+                <ButtonLoading text="Sending code..." />
+              ) : (
+                <Text>Send reset code</Text>
+              )}
+            </Button>
+
             <View className="gap-1.5">
-              <View className="flex-row items-center">
-                <Label htmlFor="password">Password</Label>
-              </View>
+              <Label htmlFor="code">Enter verification code</Label>
+
               <Controller
                 control={control}
-                name="password"
+                name="otp"
                 render={({ field: { value, onChange } }) => (
-                  <InputWithIcon
-                    ref={passwordInputRef}
-                    id="password"
-                    secureTextEntry={!showPassword}
+                  <Input
+                    id="code"
+                    autoCapitalize="none"
                     returnKeyType="send"
+                    keyboardType="numeric"
+                    autoComplete="sms-otp"
+                    textContentType="oneTimeCode"
+                    maxLength={6}
                     value={value}
                     onChangeText={onChange}
                     onSubmitEditing={handleSubmit(onSubmit)}
-                    rightIcon={
-                      <Ionicons
-                        name={showPassword ? "eye-off" : "eye"}
-                        size={18}
-                      />
-                    }
-                    onRightIconPress={() => setShowPassword((prev) => !prev)}
                   />
                 )}
               />
 
-              <ReactHookFormError errorMessage={errors?.password?.message} />
+              <ReactHookFormError errorMessage={errors?.otp?.message} />
             </View>
+
             <Button
               className="w-full"
               onPress={handleSubmit(onSubmit)}
               disabled={isPending}
             >
               {isPending ? (
-                <ButtonLoading text="Creating account..." />
+                <ButtonLoading text="Verifying..." />
               ) : (
-                <Text>Continue</Text>
+                <Text>Verify code</Text>
               )}
             </Button>
           </View>
@@ -163,20 +197,10 @@ const SignUpForm = () => {
               </Text>
             </Pressable>
           </View>
-
-          {/* or separator */}
-          <View className="flex-row items-center">
-            <Separator className="flex-1" />
-            <Text className="text-muted-foreground px-4 text-sm">or</Text>
-            <Separator className="flex-1" />
-          </View>
-
-          {/* social logins */}
-          <SocialConnections />
         </CardContent>
       </Card>
     </View>
   );
 };
 
-export default SignUpForm;
+export default ForgotPasswordForm;

@@ -1,5 +1,5 @@
 import CustomStatusBar from "@/components/CustomStatusBar";
-import VerifyEmailForm from "@/components/VerifyEmailForm";
+import VerifyEmailForm from "@/components/forms/VerifyEmailForm";
 import React from "react";
 import { ScrollView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";

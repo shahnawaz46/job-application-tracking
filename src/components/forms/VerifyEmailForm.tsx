@@ -17,9 +17,9 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { Controller, useForm } from "react-hook-form";
 import { View } from "react-native";
-import ReactHookFormError from "./fallback/ReactHookFormError";
-import ButtonLoading from "./loaders/ButtonLoading";
-import { ToastMessage } from "./Toast";
+import ReactHookFormError from "./../fallback/ReactHookFormError";
+import ButtonLoading from "./../loaders/ButtonLoading";
+import { ToastMessage } from "./../Toast";
 
 const RESEND_CODE_INTERVAL_SECONDS = 30;
 

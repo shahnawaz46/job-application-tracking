@@ -10,20 +10,20 @@ import { useRouter } from "expo-router";
 import React, { useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Text, View } from "react-native";
-import ReactHookFormError from "./fallback/ReactHookFormError";
-import ButtonLoading from "./loaders/ButtonLoading";
-import { ToastMessage } from "./Toast";
-import { Button } from "./ui/button";
+import ReactHookFormError from "../fallback/ReactHookFormError";
+import ButtonLoading from "../loaders/ButtonLoading";
+import { ToastMessage } from "../Toast";
+import { Button } from "../ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "./ui/card";
-import { Input } from "./ui/input";
-import { InputWithIcon } from "./ui/inputwithicon";
-import { Label } from "./ui/label";
+} from "../ui/card";
+import { Input } from "../ui/input";
+import { InputWithIcon } from "../ui/inputwithicon";
+import { Label } from "../ui/label";
 
 // types/interfaces
 import type { IUpdatePassword } from "@/validation/auth.yup";
