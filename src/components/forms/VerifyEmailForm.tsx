@@ -41,7 +41,6 @@ const VerifyEmailForm = () => {
   });
 
   const onSubmit = ({ otp }: { otp: string }) => {
-    console.log("otp: ", otp);
     if (!email) {
       ToastMessage({
         type: "error",
@@ -109,18 +108,16 @@ const VerifyEmailForm = () => {
 
               <Button
                 variant="link"
-                size="sm"
+                size="xs"
                 disabled={countdown > 0}
                 onPress={() => {
                   restartCountdown();
                   console.log("clicked");
                 }}
               >
-                <Text className="text-center text-xs">
+                <Text className="text-center">
                   Didn&apos;t receive the code? Resend{" "}
-                  {countdown > 0 ? (
-                    <Text className="text-xs">({countdown})</Text>
-                  ) : null}
+                  {countdown > 0 ? <Text>({countdown})</Text> : null}
                 </Text>
               </Button>
             </View>

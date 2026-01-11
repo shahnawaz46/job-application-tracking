@@ -31,7 +31,7 @@ export function SocialConnections() {
           <Button
             key={strategy.type}
             variant="outline"
-            size="sm"
+            size="xs"
             className="flex-1"
             onPress={() => {
               // TODO: Authenticate with social provider and navigate to protected screen if successful

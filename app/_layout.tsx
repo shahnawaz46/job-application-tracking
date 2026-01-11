@@ -33,6 +33,9 @@ function RootRoute() {
   );
 }
 
+{
+  /* React Native doesn't support DOM portals. On native platforms, components like modals, and menus need a PortalHost  */
+}
 export default function RootLayout() {
   return (
     <AuthProvider>

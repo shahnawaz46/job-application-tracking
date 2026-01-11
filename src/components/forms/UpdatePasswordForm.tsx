@@ -9,7 +9,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useRouter } from "expo-router";
 import React, { useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { Text, View } from "react-native";
+import { View } from "react-native";
 import ReactHookFormError from "../fallback/ReactHookFormError";
 import ButtonLoading from "../loaders/ButtonLoading";
 import { ToastMessage } from "../Toast";
@@ -24,6 +24,7 @@ import {
 import { Input } from "../ui/input";
 import { InputWithIcon } from "../ui/inputwithicon";
 import { Label } from "../ui/label";
+import { Text } from "../ui/text";
 
 // types/interfaces
 import type { IUpdatePassword } from "@/validation/auth.yup";

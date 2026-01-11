@@ -153,12 +153,12 @@ const SignUpForm = () => {
 
           {/* text for navigation */}
           <View className="text-center flex-row justify-center items-center">
-            <Text className="text-sm">Already have an account? </Text>
+            <Text variant={"small"}>Already have an account? </Text>
             <Pressable
               className="items-center"
               onPress={() => router.push("/signin")}
             >
-              <Text className="text-sm underline underline-offset-4">
+              <Text variant={"small"} className="underline underline-offset-4">
                 Sign in
               </Text>
             </Pressable>
@@ -167,7 +167,9 @@ const SignUpForm = () => {
           {/* or separator */}
           <View className="flex-row items-center">
             <Separator className="flex-1" />
-            <Text className="text-muted-foreground px-4 text-sm">or</Text>
+            <Text variant={"small"} className="text-muted-foreground px-4">
+              or
+            </Text>
             <Separator className="flex-1" />
           </View>
 

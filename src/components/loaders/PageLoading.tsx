@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Dimensions, Text, View } from "react-native";
+import { Dimensions, View } from "react-native";
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -8,6 +8,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Text } from "../ui/text";
 
 const { width } = Dimensions.get("window");
 
@@ -76,7 +77,7 @@ const PageLoading = () => {
         </Animated.View>
 
         {/* Loading Text */}
-        <Text className="text-white text-2xl font-semibold tracking-wide mb-4">
+        <Text variant={"xl"} className="text-white tracking-wide mb-4">
           Loading
         </Text>
 
@@ -98,7 +99,8 @@ const PageLoading = () => {
 
         {/* Subtext */}
         <Text
-          className="text-gray-400 text-sm text-center"
+          variant={"small"}
+          className="text-gray-400 text-center"
           style={{ maxWidth: width * 0.7 }}
         >
           Please wait while we prepare everything

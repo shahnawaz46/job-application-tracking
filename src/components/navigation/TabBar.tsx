@@ -67,7 +67,7 @@ export default TabBar;
 const styles = StyleSheet.create({
   tabBar: {
     position: "absolute",
-    bottom: 10,
+    bottom: 20,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
@@ -77,8 +77,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     backgroundColor: "#fff",
     borderRadius: 50,
-    shadowOffset: { width: 0, height: 10 },
+    shadowOffset: { width: 0, height: 1 },
+    shadowColor: "#000",
     shadowRadius: 10,
     shadowOpacity: 0.1,
+    elevation: 2,
   },
 });

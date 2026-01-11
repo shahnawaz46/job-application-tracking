@@ -187,12 +187,12 @@ const ForgotPasswordForm = () => {
 
           {/* text for navigation */}
           <View className="text-center flex-row justify-center items-center">
-            <Text className="text-sm">Already have an account? </Text>
+            <Text variant={"small"}>Already have an account? </Text>
             <Pressable
               className="items-center"
               onPress={() => router.push("/signin")}
             >
-              <Text className="text-sm underline underline-offset-4">
+              <Text variant={"small"} className="underline underline-offset-4">
                 Sign in
               </Text>
             </Pressable>
