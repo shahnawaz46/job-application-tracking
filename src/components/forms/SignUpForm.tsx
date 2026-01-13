@@ -54,6 +54,7 @@ const SignUpForm = () => {
         data: { user },
         error,
       } = await supabase.auth.signUp(userData);
+
       if (error) {
         ToastMessage({
           type: "error",
@@ -64,6 +65,11 @@ const SignUpForm = () => {
         return;
       }
 
+      ToastMessage({
+        type: "success",
+        text1:
+          "If no account exists for this email, you'll receive a verification code shortly.",
+      });
       router.push({
         pathname: "/(auth)/verify-email",
         params: { email: user?.user_metadata?.email || userData.email },

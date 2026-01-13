@@ -15,19 +15,22 @@ import { supabase } from "@/lib/supabase";
 import { otpSchema } from "@/validation/auth.yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import { useRef } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { View } from "react-native";
 import ReactHookFormError from "./../fallback/ReactHookFormError";
 import ButtonLoading from "./../loaders/ButtonLoading";
 import { ToastMessage } from "./../Toast";
 
-const RESEND_CODE_INTERVAL_SECONDS = 30;
+// const RESEND_CODE_INTERVAL_SECONDS = 30;
 
 const VerifyEmailForm = () => {
+  const resendOtpRef = useRef(30);
   const { countdown, restartCountdown } = useCountdown({
-    seconds: RESEND_CODE_INTERVAL_SECONDS,
+    seconds: resendOtpRef.current,
   });
   const { isPending, execute } = useAsyncAction();
+  const { isPending: isOTPPending, execute: otpExecute } = useAsyncAction();
   const { email } = useLocalSearchParams<{ email: string }>();
   const router = useRouter();
 
@@ -66,6 +69,34 @@ const VerifyEmailForm = () => {
       }
 
       router.push("/(tabs)");
+    });
+  };
+
+  const resendOTP = () => {
+    otpExecute(async () => {
+      const { error, data } = await supabase.auth.resend({
+        type: "signup",
+        email: email,
+      });
+
+      if (error) {
+        ToastMessage({
+          type: "error",
+          text1:
+            error?.message ||
+            "We couldn't resend the verification code right now. Please try again shortly.",
+        });
+        return;
+      }
+
+      ToastMessage({
+        type: "success",
+        text1:
+          "We've sent you a new verification code. Please check your email.",
+      });
+
+      resendOtpRef.current *= 3;
+      restartCountdown(resendOtpRef.current);
     });
   };
 
@@ -109,16 +140,19 @@ const VerifyEmailForm = () => {
               <Button
                 variant="link"
                 size="xs"
-                disabled={countdown > 0}
-                onPress={() => {
-                  restartCountdown();
-                  console.log("clicked");
-                }}
+                disabled={countdown > 0 || isOTPPending}
+                onPress={resendOTP}
               >
-                <Text className="text-center">
-                  Didn&apos;t receive the code? Resend{" "}
-                  {countdown > 0 ? <Text>({countdown})</Text> : null}
-                </Text>
+                {isOTPPending ? (
+                  <Text className="text-center">
+                    Resending verification code...
+                  </Text>
+                ) : (
+                  <Text className="text-center">
+                    Didn&apos;t receive the code? Resend{" "}
+                    {countdown > 0 ? <Text>({countdown})</Text> : null}
+                  </Text>
+                )}
               </Button>
             </View>
             <View className="gap-3">

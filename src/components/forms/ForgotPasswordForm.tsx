@@ -59,7 +59,7 @@ const ForgotPasswordForm = () => {
       }
 
       clearErrors("email");
-      const { error, data } = await supabase.auth.resetPasswordForEmail(email);
+      const { error } = await supabase.auth.resetPasswordForEmail(email);
 
       if (error) {
         ToastMessage({
