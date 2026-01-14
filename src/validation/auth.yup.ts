@@ -1,19 +1,29 @@
 import * as Yup from "yup";
-import { EMAIL_MESSAGES, OTP_MESSAGES, PASSWORD_MESSAGES } from "./messages";
+import {
+  EMAIL_MESSAGES,
+  FULL_NAME_MESSAGES,
+  OTP_MESSAGES,
+  PASSWORD_MESSAGES,
+} from "./messages";
 import { EMAIL_REGEX, OTP_REGEX, PASSWORD_REGEX } from "./regex";
 
-export interface IInitialState {
+// SIGN UP
+export interface ISignUp {
+  full_name: string;
   email: string;
   password: string;
+  confirm_password: string;
 }
 
-export const initialState: IInitialState = {
+export const signUpInitialState: ISignUp = {
+  full_name: "",
   email: "",
   password: "",
+  confirm_password: "",
 };
 
-// SIGN UP
 export const signUpSchema = Yup.object({
+  full_name: Yup.string().required(FULL_NAME_MESSAGES.REQUIRED),
   email: Yup.string()
     .required(EMAIL_MESSAGES.REQUIRED)
     .matches(EMAIL_REGEX, EMAIL_MESSAGES.INVALID)
@@ -24,9 +34,22 @@ export const signUpSchema = Yup.object({
     .min(6, PASSWORD_MESSAGES.MIN)
     .max(128, PASSWORD_MESSAGES.MAX)
     .matches(PASSWORD_REGEX, PASSWORD_MESSAGES.INVALID),
+  confirm_password: Yup.string()
+    .required("Please confirm your password")
+    .oneOf([Yup.ref("password")], "Passwords do not match"),
 });
 
 // SIGN IN
+export interface ISignIn {
+  email: string;
+  password: string;
+}
+
+export const signInInitialState: ISignIn = {
+  email: "",
+  password: "",
+};
+
 export const signInSchema = Yup.object({
   email: Yup.string()
     .required(EMAIL_MESSAGES.REQUIRED)

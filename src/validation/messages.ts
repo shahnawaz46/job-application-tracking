@@ -1,3 +1,7 @@
+export const FULL_NAME_MESSAGES = {
+  REQUIRED: "Full name is required",
+};
+
 export const EMAIL_MESSAGES = {
   REQUIRED: "Email is required",
   INVALID: "Please provide a valid email address",

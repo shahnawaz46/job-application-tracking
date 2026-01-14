@@ -13,7 +13,7 @@ import { Separator } from "@/components/ui/separator";
 import { Text } from "@/components/ui/text";
 import useAsyncAction from "@/hooks/useAsyncAction";
 import { supabase } from "@/lib/supabase";
-import { initialState, signUpSchema } from "@/validation/auth.yup";
+import { signUpInitialState, signUpSchema } from "@/validation/auth.yup";
 import { Ionicons } from "@expo/vector-icons";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useRouter } from "expo-router";
@@ -26,12 +26,14 @@ import { ToastMessage } from "../Toast";
 import { InputWithIcon } from "../ui/inputwithicon";
 
 // types/interfaces
-import type { IInitialState } from "@/validation/auth.yup";
+import type { ISignUp } from "@/validation/auth.yup";
 import type { TextInput } from "react-native";
 
 const SignUpForm = () => {
   const router = useRouter();
+  const emailInputRef = useRef<TextInput>(null);
   const passwordInputRef = useRef<TextInput>(null);
+  const confirmPasswordInputRef = useRef<TextInput>(null);
   const { isPending, execute } = useAsyncAction();
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
@@ -40,20 +42,20 @@ const SignUpForm = () => {
     handleSubmit,
     formState: { errors },
   } = useForm({
-    defaultValues: initialState,
+    defaultValues: signUpInitialState,
     resolver: yupResolver(signUpSchema),
   });
 
-  function onEmailSubmitEditing() {
-    passwordInputRef.current?.focus();
-  }
-
-  const onSubmit = (userData: IInitialState) => {
+  const onSubmit = (userData: ISignUp) => {
     execute(async () => {
       const {
         data: { user },
         error,
-      } = await supabase.auth.signUp(userData);
+      } = await supabase.auth.signUp({
+        email: userData.email,
+        password: userData.password,
+        options: { data: { full_name: userData.full_name } },
+      });
 
       if (error) {
         ToastMessage({
@@ -88,9 +90,31 @@ const SignUpForm = () => {
             Welcome! Please fill in the details to get started
           </CardDescription>
         </CardHeader>
-        <CardContent className="gap-6">
+        <CardContent className="gap-4">
           {/* Signup form */}
-          <View className="gap-6">
+          <View className="gap-4">
+            <View className="gap-1.5">
+              <Label htmlFor="full_name">Full Name</Label>
+              <Controller
+                control={control}
+                name="full_name"
+                render={({ field: { value, onChange } }) => (
+                  <Input
+                    id="full_name"
+                    placeholder="Your Name"
+                    autoCapitalize="words"
+                    returnKeyType="next"
+                    submitBehavior="submit"
+                    onSubmitEditing={() => emailInputRef.current?.focus()}
+                    value={value}
+                    onChangeText={onChange}
+                  />
+                )}
+              />
+
+              <ReactHookFormError errorMessage={errors?.full_name?.message} />
+            </View>
+
             <View className="gap-1.5">
               <Label htmlFor="email">Email</Label>
               <Controller
@@ -98,14 +122,15 @@ const SignUpForm = () => {
                 name="email"
                 render={({ field: { value, onChange } }) => (
                   <Input
+                    ref={emailInputRef}
                     id="email"
                     placeholder="m@example.com"
                     keyboardType="email-address"
                     autoComplete="email"
                     autoCapitalize="none"
-                    onSubmitEditing={onEmailSubmitEditing}
                     returnKeyType="next"
                     submitBehavior="submit"
+                    onSubmitEditing={() => passwordInputRef.current?.focus()}
                     value={value}
                     onChangeText={onChange}
                   />
@@ -123,14 +148,40 @@ const SignUpForm = () => {
                 control={control}
                 name="password"
                 render={({ field: { value, onChange } }) => (
-                  <InputWithIcon
+                  <Input
                     ref={passwordInputRef}
                     id="password"
                     secureTextEntry={!showPassword}
-                    returnKeyType="send"
+                    returnKeyType="next"
+                    submitBehavior="submit"
+                    onSubmitEditing={() =>
+                      confirmPasswordInputRef.current?.focus()
+                    }
                     value={value}
                     onChangeText={onChange}
+                  />
+                )}
+              />
+
+              <ReactHookFormError errorMessage={errors?.password?.message} />
+            </View>
+
+            <View className="gap-1.5">
+              <View className="flex-row items-center">
+                <Label htmlFor="confirm_password">Confirm Password</Label>
+              </View>
+              <Controller
+                control={control}
+                name="confirm_password"
+                render={({ field: { value, onChange } }) => (
+                  <InputWithIcon
+                    ref={confirmPasswordInputRef}
+                    id="confirm_password"
+                    secureTextEntry={!showPassword}
+                    returnKeyType="send"
                     onSubmitEditing={handleSubmit(onSubmit)}
+                    value={value}
+                    onChangeText={onChange}
                     rightIcon={
                       <Ionicons
                         name={showPassword ? "eye-off" : "eye"}
@@ -142,7 +193,9 @@ const SignUpForm = () => {
                 )}
               />
 
-              <ReactHookFormError errorMessage={errors?.password?.message} />
+              <ReactHookFormError
+                errorMessage={errors?.confirm_password?.message}
+              />
             </View>
             <Button
               className="w-full"

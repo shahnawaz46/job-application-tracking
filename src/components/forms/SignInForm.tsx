@@ -13,7 +13,7 @@ import { Separator } from "@/components/ui/separator";
 import { Text } from "@/components/ui/text";
 import useAsyncAction from "@/hooks/useAsyncAction";
 import { supabase } from "@/lib/supabase";
-import { initialState, signInSchema } from "@/validation/auth.yup";
+import { signInInitialState, signInSchema } from "@/validation/auth.yup";
 import { Ionicons } from "@expo/vector-icons";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useRouter } from "expo-router";
@@ -26,7 +26,7 @@ import { ToastMessage } from "../Toast";
 import { InputWithIcon } from "../ui/inputwithicon";
 
 // types/interfaces
-import type { IInitialState } from "@/validation/auth.yup";
+import type { ISignIn } from "@/validation/auth.yup";
 import type { TextInput } from "react-native";
 
 const SignInForm = () => {
@@ -40,7 +40,7 @@ const SignInForm = () => {
     handleSubmit,
     formState: { errors },
   } = useForm({
-    defaultValues: initialState,
+    defaultValues: signInInitialState,
     resolver: yupResolver(signInSchema),
   });
 
@@ -48,7 +48,7 @@ const SignInForm = () => {
     passwordInputRef.current?.focus();
   }
 
-  const onSubmit = (userData: IInitialState) => {
+  const onSubmit = (userData: ISignIn) => {
     execute(async () => {
       const { error } = await supabase.auth.signInWithPassword(userData);
 
