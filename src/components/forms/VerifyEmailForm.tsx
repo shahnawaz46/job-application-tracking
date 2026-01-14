@@ -17,7 +17,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useRef } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { View } from "react-native";
+import { Pressable, View } from "react-native";
 import ReactHookFormError from "./../fallback/ReactHookFormError";
 import ButtonLoading from "./../loaders/ButtonLoading";
 import { ToastMessage } from "./../Toast";
@@ -168,6 +168,19 @@ const VerifyEmailForm = () => {
                 )}
               </Button>
             </View>
+          </View>
+
+          {/* text for navigation */}
+          <View className="text-center flex-row justify-center items-center">
+            <Text variant={"small"}>Already have an account? </Text>
+            <Pressable
+              className="items-center"
+              onPress={() => router.push("/signin")}
+            >
+              <Text variant={"small"} className="underline underline-offset-4">
+                Sign in
+              </Text>
+            </Pressable>
           </View>
         </CardContent>
       </Card>

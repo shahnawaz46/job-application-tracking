@@ -2,6 +2,7 @@ import CustomStatusBar from "@/components/CustomStatusBar";
 import { ToastMessage } from "@/components/Toast";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/lib/supabase";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import React from "react";
 import { Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -9,6 +10,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 const Profile = () => {
   const logout = async () => {
     const { error } = await supabase.auth.signOut();
+    await GoogleSignin.signOut();
 
     if (error) {
       ToastMessage({ type: "error", text1: error.message });

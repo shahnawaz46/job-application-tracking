@@ -1,4 +1,4 @@
-import { SocialConnections } from "@/components/SocialConnections";
+import { SocialConnections } from "@/components/social-signin/SocialConnections";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -60,8 +60,6 @@ const SignInForm = () => {
         });
         return;
       }
-
-      router.push("/(tabs)");
     });
   };
 
