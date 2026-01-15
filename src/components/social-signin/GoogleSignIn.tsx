@@ -56,7 +56,6 @@ const GoogleSignIn = () => {
   return (
     <Button
       variant="outline"
-      size="xs"
       className="flex-1"
       onPress={handleSignIn}
       disabled={isPending}

@@ -19,9 +19,9 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
   useEffect(() => {
     const init = async () => {
       const { data, error } = await supabase.auth.getSession();
-      if (error) console.log("getSession Error: ", error);
+      // if (error) console.log("getSession Error: ", error);
       if (!error) setSession(data.session);
-      console.log("getSession Data: ", data);
+      // console.log("getSession Data: ", data);
       setIsLoading(false);
     };
 
@@ -30,7 +30,7 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, session) => {
-      console.log("Auth event:", event, session);
+      // console.log("Auth event:", event, session);
       setSession(session);
 
       // handle password recovery session(forgot password)
@@ -42,7 +42,7 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
       // handle sign-out (manual or forced)
       // this also covers expired/invalid recovery links where we explicitly sign out
       if (event === "SIGNED_OUT") {
-        console.log("SIGNED_OUT");
+        // console.log("SIGNED_OUT");
         setIsRecoveringPassword(false);
         router.replace("/(auth)/signin");
       }
@@ -58,13 +58,21 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
       return;
     }
 
-    supabase
-      .from("users")
-      .select("*")
-      .eq("id", session.user.id)
-      .single()
-      .then(({ data }) => setProfile(data));
+    if (!profile) {
+      supabase
+        .from("user_profiles")
+        .select("*")
+        .eq("id", session.user.id)
+        .single()
+        .then(({ data }) => {
+          setProfile(data);
+        });
+    }
   }, [session]);
+
+  const updateProfileData = (newValue: any) => {
+    setProfile(newValue);
+  };
 
   return (
     <AuthContext.Provider
@@ -74,6 +82,7 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
         isLoading,
         isAuthenticated: !!session,
         isRecoveringPassword,
+        updateProfileData,
       }}
     >
       {children}

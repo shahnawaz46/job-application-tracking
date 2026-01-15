@@ -28,6 +28,7 @@ function RootRoute() {
 
       <Stack.Protected guard={isAuthenticated && !isRecoveringPassword}>
         <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="(protected)" />
       </Stack.Protected>
     </Stack>
   );

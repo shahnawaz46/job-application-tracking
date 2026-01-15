@@ -37,6 +37,7 @@ const textVariants = cva(
           "bg-muted relative rounded px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold"
         ),
         lead: "text-muted-foreground text-xl",
+        xxl: "text-2xl font-bold",
         xl: "text-xl font-semibold",
         large: "text-lg font-semibold",
         base: "text-base font-medium",

@@ -1,7 +1,8 @@
 import * as Yup from "yup";
+import { NAME_MAX, NAME_MIN, PASSWORD_MAX, PASSWORD_MIN } from "./constants";
 import {
   EMAIL_MESSAGES,
-  FULL_NAME_MESSAGES,
+  NAME_MESSAGES,
   OTP_MESSAGES,
   PASSWORD_MESSAGES,
 } from "./messages";
@@ -23,7 +24,12 @@ export const signUpInitialState: ISignUp = {
 };
 
 export const signUpSchema = Yup.object({
-  full_name: Yup.string().required(FULL_NAME_MESSAGES.REQUIRED),
+  full_name: Yup.string()
+    .required(NAME_MESSAGES.REQUIRED)
+    .min(NAME_MIN, NAME_MESSAGES.MIN)
+    .max(NAME_MAX, NAME_MESSAGES.MAX)
+    .trim(),
+
   email: Yup.string()
     .required(EMAIL_MESSAGES.REQUIRED)
     .matches(EMAIL_REGEX, EMAIL_MESSAGES.INVALID)
@@ -31,9 +37,10 @@ export const signUpSchema = Yup.object({
 
   password: Yup.string()
     .required(PASSWORD_MESSAGES.REQUIRED)
-    .min(6, PASSWORD_MESSAGES.MIN)
-    .max(128, PASSWORD_MESSAGES.MAX)
+    .min(PASSWORD_MIN, PASSWORD_MESSAGES.MIN)
+    .max(PASSWORD_MAX, PASSWORD_MESSAGES.MAX)
     .matches(PASSWORD_REGEX, PASSWORD_MESSAGES.INVALID),
+
   confirm_password: Yup.string()
     .required("Please confirm your password")
     .oneOf([Yup.ref("password")], "Passwords do not match"),
@@ -58,7 +65,7 @@ export const signInSchema = Yup.object({
 
   password: Yup.string()
     .required(PASSWORD_MESSAGES.REQUIRED)
-    .max(128, PASSWORD_MESSAGES.MAX),
+    .max(PASSWORD_MAX, PASSWORD_MESSAGES.MAX),
 });
 
 // VERIFY EMAIL/ACCOUNT
@@ -84,6 +91,7 @@ export const forgotPasswordSchema = Yup.object({
     .required(EMAIL_MESSAGES.REQUIRED)
     .matches(EMAIL_REGEX, EMAIL_MESSAGES.INVALID)
     .trim(),
+
   otp: Yup.string()
     .required(OTP_MESSAGES.REQUIRED)
     .matches(OTP_REGEX, OTP_MESSAGES.INVALID),
@@ -103,9 +111,10 @@ export const updatePasswordInitialState: IUpdatePassword = {
 export const updatePasswordSchema = Yup.object({
   newPassword: Yup.string()
     .required(PASSWORD_MESSAGES.REQUIRED)
-    .min(6, PASSWORD_MESSAGES.MIN)
-    .max(128, PASSWORD_MESSAGES.MAX)
+    .min(PASSWORD_MIN, PASSWORD_MESSAGES.MIN)
+    .max(PASSWORD_MAX, PASSWORD_MESSAGES.MAX)
     .matches(PASSWORD_REGEX, PASSWORD_MESSAGES.INVALID),
+
   confirmPassword: Yup.string()
     .required("Please confirm your password")
     .oneOf([Yup.ref("newPassword")], "Passwords do not match"),
