@@ -8,25 +8,20 @@ import { Stack } from "expo-router";
 import "./global.css";
 
 function RootRoute() {
-  const { isAuthenticated, isLoading, isRecoveringPassword } = useAuthContext();
+  const { isAuthenticated, isLoading } = useAuthContext();
 
-  // console.log("RootRoute", isLoading, isAuthenticated, isRecoveringPassword);
+  // console.log("RootRoute", isLoading, isAuthenticated);
   if (isLoading) {
     return <PageLoading />;
   }
 
   return (
     <Stack screenOptions={{ headerShown: false }}>
-      {/* if user requested for Reset Password then only this 'Update Password' route will be accessible */}
-      <Stack.Protected guard={isRecoveringPassword}>
-        <Stack.Screen name="(recovery)" />
-      </Stack.Protected>
-
-      <Stack.Protected guard={!isAuthenticated && !isRecoveringPassword}>
+      <Stack.Protected guard={!isAuthenticated}>
         <Stack.Screen name="(auth)" />
       </Stack.Protected>
 
-      <Stack.Protected guard={isAuthenticated && !isRecoveringPassword}>
+      <Stack.Protected guard={isAuthenticated}>
         <Stack.Screen name="(tabs)" />
         <Stack.Screen name="(protected)" />
       </Stack.Protected>

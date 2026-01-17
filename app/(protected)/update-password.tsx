@@ -1,9 +1,8 @@
-import { ToastMessage } from "@/components/Toast";
 import ReactHookFormError from "@/components/fallback/ReactHookFormError";
 import FormWrapper from "@/components/headers/FormWrapper";
 import PageHeader from "@/components/headers/PageHeader";
 import ButtonLoading from "@/components/loaders/ButtonLoading";
-import { SocialConnections } from "@/components/social-signin/SocialConnections";
+import { ToastMessage } from "@/components/Toast";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -15,116 +14,118 @@ import {
 import { Input } from "@/components/ui/input";
 import { InputWithIcon } from "@/components/ui/inputwithicon";
 import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
 import { Text } from "@/components/ui/text";
 import useAsyncAction from "@/hooks/useAsyncAction";
 import { supabase } from "@/lib/supabase";
-import { signInInitialState, signInSchema } from "@/validation/auth.yup";
+import {
+  updatePasswordInitialState,
+  updatePasswordSchema,
+} from "@/validation/auth.yup";
 import { Ionicons } from "@expo/vector-icons";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useRouter } from "expo-router";
 import { useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { Pressable, View } from "react-native";
+import { View } from "react-native";
 
 // types/interfaces
-import type { ISignIn } from "@/validation/auth.yup";
+import type { IUpdatePassword } from "@/validation/auth.yup";
 import type { TextInput } from "react-native";
 
-const SignIn = () => {
+const UpdatePassword = () => {
   const router = useRouter();
   const passwordInputRef = useRef<TextInput>(null);
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  const { isPending, execute } = useAsyncAction();
-
   const {
     control,
     handleSubmit,
     formState: { errors },
   } = useForm({
-    defaultValues: signInInitialState,
-    resolver: yupResolver(signInSchema),
+    defaultValues: updatePasswordInitialState,
+    resolver: yupResolver(updatePasswordSchema),
   });
+  const { isPending, execute } = useAsyncAction();
 
-  const onSubmit = (userData: ISignIn) => {
+  const onPasswordSubmit = () => {
+    passwordInputRef.current?.focus();
+  };
+
+  const onSubmit = ({ newPassword }: IUpdatePassword) => {
     execute(async () => {
-      const { error } = await supabase.auth.signInWithPassword(userData);
+      const { error } = await supabase.auth.updateUser({
+        password: newPassword,
+      });
 
       if (error) {
         ToastMessage({
           type: "error",
-          text1:
-            error?.message || "Login failed, please try again after some time!",
+          text1: error.message || "Unable to update password. Try again.",
         });
-        return;
       }
+
+      if (!error) {
+        ToastMessage({
+          type: "success",
+          text1: "Your password has been updated. Please sign in again.",
+        });
+        await supabase.auth.signOut();
+      }
+
+      router.replace("/(auth)/signin");
     });
   };
+
   return (
     <PageHeader>
       <FormWrapper>
         <Card className="border-border/0 shadow-none">
           <CardHeader>
             <CardTitle className="text-center text-xl">
-              Sign in to your app
+              Update your password
             </CardTitle>
             <CardDescription className="text-center">
-              Welcome back! Please sign in to continue
+              Choose a new password for your account. Make sure it's strong and
+              secure
             </CardDescription>
           </CardHeader>
           <CardContent className="gap-6">
-            {/* Signin form */}
             <View className="gap-6">
               <View className="gap-1.5">
-                <Label htmlFor="email">Email</Label>
+                <View className="flex-row items-center">
+                  <Label htmlFor="password">New password</Label>
+                </View>
                 <Controller
                   control={control}
-                  name="email"
+                  name="newPassword"
                   render={({ field: { value, onChange } }) => (
                     <Input
-                      id="email"
-                      placeholder="m@example.com"
-                      keyboardType="email-address"
-                      autoComplete="email"
-                      autoCapitalize="none"
-                      onSubmitEditing={() => passwordInputRef.current?.focus()}
+                      id="password"
+                      secureTextEntry={!showPassword}
                       returnKeyType="next"
                       submitBehavior="submit"
+                      onSubmitEditing={onPasswordSubmit}
                       value={value}
                       onChangeText={onChange}
                     />
                   )}
                 />
 
-                <ReactHookFormError errorMessage={errors?.email?.message} />
+                <ReactHookFormError
+                  errorMessage={errors.newPassword?.message}
+                />
               </View>
-
               <View className="gap-1.5">
-                <View className="flex-row items-center">
-                  <Label htmlFor="password">Password</Label>
-                  <Button
-                    variant="link"
-                    size="xs"
-                    className="web:h-fit ml-auto h-4 px-1 py-0"
-                    onPress={() => {
-                      router.push("/(auth)/forgot-password");
-                    }}
-                  >
-                    <Text>Forgot your password?</Text>
-                  </Button>
-                </View>
+                <Label htmlFor="c-password">Confirm new password</Label>
 
                 <Controller
                   control={control}
-                  name="password"
+                  name="confirmPassword"
                   render={({ field: { value, onChange } }) => (
                     <InputWithIcon
                       ref={passwordInputRef}
-                      id="password"
+                      id="c-password"
                       secureTextEntry={!showPassword}
                       returnKeyType="send"
-                      value={value}
-                      onChangeText={onChange}
                       onSubmitEditing={handleSubmit(onSubmit)}
                       rightIcon={
                         <Ionicons
@@ -133,11 +134,15 @@ const SignIn = () => {
                         />
                       }
                       onRightIconPress={() => setShowPassword((prev) => !prev)}
+                      value={value}
+                      onChangeText={onChange}
                     />
                   )}
                 />
 
-                <ReactHookFormError errorMessage={errors?.password?.message} />
+                <ReactHookFormError
+                  errorMessage={errors.confirmPassword?.message}
+                />
               </View>
               <Button
                 className="w-full"
@@ -145,40 +150,12 @@ const SignIn = () => {
                 disabled={isPending}
               >
                 {isPending ? (
-                  <ButtonLoading text="Signing..." />
+                  <ButtonLoading text="Updating..." />
                 ) : (
-                  <Text>Continue</Text>
+                  <Text className="text-white">Update password</Text>
                 )}
               </Button>
             </View>
-
-            {/* text for navigation */}
-            <View className="text-center flex-row justify-center items-center">
-              <Text variant={"small"}>Don&apos;t have an account? </Text>
-              <Pressable
-                className="items-center"
-                onPress={() => router.push("/signup")}
-              >
-                <Text
-                  variant={"small"}
-                  className="underline underline-offset-4"
-                >
-                  Sign up
-                </Text>
-              </Pressable>
-            </View>
-
-            {/* or separator */}
-            <View className="flex-row items-center">
-              <Separator className="flex-1" />
-              <Text variant={"small"} className="text-muted-foreground px-4">
-                or
-              </Text>
-              <Separator className="flex-1" />
-            </View>
-
-            {/* social logins */}
-            <SocialConnections />
           </CardContent>
         </Card>
       </FormWrapper>
@@ -186,4 +163,4 @@ const SignIn = () => {
   );
 };
 
-export default SignIn;
+export default UpdatePassword;

@@ -9,11 +9,9 @@ import type { PropsWithChildren } from "react";
 
 const AuthProvider = ({ children }: PropsWithChildren) => {
   const router = useRouter();
-
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [isRecoveringPassword, setIsRecoveringPassword] = useState(false);
 
   // initial session fetch and subscribe to auth state changes
   useEffect(() => {
@@ -30,20 +28,20 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, session) => {
-      // console.log("Auth event:", event, session);
+      console.log("Auth event:", event, session);
       setSession(session);
 
       // handle password recovery session(forgot password)
       // if a recovery session exists, allow access to update-password flow only
       if (session && session.user.recovery_sent_at) {
-        setIsRecoveringPassword(true);
+        router.replace("/(protected)/update-password");
+        return;
       }
 
       // handle sign-out (manual or forced)
       // this also covers expired/invalid recovery links where we explicitly sign out
       if (event === "SIGNED_OUT") {
         // console.log("SIGNED_OUT");
-        setIsRecoveringPassword(false);
         router.replace("/(auth)/signin");
       }
     });
@@ -81,7 +79,6 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
         profile,
         isLoading,
         isAuthenticated: !!session,
-        isRecoveringPassword,
         updateProfileData,
       }}
     >

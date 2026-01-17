@@ -9,7 +9,6 @@ export interface IAuthData {
   updateProfileData: (newValue: any) => void;
   isLoading: boolean;
   isAuthenticated: boolean;
-  isRecoveringPassword: boolean;
 }
 
 export const AuthContext = createContext<IAuthData>({
@@ -18,7 +17,6 @@ export const AuthContext = createContext<IAuthData>({
   updateProfileData: () => {},
   isLoading: true,
   isAuthenticated: false,
-  isRecoveringPassword: false,
 });
 
 export const useAuthContext = () => useContext(AuthContext);

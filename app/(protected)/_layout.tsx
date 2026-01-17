@@ -4,6 +4,7 @@ const ProtectedLayout = () => {
   return (
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="edit-profile" />
+      <Stack.Screen name="update-password" />
     </Stack>
   );
 };
