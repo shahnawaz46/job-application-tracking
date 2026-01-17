@@ -7,25 +7,32 @@ import {
   type TextInputProps,
   View,
 } from "react-native";
+import { Text } from "./text";
 
-type TInputWithIconProps = TextInputProps &
-  React.RefAttributes<TextInput> & {
-    leftIcon?: React.ReactNode;
-    rightIcon?: React.ReactNode;
-    onLeftIconPress?: () => void;
-    onRightIconPress?: () => void;
-  };
+interface IInputCustomProps {
+  leftIcon?: React.ReactNode;
+  rightIcon?: React.ReactNode;
+  onLeftIconPress?: () => void;
+  onRightIconPress?: () => void;
+  asText?: boolean;
+  onPress?: () => void;
+}
 
 const InputWithIcon = ({
   leftIcon,
   rightIcon,
   onLeftIconPress,
   onRightIconPress,
+  asText = false,
+  onPress,
   className,
   ...props
-}: TInputWithIconProps) => {
+}: TextInputProps & React.RefAttributes<TextInput> & IInputCustomProps) => {
+  const Wrapper = asText ? Pressable : View;
+
   return (
-    <View
+    <Wrapper
+      onPress={asText ? onPress : undefined}
       className={cn(
         "dark:bg-input/30 border-input bg-background flex h-10 w-full min-w-0 flex-row items-center rounded-md border shadow-sm shadow-black/5 sm:h-9",
         props.editable === false && "opacity-50",
@@ -48,21 +55,33 @@ const InputWithIcon = ({
         </Pressable>
       )}
 
-      <TextInput
-        className={cn(
-          "text-foreground flex-1 px-3 py-1 text-base leading-5",
-          !leftIcon && "pl-3",
-          !rightIcon && "pr-3",
-          Platform.select({
-            web: cn(
-              "placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground outline-none md:text-sm"
-            ),
-            native: "placeholder:text-muted-foreground/50",
-          }),
-          className
-        )}
-        {...props}
-      />
+      {!asText ? (
+        <TextInput
+          className={cn(
+            "text-foreground flex-1 px-3 py-1 text-base leading-5",
+            !leftIcon && "pl-3",
+            !rightIcon && "pr-3",
+            Platform.select({
+              web: cn(
+                "placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground outline-none md:text-sm"
+              ),
+              native: "placeholder:text-muted-foreground/50",
+            }),
+            className
+          )}
+          {...props}
+        />
+      ) : (
+        <Text
+          className={cn(
+            "text-foreground flex-1 px-3 py-1 text-base leading-5",
+            !props.value && "text-muted-foreground/50",
+            className
+          )}
+        >
+          {props.value || props.placeholder}
+        </Text>
+      )}
 
       {rightIcon && (
         <Pressable
@@ -73,7 +92,7 @@ const InputWithIcon = ({
           {rightIcon}
         </Pressable>
       )}
-    </View>
+    </Wrapper>
   );
 };
 

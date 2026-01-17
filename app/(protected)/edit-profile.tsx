@@ -94,9 +94,9 @@ const EditProfile = () => {
   // convert array into object for Select Options
   const genderDropdown: { label: string; value: TGender }[] = useMemo(
     () =>
-      GENDER_OPTIONS.map((value) => ({
-        label: value.charAt(0).toUpperCase() + value.slice(1),
-        value,
+      GENDER_OPTIONS.map((item) => ({
+        label: item.charAt(0).toUpperCase() + item.slice(1),
+        value: item,
       })),
     []
   );
