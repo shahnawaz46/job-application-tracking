@@ -1,4 +1,5 @@
 import ReactHookFormError from "@/components/fallback/ReactHookFormError";
+import PageHeader from "@/components/headers/PageHeader";
 import ButtonLoading from "@/components/loaders/ButtonLoading";
 import Header from "@/components/profile/Header";
 import ProfileInfo from "@/components/profile/ProfileInfo";
@@ -29,12 +30,11 @@ import { KeyboardAvoidingView, Platform, ScrollView, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 // types/interface
-import PageHeader from "@/components/headers/PageHeader";
 import type { IInitialState } from "@/validation/profile.yup";
 import type { TextInput } from "react-native";
 
 const EditProfile = () => {
-  const { profile, updateProfileData } = useAuthContext();
+  const { profile, updateProfileData, isLoading } = useAuthContext();
 
   const {
     control,
@@ -98,7 +98,7 @@ const EditProfile = () => {
         label: item.charAt(0).toUpperCase() + item.slice(1),
         value: item,
       })),
-    []
+    [],
   );
 
   return (
@@ -116,6 +116,7 @@ const EditProfile = () => {
             <ProfilePic
               full_name={profile.full_name}
               profile_pic={profile.profile_pic}
+              isLoading={isLoading}
             />
 
             {/* Profile Info */}
@@ -123,6 +124,7 @@ const EditProfile = () => {
               full_name={profile.full_name}
               email={profile.email}
               joined={profile.created_at}
+              isLoading={isLoading}
             />
 
             <Separator />
@@ -178,7 +180,7 @@ const EditProfile = () => {
                   name="gender"
                   render={({ field: { value, onChange } }) => {
                     const optionValue = genderDropdown.find(
-                      (val) => val.value === value
+                      (val) => val.value === value,
                     );
 
                     return (

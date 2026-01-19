@@ -11,11 +11,10 @@ import { Text } from "@/components/ui/text";
 import useAsyncAction from "@/hooks/useAsyncAction";
 import { useAuthContext } from "@/hooks/useAuthContext";
 import { supabase } from "@/lib/supabase";
-import React from "react";
 import { ScrollView, View } from "react-native";
 
 const ProfileScreen = () => {
-  const { profile } = useAuthContext();
+  const { profile, isLoading } = useAuthContext();
   const { isPending, execute } = useAsyncAction();
 
   const handleLogout = () => {
@@ -38,6 +37,7 @@ const ProfileScreen = () => {
           <ProfilePic
             full_name={profile.full_name}
             profile_pic={profile.profile_pic}
+            isLoading={isLoading}
           />
 
           {/* Profile Info */}
@@ -45,6 +45,7 @@ const ProfileScreen = () => {
             full_name={profile.full_name}
             email={profile.email}
             joined={profile.created_at}
+            isLoading={isLoading}
           />
         </View>
 

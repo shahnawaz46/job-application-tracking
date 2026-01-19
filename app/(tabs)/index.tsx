@@ -53,8 +53,9 @@ const DashboardScreen = () => {
             <StatCard
               icon={<Ionicons name={"briefcase"} size={15} color={"#6366F1"} />}
               label="Applied"
-              value={applicationStatusStatsData?.applied}
+              value={applicationStatusStatsData?.applied ?? 0}
               bgColor="bg-blue-100"
+              isLoading={isLoading}
             />
             <StatCard
               icon={
@@ -65,8 +66,9 @@ const DashboardScreen = () => {
                 />
               }
               label="Interviews"
-              value={applicationStatusStatsData?.interview}
+              value={applicationStatusStatsData?.interview ?? 0}
               bgColor="bg-yellow-100"
+              isLoading={isLoading}
             />
           </View>
           <View className="flex-row gap-3">
@@ -79,14 +81,16 @@ const DashboardScreen = () => {
                 />
               }
               label="Rejected"
-              value={applicationStatusStatsData?.rejected}
+              value={applicationStatusStatsData?.rejected ?? 0}
               bgColor="bg-purple-100"
+              isLoading={isLoading}
             />
             <StatCard
               icon={<Ionicons name={"checkmark"} size={15} color={"#10B981"} />}
               label="Offers"
-              value={applicationStatusStatsData?.offer_received}
+              value={applicationStatusStatsData?.offer_received ?? 0}
               bgColor="bg-green-100"
+              isLoading={isLoading}
             />
           </View>
         </View>
@@ -108,6 +112,7 @@ const DashboardScreen = () => {
               applicationStatusStatsData?.applied ?? 0,
             )}
             bottomText="Applied to Interivews"
+            isLoading={isLoading}
           />
           <AnalyticsCard
             icon={<AntDesign name={"bar-chart"} size={18} color={"#10B981"} />}
@@ -117,6 +122,7 @@ const DashboardScreen = () => {
               applicationStatusStatsData?.offer_received ?? 0,
             )}
             bottomText="Interviews to Offers"
+            isLoading={isLoading}
           />
         </View>
 
@@ -125,6 +131,7 @@ const DashboardScreen = () => {
           onsite={applicationStatusStatsData?.onsite ?? 0}
           hybrid={applicationStatusStatsData?.hybrid ?? 0}
           remote={applicationStatusStatsData?.remote ?? 0}
+          isLoading={isLoading}
         />
       </ScrollView>
     </PageHeader>

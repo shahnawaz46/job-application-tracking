@@ -1,15 +1,17 @@
 import { Ionicons } from "@expo/vector-icons";
 import { View } from "react-native";
 import { Card, CardContent } from "../ui/card";
+import { Skeleton } from "../ui/skeleton";
 import { Text } from "../ui/text";
 
 interface IWorkModeCard {
   onsite: number;
   hybrid: number;
   remote: number;
+  isLoading: boolean;
 }
 
-const WorkModeCard = ({ onsite, hybrid, remote }: IWorkModeCard) => {
+const WorkModeCard = ({ onsite, hybrid, remote, isLoading }: IWorkModeCard) => {
   return (
     <Card className="p-3">
       <CardContent className="p-0">
@@ -24,25 +26,37 @@ const WorkModeCard = ({ onsite, hybrid, remote }: IWorkModeCard) => {
             <Text variant={"small"} className="text-muted-foreground">
               Onsite
             </Text>
-            <Text variant={"xs"} className="font-semibold text-foreground">
-              {onsite}
-            </Text>
+            {isLoading ? (
+              <Skeleton className="w-8 h-4 rounded-sm" />
+            ) : (
+              <Text variant={"xs"} className="font-semibold text-foreground">
+                {onsite}
+              </Text>
+            )}
           </View>
           <View className="flex-row justify-between">
             <Text variant={"small"} className="text-muted-foreground">
               Hybrid
             </Text>
-            <Text variant={"xs"} className="font-semibold text-foreground">
-              {hybrid}
-            </Text>
+            {isLoading ? (
+              <Skeleton className="w-8 h-4 rounded-sm" />
+            ) : (
+              <Text variant={"xs"} className="font-semibold text-foreground">
+                {hybrid}
+              </Text>
+            )}
           </View>
           <View className="flex-row justify-between">
             <Text variant={"small"} className="text-muted-foreground">
               Remote
             </Text>
-            <Text variant={"xs"} className="font-semibold text-foreground">
-              {remote}
-            </Text>
+            {isLoading ? (
+              <Skeleton className="w-8 h-4 rounded-sm" />
+            ) : (
+              <Text variant={"xs"} className="font-semibold text-foreground">
+                {remote}
+              </Text>
+            )}
           </View>
         </View>
       </CardContent>
