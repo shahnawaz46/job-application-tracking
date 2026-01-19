@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/select";
 import { Text } from "@/components/ui/text";
 import useAsyncAction from "@/hooks/useAsyncAction";
+import { invalidateQuery } from "@/hooks/useQuery";
 import { supabase } from "@/lib/supabase";
 import {
   APPLICATION_STATUS,
@@ -101,7 +102,8 @@ const AddApplicationScreen = () => {
         text1: "Your job application has been added successfully.",
       });
 
-      reset(); // reset form data
+      reset(jobApplicationInitialState); // reset form data
+      invalidateQuery("application_stats");
     });
   };
 
@@ -112,7 +114,7 @@ const AddApplicationScreen = () => {
         label: item.charAt(0).toUpperCase() + item.slice(1),
         value: item,
       })),
-    []
+    [],
   );
 
   // convert array into object for Select Options
@@ -122,7 +124,7 @@ const AddApplicationScreen = () => {
         label: item.charAt(0).toUpperCase() + item.slice(1),
         value: item,
       })),
-    []
+    [],
   );
 
   // convert array into object for Select Options
@@ -132,7 +134,7 @@ const AddApplicationScreen = () => {
         label: item.charAt(0).toUpperCase() + item.slice(1),
         value: item,
       })),
-    []
+    [],
   );
 
   return (
@@ -249,7 +251,7 @@ const AddApplicationScreen = () => {
                   rules={{ required: "Application status is required" }}
                   render={({ field: { value, onChange } }) => {
                     const optionValue = applicationStatusDropDown.find(
-                      (val) => val.value === value
+                      (val) => val.value === value,
                     );
 
                     return (
@@ -319,7 +321,7 @@ const AddApplicationScreen = () => {
                   name="job_type"
                   render={({ field: { value, onChange } }) => {
                     const optionValue = jobTypeDropDown.find(
-                      (val) => val.value === value
+                      (val) => val.value === value,
                     );
 
                     return (
@@ -328,7 +330,7 @@ const AddApplicationScreen = () => {
                         onValueChange={(val) => onChange(val?.value)}
                       >
                         <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Select a job type" />
+                          <SelectValue placeholder="Select job type" />
                         </SelectTrigger>
                         <SelectContent
                           insets={contentInsets}
@@ -360,7 +362,7 @@ const AddApplicationScreen = () => {
                   name="work_mode"
                   render={({ field: { value, onChange } }) => {
                     const optionValue = workModeDropDown.find(
-                      (val) => val.value === value
+                      (val) => val.value === value,
                     );
 
                     return (
@@ -369,7 +371,7 @@ const AddApplicationScreen = () => {
                         onValueChange={(val) => onChange(val?.value)}
                       >
                         <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Select a gender" />
+                          <SelectValue placeholder="Select work mode" />
                         </SelectTrigger>
                         <SelectContent
                           insets={contentInsets}

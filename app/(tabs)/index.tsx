@@ -1,16 +1,133 @@
-import CustomStatusBar from "@/components/CustomStatusBar";
-import { Text } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import AnalyticsCard from "@/components/dashboard/AnalyticsCard";
+import Header from "@/components/dashboard/Header";
+import StatCard from "@/components/dashboard/StatCard";
+import WorkModeCard from "@/components/dashboard/WorkModeCard";
+import PageHeader from "@/components/headers/PageHeader";
+import { Text } from "@/components/ui/text";
+import { useAuthContext } from "@/hooks/useAuthContext";
+import useQuery from "@/hooks/useQuery";
+import { supabase } from "@/lib/supabase";
+import { percent } from "@/utils/number";
+import { AntDesign, Ionicons } from "@expo/vector-icons";
+import React from "react";
+import { ScrollView, View } from "react-native";
+
+// types/interface
+import type {
+  TApplicationStatus,
+  TWorkMode,
+} from "@/validation/jobApplication.yup";
+
+type ToSnakeCase<T> = T extends `${infer A} ${infer B}` ? `${A}_${B}` : T;
+
+type TApplicationStats = { [J in TWorkMode]: number } & {
+  [K in ToSnakeCase<TApplicationStatus>]: number;
+};
 
 const DashboardScreen = () => {
+  const { profile } = useAuthContext();
+  const {
+    isLoading,
+    data: applicationStatusStatsData,
+    error,
+  } = useQuery<TApplicationStats>({
+    queryKey: "application-stats",
+    queryFn: async () => {
+      const { data, error } = await supabase.rpc(
+        "get_application_status_stats",
+      );
+      return { data: data?.[0] ?? null, error: error ?? null };
+    },
+  });
+  // console.log("useQuery: ", isLoading, applicationStatusStatsData, error);
+
   return (
-    <SafeAreaView className="bg-black flex-1" edges={["top"]}>
-      <CustomStatusBar bgColor="black" style="light" />
-      <Text className="text-green-300">DashboardScreen</Text>
-      <Text className="text-xl font-bold text-blue-500">
-        Welcome to Nativewind!
-      </Text>
-    </SafeAreaView>
+    <PageHeader safeAreaViewClassName="px-4 pt-3 pb-10">
+      <ScrollView showsVerticalScrollIndicator={false}>
+        {/* Header */}
+        <Header full_name={profile?.full_name} />
+
+        {/* Stats Cards */}
+        <View className="mb-4">
+          <View className="flex-row gap-3 mb-3">
+            <StatCard
+              icon={<Ionicons name={"briefcase"} size={15} color={"#6366F1"} />}
+              label="Applied"
+              value={applicationStatusStatsData?.applied}
+              bgColor="bg-blue-100"
+            />
+            <StatCard
+              icon={
+                <Ionicons
+                  name={"calendar-outline"}
+                  size={15}
+                  color={"#F59E0B"}
+                />
+              }
+              label="Interviews"
+              value={applicationStatusStatsData?.interview}
+              bgColor="bg-yellow-100"
+            />
+          </View>
+          <View className="flex-row gap-3">
+            <StatCard
+              icon={
+                <Ionicons
+                  name={"alert-circle-outline"}
+                  size={15}
+                  color={"#8B5CF6"}
+                />
+              }
+              label="Rejected"
+              value={applicationStatusStatsData?.rejected}
+              bgColor="bg-purple-100"
+            />
+            <StatCard
+              icon={<Ionicons name={"checkmark"} size={15} color={"#10B981"} />}
+              label="Offers"
+              value={applicationStatusStatsData?.offer_received}
+              bgColor="bg-green-100"
+            />
+          </View>
+        </View>
+
+        {/* analytics & insights */}
+        <View>
+          <Text variant={"large"} className="mb-2 mt-1">
+            Analytics & Insights
+          </Text>
+        </View>
+
+        {/* success and offer rate cards */}
+        <View className="flex-row gap-3 mb-3">
+          <AnalyticsCard
+            icon={<AntDesign name={"bar-chart"} size={18} color={"#10B981"} />}
+            label="Success Rate"
+            value={percent(
+              applicationStatusStatsData?.interview ?? 0,
+              applicationStatusStatsData?.applied ?? 0,
+            )}
+            bottomText="Applied to Interivews"
+          />
+          <AnalyticsCard
+            icon={<AntDesign name={"bar-chart"} size={18} color={"#10B981"} />}
+            label="Offer Rate"
+            value={percent(
+              applicationStatusStatsData?.interview ?? 0,
+              applicationStatusStatsData?.offer_received ?? 0,
+            )}
+            bottomText="Interviews to Offers"
+          />
+        </View>
+
+        {/* work mode card */}
+        <WorkModeCard
+          onsite={applicationStatusStatsData?.onsite ?? 0}
+          hybrid={applicationStatusStatsData?.hybrid ?? 0}
+          remote={applicationStatusStatsData?.remote ?? 0}
+        />
+      </ScrollView>
+    </PageHeader>
   );
 };
 

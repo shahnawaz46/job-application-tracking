@@ -37,7 +37,7 @@ export interface IJobApplication {
   application_status: TApplicationStatus;
   job_location?: string;
   job_type?: TJobType | null;
-  work_mode?: TWorkMode | null;
+  work_mode: TWorkMode | null;
   application_source?: string;
   salary_range?: string;
 }
@@ -46,10 +46,10 @@ export const jobApplicationInitialState: IJobApplication = {
   company_name: "",
   job_title: "",
   applied_date: "",
-  application_status: "Applied",
+  application_status: "applied",
   job_location: "",
   job_type: undefined,
-  work_mode: undefined,
+  work_mode: null,
   application_source: "",
   salary_range: "",
 };
@@ -68,8 +68,8 @@ export const jobApplicationSchema = Yup.object({
   applied_date: Yup.string().required(APPLIED_DATE_MESSAGES.REQUIRED),
 
   application_status: Yup.mixed<TApplicationStatus>()
-    .oneOf(APPLICATION_STATUS, APPLICATION_STATUS_MESSAGES.INVALID)
-    .required(APPLICATION_STATUS_MESSAGES.REQUIRED),
+    .required(APPLICATION_STATUS_MESSAGES.REQUIRED)
+    .oneOf(APPLICATION_STATUS, APPLICATION_STATUS_MESSAGES.INVALID),
 
   job_location: Yup.string()
     .transform((value) => (value === "" ? undefined : value))
@@ -82,9 +82,8 @@ export const jobApplicationSchema = Yup.object({
     .optional(),
 
   work_mode: Yup.mixed<TWorkMode>()
-    .oneOf(WORK_MODE, WORK_MODE_MESSAGES.INVALID)
-    .optional(),
-
+    .required(WORK_MODE_MESSAGES.REQUIRED)
+    .oneOf(WORK_MODE, WORK_MODE_MESSAGES.INVALID),
   application_source: Yup.string()
     .transform((value) => (value === "" ? undefined : value))
     .min(SOURCE_MIN, SOURCE_MESSAGES.MIN)

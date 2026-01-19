@@ -25,16 +25,16 @@ export const SALARY_MIN = 2;
 export const SALARY_MAX = 50;
 
 export const APPLICATION_STATUS = [
-  "Applied",
-  "Shortlisted",
-  "Not Shortlisted",
-  "HR Interview / PI",
-  "Interview",
-  "Rejected",
-  "Offer Received",
-  "Withdrawn",
+  "applied",
+  // "shortlisted",
+  // "not shortlisted",
+  // "hr interview / PI",
+  "interview",
+  "rejected",
+  "offer received",
+  // "withdrawn",
 ] as const;
 
-export const JOB_TYPE = ["Full-time", "Internship", "Contract"] as const;
+export const JOB_TYPE = ["full-time", "internship", "contract"] as const;
 
-export const WORK_MODE = ["Remote", "Hybrid", "Onsite"] as const;
+export const WORK_MODE = ["remote", "hybrid", "onsite"] as const;
