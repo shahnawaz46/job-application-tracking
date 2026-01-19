@@ -37,7 +37,7 @@ export interface IJobApplication {
   application_status: TApplicationStatus;
   job_location?: string;
   job_type?: TJobType | null;
-  work_mode: TWorkMode | null;
+  work_mode: TWorkMode;
   application_source?: string;
   salary_range?: string;
 }
@@ -49,7 +49,7 @@ export const jobApplicationInitialState: IJobApplication = {
   application_status: "applied",
   job_location: "",
   job_type: undefined,
-  work_mode: null,
+  work_mode: "onsite",
   application_source: "",
   salary_range: "",
 };

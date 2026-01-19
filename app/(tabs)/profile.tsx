@@ -10,6 +10,7 @@ import { Separator } from "@/components/ui/separator";
 import { Text } from "@/components/ui/text";
 import useAsyncAction from "@/hooks/useAsyncAction";
 import { useAuthContext } from "@/hooks/useAuthContext";
+import { invalidateQuery } from "@/hooks/useQuery";
 import { supabase } from "@/lib/supabase";
 import { ScrollView, View } from "react-native";
 
@@ -22,7 +23,10 @@ const ProfileScreen = () => {
       const { error } = await supabase.auth.signOut();
       if (error) {
         ToastMessage({ type: "error", text1: error?.message });
+        return;
       }
+
+      invalidateQuery("application-stats");
     });
   };
 
