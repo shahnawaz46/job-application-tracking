@@ -1,4 +1,4 @@
-import { getNameInitial } from "@/utils/getInitials";
+import { getNameInitial } from "@/utils/text-transform";
 import { Image, View } from "react-native";
 import { Skeleton } from "../ui/skeleton";
 import { Text } from "../ui/text";

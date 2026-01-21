@@ -1,7 +1,6 @@
 import { lightHaptic } from "@/utils/haptics";
 import { Feather } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import React from "react";
 import { Pressable, View } from "react-native";
 import { Text } from "../ui/text";
 

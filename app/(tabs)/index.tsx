@@ -26,26 +26,21 @@ type TApplicationStats = { [J in TWorkMode]: number } & {
 
 const DashboardScreen = () => {
   const { profile } = useAuthContext();
-  const {
-    isLoading,
-    data: applicationStatusStatsData,
-    error,
-  } = useQuery<TApplicationStats>({
+  const { isLoading, data, error } = useQuery<TApplicationStats[]>({
     queryKey: "application-stats",
-    queryFn: async () => {
-      const { data, error } = await supabase.rpc(
-        "get_application_status_stats",
-      );
-      return { data: data?.[0] ?? null, error: error ?? null };
-    },
+    queryFn: async () => await supabase.rpc("get_application_status_stats"),
   });
+  const applicationStatusStatsData = data?.[0];
   // console.log("useQuery: ", isLoading, applicationStatusStatsData, error);
 
   return (
     <PageHeader safeAreaViewClassName="px-4 pt-3 pb-10">
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Header */}
-        <Header full_name={profile?.full_name} />
+        <Header
+          text={`Welcome back, ${profile?.full_name}`}
+          subText={"Track and manage your job applications"}
+        />
 
         {/* Stats Cards */}
         <View className="mb-4">

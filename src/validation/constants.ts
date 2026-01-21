@@ -38,3 +38,5 @@ export const APPLICATION_STATUS = [
 export const JOB_TYPE = ["full-time", "internship", "contract"] as const;
 
 export const WORK_MODE = ["remote", "hybrid", "onsite"] as const;
+
+export const DATA_LIMIT = 12;
