@@ -1,8 +1,8 @@
 import JobCard from "@/components/application/JobCard";
 import Header from "@/components/dashboard/Header";
 import NoApplication from "@/components/fallback/NoApplication";
-import PageHeader from "@/components/headers/PageHeader";
 import JobCardLoading from "@/components/loaders/JobCardLoading";
+import PageWrapper from "@/components/wrapper/PageWrapper";
 import { useAuthContext } from "@/hooks/useAuthContext";
 import useQuery from "@/hooks/useQuery";
 import { supabase } from "@/lib/supabase";
@@ -63,7 +63,7 @@ const ApplicationScreen = () => {
   };
 
   return (
-    <PageHeader safeAreaViewClassName="px-4 pt-3">
+    <PageWrapper safeAreaViewClassName="px-4 pt-3">
       <View className="flex-1">
         <Header
           text="Job Applications"
@@ -88,7 +88,7 @@ const ApplicationScreen = () => {
           onEndReachedThreshold={0.5}
         />
       </View>
-    </PageHeader>
+    </PageWrapper>
   );
 };
 

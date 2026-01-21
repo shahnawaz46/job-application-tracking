@@ -2,8 +2,8 @@ import AnalyticsCard from "@/components/dashboard/AnalyticsCard";
 import Header from "@/components/dashboard/Header";
 import StatCard from "@/components/dashboard/StatCard";
 import WorkModeCard from "@/components/dashboard/WorkModeCard";
-import PageHeader from "@/components/headers/PageHeader";
 import { Text } from "@/components/ui/text";
+import PageWrapper from "@/components/wrapper/PageWrapper";
 import { useAuthContext } from "@/hooks/useAuthContext";
 import useQuery from "@/hooks/useQuery";
 import { supabase } from "@/lib/supabase";
@@ -34,7 +34,7 @@ const DashboardScreen = () => {
   // console.log("useQuery: ", isLoading, applicationStatusStatsData, error);
 
   return (
-    <PageHeader safeAreaViewClassName="px-4 pt-3 pb-10">
+    <PageWrapper safeAreaViewClassName="px-4 pt-3 pb-10">
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Header */}
         <Header
@@ -129,7 +129,7 @@ const DashboardScreen = () => {
           isLoading={isLoading}
         />
       </ScrollView>
-    </PageHeader>
+    </PageWrapper>
   );
 };
 

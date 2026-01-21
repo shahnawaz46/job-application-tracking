@@ -1,6 +1,4 @@
 import ReactHookFormError from "@/components/fallback/ReactHookFormError";
-import FormWrapper from "@/components/headers/FormWrapper";
-import PageHeader from "@/components/headers/PageHeader";
 import ButtonLoading from "@/components/loaders/ButtonLoading";
 import { SocialConnections } from "@/components/social-signin/SocialConnections";
 import { ToastMessage } from "@/components/Toast";
@@ -17,6 +15,8 @@ import { InputWithIcon } from "@/components/ui/inputwithicon";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Text } from "@/components/ui/text";
+import FormWrapper from "@/components/wrapper/FormWrapper";
+import PageWrapper from "@/components/wrapper/PageWrapper";
 import useAsyncAction from "@/hooks/useAsyncAction";
 import { supabase } from "@/lib/supabase";
 import { signUpInitialState, signUpSchema } from "@/validation/auth.yup";
@@ -82,7 +82,7 @@ const Signup = () => {
   };
 
   return (
-    <PageHeader>
+    <PageWrapper>
       <FormWrapper>
         <Card className="border-border/0 shadow-none">
           <CardHeader>
@@ -243,7 +243,7 @@ const Signup = () => {
           </CardContent>
         </Card>
       </FormWrapper>
-    </PageHeader>
+    </PageWrapper>
   );
 };
 

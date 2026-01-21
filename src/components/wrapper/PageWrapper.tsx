@@ -7,16 +7,16 @@ import CustomStatusBar from "../CustomStatusBar";
 import type { StatusBarStyle } from "expo-status-bar";
 import type { PropsWithChildren } from "react";
 
-interface IPageHeader extends PropsWithChildren {
+interface IPageWrapper extends PropsWithChildren {
   safeAreaViewClassName?: string;
   statusBarStyle?: StatusBarStyle;
 }
 
-const PageHeader = ({
+const PageWrapper = ({
   children,
   safeAreaViewClassName,
   statusBarStyle = "dark",
-}: IPageHeader) => {
+}: IPageWrapper) => {
   return (
     <SafeAreaView
       edges={["top"]}
@@ -28,4 +28,4 @@ const PageHeader = ({
   );
 };
 
-export default PageHeader;
+export default PageWrapper;

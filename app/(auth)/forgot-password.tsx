@@ -1,6 +1,4 @@
 import ReactHookFormError from "@/components/fallback/ReactHookFormError";
-import FormWrapper from "@/components/headers/FormWrapper";
-import PageHeader from "@/components/headers/PageHeader";
 import ButtonLoading from "@/components/loaders/ButtonLoading";
 import { ToastMessage } from "@/components/Toast";
 import { Button } from "@/components/ui/button";
@@ -14,6 +12,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Text } from "@/components/ui/text";
+import FormWrapper from "@/components/wrapper/FormWrapper";
+import PageWrapper from "@/components/wrapper/PageWrapper";
 import useAsyncAction from "@/hooks/useAsyncAction";
 import { supabase } from "@/lib/supabase";
 import {
@@ -99,7 +99,7 @@ const ForgotPassword = () => {
   };
 
   return (
-    <PageHeader>
+    <PageWrapper>
       <FormWrapper>
         <Card className="border-border/0 shadow-none">
           <CardHeader>
@@ -206,7 +206,7 @@ const ForgotPassword = () => {
           </CardContent>
         </Card>
       </FormWrapper>
-    </PageHeader>
+    </PageWrapper>
   );
 };
 

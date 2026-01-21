@@ -1,6 +1,4 @@
 import ReactHookFormError from "@/components/fallback/ReactHookFormError";
-import FormWrapper from "@/components/headers/FormWrapper";
-import PageHeader from "@/components/headers/PageHeader";
 import ButtonLoading from "@/components/loaders/ButtonLoading";
 import { ToastMessage } from "@/components/Toast";
 import { Button } from "@/components/ui/button";
@@ -23,6 +21,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Text } from "@/components/ui/text";
+import FormWrapper from "@/components/wrapper/FormWrapper";
+import PageWrapper from "@/components/wrapper/PageWrapper";
 import useAsyncAction from "@/hooks/useAsyncAction";
 import { invalidateQuery } from "@/hooks/useQuery";
 import { supabase } from "@/lib/supabase";
@@ -138,7 +138,7 @@ const AddApplicationScreen = () => {
   );
 
   return (
-    <PageHeader safeAreaViewClassName="pt-3 pb-20">
+    <PageWrapper safeAreaViewClassName="pt-3 pb-20">
       <FormWrapper>
         <Card className="border-border/0 shadow-none">
           <CardHeader>
@@ -461,7 +461,7 @@ const AddApplicationScreen = () => {
           </CardContent>
         </Card>
       </FormWrapper>
-    </PageHeader>
+    </PageWrapper>
   );
 };
 

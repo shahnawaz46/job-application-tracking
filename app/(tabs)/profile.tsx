@@ -1,4 +1,3 @@
-import PageHeader from "@/components/headers/PageHeader";
 import ButtonLoading from "@/components/loaders/ButtonLoading";
 import AccountSection from "@/components/profile/AccountSection";
 import Header from "@/components/profile/Header";
@@ -8,6 +7,7 @@ import { ToastMessage } from "@/components/Toast";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Text } from "@/components/ui/text";
+import PageWrapper from "@/components/wrapper/PageWrapper";
 import useAsyncAction from "@/hooks/useAsyncAction";
 import { useAuthContext } from "@/hooks/useAuthContext";
 import { invalidateQuery } from "@/hooks/useQuery";
@@ -31,7 +31,7 @@ const ProfileScreen = () => {
   };
 
   return (
-    <PageHeader safeAreaViewClassName="px-4 pt-3 pb-10">
+    <PageWrapper safeAreaViewClassName="px-4 pt-3 pb-10">
       <ScrollView showsVerticalScrollIndicator={false}>
         <View className="flex-1 bg-white">
           {/* Header */}
@@ -80,7 +80,7 @@ const ProfileScreen = () => {
 
         <View className="h-8" />
       </ScrollView>
-    </PageHeader>
+    </PageWrapper>
   );
 };
 

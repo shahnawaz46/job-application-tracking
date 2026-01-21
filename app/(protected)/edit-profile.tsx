@@ -1,5 +1,4 @@
 import ReactHookFormError from "@/components/fallback/ReactHookFormError";
-import PageHeader from "@/components/headers/PageHeader";
 import ButtonLoading from "@/components/loaders/ButtonLoading";
 import Header from "@/components/profile/Header";
 import ProfileInfo from "@/components/profile/ProfileInfo";
@@ -18,6 +17,7 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Text } from "@/components/ui/text";
+import PageWrapper from "@/components/wrapper/PageWrapper";
 import useAsyncAction from "@/hooks/useAsyncAction";
 import { useAuthContext } from "@/hooks/useAuthContext";
 import { supabase } from "@/lib/supabase";
@@ -102,7 +102,7 @@ const EditProfile = () => {
   );
 
   return (
-    <PageHeader safeAreaViewClassName="px-4 pt-3 pb-10">
+    <PageWrapper safeAreaViewClassName="px-4 pt-3 pb-10">
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -231,7 +231,7 @@ const EditProfile = () => {
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
-    </PageHeader>
+    </PageWrapper>
   );
 };
 

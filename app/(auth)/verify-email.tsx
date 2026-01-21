@@ -1,7 +1,5 @@
 import { ToastMessage } from "@/components/Toast";
 import ReactHookFormError from "@/components/fallback/ReactHookFormError";
-import FormWrapper from "@/components/headers/FormWrapper";
-import PageHeader from "@/components/headers/PageHeader";
 import ButtonLoading from "@/components/loaders/ButtonLoading";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,6 +12,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Text } from "@/components/ui/text";
+import FormWrapper from "@/components/wrapper/FormWrapper";
+import PageWrapper from "@/components/wrapper/PageWrapper";
 import useAsyncAction from "@/hooks/useAsyncAction";
 import useCountdown from "@/hooks/useCountdown";
 import { supabase } from "@/lib/supabase";
@@ -101,7 +101,7 @@ const VerifyEmail = () => {
   };
 
   return (
-    <PageHeader>
+    <PageWrapper>
       <FormWrapper>
         <Card className="border-border/0 pb-4 shadow-none">
           <CardHeader>
@@ -189,7 +189,7 @@ const VerifyEmail = () => {
           </CardContent>
         </Card>
       </FormWrapper>
-    </PageHeader>
+    </PageWrapper>
   );
 };
 
