@@ -1,3 +1,4 @@
+import { getApplicationStats } from "@/api/query";
 import ButtonLoading from "@/components/loaders/ButtonLoading";
 import AccountSection from "@/components/profile/AccountSection";
 import Header from "@/components/profile/Header";
@@ -26,7 +27,7 @@ const ProfileScreen = () => {
         return;
       }
 
-      invalidateQuery("application-stats");
+      invalidateQuery(getApplicationStats.QUERY_KEY);
     });
   };
 

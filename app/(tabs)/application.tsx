@@ -1,3 +1,4 @@
+import { getAllApplications } from "@/api/query";
 import DebounceSearch from "@/components/application/DebounceSearch";
 import DeleteConfirmationModal from "@/components/application/DeleteConfirmationModal";
 import JobCard from "@/components/application/JobCard";
@@ -21,16 +22,6 @@ export interface IJobApplicationRes extends IJobApplication {
   user_id: string;
 }
 
-const QUERY_KEY = "job-application";
-const QUERY_FNC = (profileId: string, range: number[]) => async () => {
-  return supabase
-    .from("job_applications")
-    .select("*")
-    .eq("user_id", profileId)
-    .range(range[0], range[1] - 1) // i have to do (-1) because supabase return 0-12 (13 items, 0 and 12 both are included)
-    .order("created_at", { ascending: false });
-};
-
 const ApplicationScreen = () => {
   const { profile } = useAuthContext();
   const router = useRouter();
@@ -44,8 +35,8 @@ const ApplicationScreen = () => {
     hasMore: jobHasMore,
     onDelete: onDeleteJob,
   } = useQuery<IJobApplicationRes[]>({
-    queryKey: QUERY_KEY,
-    queryFn: QUERY_FNC(profile.id, [
+    queryKey: getAllApplications.QUERY_KEY,
+    queryFn: getAllApplications.QUERY_FN(profile.id, [
       pageRef.current * DATA_LIMIT,
       pageRef.current * DATA_LIMIT + DATA_LIMIT,
     ]),
@@ -68,7 +59,7 @@ const ApplicationScreen = () => {
     if (!selectedJob) return;
 
     onDeleteJob(
-      QUERY_KEY,
+      getAllApplications.QUERY_KEY,
       async () =>
         supabase.from("job_applications").delete().eq("id", selectedJob?.id),
       selectedJob.id,
@@ -93,8 +84,8 @@ const ApplicationScreen = () => {
   const fetchMoreApplication = () => {
     pageRef.current += 1;
     fetchMoreData(
-      QUERY_KEY,
-      QUERY_FNC(profile.id, [
+      getAllApplications.QUERY_KEY,
+      getAllApplications.QUERY_FN(profile.id, [
         pageRef.current * DATA_LIMIT,
         pageRef.current * DATA_LIMIT + DATA_LIMIT,
       ]),

@@ -1,3 +1,4 @@
+import { getAllApplications, getApplicationStats } from "@/api/query";
 import ReactHookFormError from "@/components/fallback/ReactHookFormError";
 import ButtonLoading from "@/components/loaders/ButtonLoading";
 import { ToastMessage } from "@/components/Toast";
@@ -106,8 +107,8 @@ const AddApplicationScreen = () => {
       });
 
       reset(jobApplicationInitialState); // reset form data
-      invalidateQuery("application-stats");
-      invalidateQuery("job-application");
+      invalidateQuery(getApplicationStats.QUERY_KEY);
+      invalidateQuery(getAllApplications.QUERY_KEY);
     });
   };
 
@@ -135,8 +136,8 @@ const AddApplicationScreen = () => {
       });
 
       reset(jobApplicationInitialState); // reset form data
-      invalidateQuery("application-stats");
-      invalidateQuery("job-application");
+      invalidateQuery(getApplicationStats.QUERY_KEY);
+      invalidateQuery(getAllApplications.QUERY_KEY);
     });
   };
 

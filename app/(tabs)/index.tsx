@@ -1,3 +1,4 @@
+import { getApplicationStats } from "@/api/query";
 import AnalyticsCard from "@/components/dashboard/AnalyticsCard";
 import Header from "@/components/dashboard/Header";
 import StatCard from "@/components/dashboard/StatCard";
@@ -7,7 +8,6 @@ import { Text } from "@/components/ui/text";
 import PageWrapper from "@/components/wrapper/PageWrapper";
 import { useAuthContext } from "@/hooks/useAuthContext";
 import useQuery from "@/hooks/useQuery";
-import { supabase } from "@/lib/supabase";
 import { percent } from "@/utils/number";
 import { AntDesign, Ionicons } from "@expo/vector-icons";
 import { ScrollView, View } from "react-native";
@@ -27,8 +27,8 @@ type TApplicationStats = { [J in TWorkMode]: number } & {
 const DashboardScreen = () => {
   const { profile } = useAuthContext();
   const { isLoading, data, error } = useQuery<TApplicationStats[]>({
-    queryKey: "application-stats",
-    queryFn: async () => await supabase.rpc("get_application_status_stats"),
+    queryKey: getApplicationStats.QUERY_KEY,
+    queryFn: async () => getApplicationStats.QUERY_FN,
   });
 
   const applicationStatusStatsData = data?.[0];
