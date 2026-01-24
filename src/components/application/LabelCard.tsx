@@ -31,7 +31,7 @@ const LabelCard = ({
   return (
     <View
       className={cn(
-        "flex-row items-center gap-1.5 bg-muted/50 px-3 py-1.5 rounded-md",
+        "flex-row items-center gap-1.5 bg-muted/80 px-3 py-1.5 rounded-md",
         containerClassName,
       )}
     >

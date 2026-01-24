@@ -1,4 +1,5 @@
 import DebounceSearch from "@/components/application/DebounceSearch";
+import DeleteConfirmationModal from "@/components/application/DeleteConfirmationModal";
 import JobCard from "@/components/application/JobCard";
 import Header from "@/components/dashboard/Header";
 import StateMessage from "@/components/fallback/StateMessge";
@@ -41,6 +42,7 @@ const ApplicationScreen = () => {
     error: jobError,
     fetchMoreData,
     hasMore: jobHasMore,
+    onDelete: onDeleteJob,
   } = useQuery<IJobApplicationRes[]>({
     queryKey: QUERY_KEY,
     queryFn: QUERY_FNC(profile.id, [
@@ -48,27 +50,39 @@ const ApplicationScreen = () => {
       pageRef.current * DATA_LIMIT + DATA_LIMIT,
     ]),
   });
+
+  // search date
   const [searchResult, setSearchResult] = useState<{
     isSearching: boolean;
     isLoading: boolean;
     data: IJobApplicationRes[];
   }>({ isSearching: false, isLoading: false, data: [] });
 
+  // state for model
+  const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
+  const [selectedJob, setSelectedJob] = useState<IJobApplicationRes | null>(
+    null,
+  );
+
+  const handleDelete = async () => {
+    if (!selectedJob) return;
+
+    onDeleteJob(
+      QUERY_KEY,
+      async () =>
+        supabase.from("job_applications").delete().eq("id", selectedJob?.id),
+      selectedJob.id,
+    );
+
+    setShowDeleteModal(false);
+  };
+
+  // console.log("LOG:", isJobLoading, jobData?.length);
+
   // conditionally variables
   const listData = searchResult.isSearching ? searchResult.data : jobData;
   const isLoading = isJobLoading || searchResult.isLoading;
   const hasMore = searchResult.isSearching ? false : jobHasMore;
-
-  if (jobError) {
-    return (
-      <StateMessage
-        iconName="warning-outline"
-        iconColor="#EF4444"
-        title="Something went wrong"
-        description="We couldn't load your applications. Please try again."
-      />
-    );
-  }
 
   const fetchMoreApplication = () => {
     pageRef.current += 1;
@@ -81,6 +95,7 @@ const ApplicationScreen = () => {
     );
   };
 
+  // for loading and empty message
   const ListEmtpy = () => {
     if (isLoading)
       return Array.from({ length: 5 }).map((_, index) => (
@@ -98,6 +113,18 @@ const ApplicationScreen = () => {
     );
   };
 
+  // for show error
+  if (jobError) {
+    return (
+      <StateMessage
+        iconName="warning-outline"
+        iconColor="#EF4444"
+        title="Something went wrong"
+        description="We couldn't load your applications. Please try again."
+      />
+    );
+  }
+
   return (
     <PageWrapper safeAreaViewClassName="px-4 pt-3">
       <View className="flex-1">
@@ -114,7 +141,15 @@ const ApplicationScreen = () => {
           contentContainerClassName="flex-grow pb-24"
           data={listData ?? []}
           keyExtractor={(item) => item.id}
-          renderItem={({ item }) => <JobCard item={item} />}
+          renderItem={({ item }) => (
+            <JobCard
+              item={item}
+              onDelete={(job: IJobApplicationRes) => {
+                setSelectedJob(job);
+                setShowDeleteModal(true);
+              }}
+            />
+          )}
           showsVerticalScrollIndicator={false}
           ItemSeparatorComponent={() => <View className="h-3" />}
           initialNumToRender={5}
@@ -128,6 +163,16 @@ const ApplicationScreen = () => {
           onEndReachedThreshold={0.5}
         />
       </View>
+
+      <DeleteConfirmationModal
+        open={showDeleteModal}
+        job={selectedJob}
+        onConfirm={handleDelete}
+        onCancel={() => {
+          setShowDeleteModal(false);
+          setSelectedJob(null);
+        }}
+      />
     </PageWrapper>
   );
 };

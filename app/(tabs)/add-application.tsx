@@ -104,6 +104,7 @@ const AddApplicationScreen = () => {
 
       reset(jobApplicationInitialState); // reset form data
       invalidateQuery("application-stats");
+      invalidateQuery("job-application");
     });
   };
 

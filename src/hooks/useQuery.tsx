@@ -22,11 +22,12 @@ function useQuery<T extends unknown[]>({
   queryFn,
 }: IUseQueryProps<T>) {
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [dataState, setDataState] = useState<Omit<IQueryResult<T>, "isStale">>({
+  const [dataState, setDataState] = useState<IQueryResult<T>>({
     data: null,
     error: null,
     hasMore: true,
     updatedAt: null,
+    isStale: false,
   });
 
   const fetchData = async () => {
@@ -39,21 +40,22 @@ function useQuery<T extends unknown[]>({
         error,
         updatedAt: new Date(),
         hasMore: data?.length === DATA_LIMIT,
+        isStale: false,
       };
-      cache.set(queryKey, { ...result, isStale: false });
+      cache.set(queryKey, result);
 
       setDataState(result);
       setIsLoading(false);
     } catch (error) {
-      console.log("Query FetchDate:", error);
+      console.log("Query fetchData:", error);
       setIsLoading(false);
     }
   };
 
-  async function fetchMoreData(
+  const fetchMoreData = async (
     key: string,
     cb: () => Promise<{ data: T | null; error: Error | null }>,
-  ) {
+  ) => {
     setIsLoading(true);
     try {
       if (!key || !cb) return;
@@ -70,25 +72,73 @@ function useQuery<T extends unknown[]>({
         error,
         updatedAt: new Date(),
         hasMore: data?.length === DATA_LIMIT,
+        isStale: false,
       };
 
-      cache.set(key, { ...result, isStale: false });
+      cache.set(key, result);
       setDataState(result);
-    } finally {
+      setIsLoading(false);
+    } catch (error) {
+      console.log("Query fetchMoreData:", error);
       setIsLoading(false);
     }
-  }
+  };
+
+  const onDelete = async (
+    key: string,
+    cb: () => Promise<{ data: T | null; error: Error | null }>,
+    id: string,
+  ) => {
+    setIsLoading(true);
+    try {
+      if (!key || !cb) return;
+
+      const { error } = await cb();
+
+      const cached = cache.get(key) as IQueryResult<T> | undefined;
+      if (!cached) return;
+
+      // if i got the error then only updating error and updatedAt
+      if (error) {
+        const result = {
+          ...cached,
+          error,
+          updatedAt: new Date(),
+        };
+
+        cache.set(key, result);
+        setDataState(result);
+        return;
+      }
+
+      // for now i am doing type assertion - (item as { id: string }).id
+      const mergedData = cached?.data
+        ? (cached.data.filter(
+            (item) => (item as { id: string }).id !== id,
+          ) as T)
+        : null;
+
+      const result = {
+        ...cached,
+        data: mergedData,
+        error,
+        updatedAt: new Date(),
+      };
+
+      cache.set(key, result);
+      setDataState(result);
+      setIsLoading(false);
+    } catch (error) {
+      console.log("Query onDelete:", error);
+      setIsLoading(false);
+    }
+  };
 
   useFocusEffect(
     useCallback(() => {
       const cached = cache.get(queryKey) as IQueryResult<T> | undefined;
 
-      if (!cached) {
-        fetchData();
-        return;
-      }
-
-      if (cached.isStale) {
+      if (!cached || cached.isStale) {
         fetchData();
         return;
       }
@@ -101,6 +151,7 @@ function useQuery<T extends unknown[]>({
     isLoading,
     ...dataState,
     fetchMoreData,
+    onDelete,
   };
 }
 

@@ -1,19 +1,22 @@
 import { formatDate } from "@/utils/date";
+import { lightHaptic } from "@/utils/haptics";
+import { Ionicons } from "@expo/vector-icons";
 import { memo } from "react";
-import { View } from "react-native";
+import { Pressable, View } from "react-native";
 import { Card, CardContent, CardFooter, CardHeader } from "../ui/card";
 import { Text } from "../ui/text";
 import LabelCard from "./LabelCard";
 import StatusBadge from "./StatusBadge";
 
 // types/interface
-import type { IJobApplication } from "@/validation/jobApplication.yup";
+import type { IJobApplicationRes } from "../../../app/(tabs)/application";
 
 interface IJobCardProps {
-  item: IJobApplication;
+  item: IJobApplicationRes;
+  onDelete: (job: IJobApplicationRes) => void;
 }
 
-const JobCard = ({ item }: IJobCardProps) => {
+const JobCard = ({ item, onDelete }: IJobCardProps) => {
   return (
     <Card className="py-3 gap-3">
       {/* header */}
@@ -69,34 +72,58 @@ const JobCard = ({ item }: IJobCardProps) => {
             />
           )}
         </View>
+
+        {item.application_source && (
+          <View className="items-end">
+            {item.application_source && (
+              <LabelCard
+                label={`via ${item.application_source}`}
+                isTransform={false}
+                containerClassName="bg-primary/10"
+                textClassName="font-medium"
+              />
+            )}
+          </View>
+        )}
       </CardContent>
 
-      {/* additional info */}
-      {(item.salary_range || item.application_source) && (
-        <CardFooter className="px-4 pt-3 flex-row justify-between items-center border-t border-border/50">
-          {item.salary_range ? (
-            <LabelCard
-              iconName="cash-outline"
-              iconColor={"#10B981"}
-              label={item.salary_range}
-              isTransform={false}
-              textVariant={"small"}
-              containerClassName="bg-white px-0 py-0"
-              textClassName="font-semibold"
-            />
-          ) : (
-            <View />
-          )}
-          {item.application_source && (
-            <LabelCard
-              label={`via ${item.application_source}`}
-              isTransform={false}
-              containerClassName="bg-primary/10"
-              textClassName="font-medium"
-            />
-          )}
-        </CardFooter>
-      )}
+      <CardFooter className="px-4 pt-3 flex-row gap-3 justify-between items-center border-t border-border/50">
+        {/* salray range */}
+        {item.salary_range ? (
+          <LabelCard
+            iconName="cash-outline"
+            iconColor={"#10B981"}
+            label={item.salary_range}
+            isTransform={false}
+            textVariant={"small"}
+            containerClassName="bg-white px-0 py-0"
+            textClassName="font-semibold"
+          />
+        ) : (
+          <View />
+        )}
+
+        {/* edit and delete icons */}
+        <View className="flex-row gap-3 justify-end">
+          <Pressable
+            onPress={() => {
+              console.log("edit");
+            }}
+            className="w-7 h-7 bg-blue-100 rounded-md items-center justify-center"
+          >
+            <Ionicons name="create-outline" size={16} color="#6366F1" />
+          </Pressable>
+          <Pressable
+            onPress={() => {
+              lightHaptic();
+              onDelete(item);
+            }}
+            className="w-7 h-7 bg-red-100 rounded-md items-center justify-center"
+          >
+            <Ionicons name="trash-outline" size={16} color="#EF4444" />
+          </Pressable>
+        </View>
+      </CardFooter>
     </Card>
   );
 };

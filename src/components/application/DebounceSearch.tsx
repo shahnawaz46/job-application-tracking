@@ -29,6 +29,7 @@ const DebounceSearch = ({ setSearchResult }: IDebounceSearchProps) => {
       .from("job_applications")
       .select("*")
       .textSearch("search_text", input)
+      .order("created_at", { ascending: false })
       .limit(16); // for now only show 16 result, if user want accurate result then search by company name
 
     setSearchResult((prev) => ({
