@@ -32,7 +32,8 @@ const TabBar = ({ state, descriptors, navigation }: ITabBarProps) => {
           });
 
           if (!isFocused && !event.defaultPrevented) {
-            navigation.navigate(route.name, route.params);
+            // navigation.navigate(route.name, route.params);
+            navigation.navigate(route.name); // while navigate via tabs then remove existing params(if any)
           }
         };
 

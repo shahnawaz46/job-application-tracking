@@ -75,9 +75,15 @@ const ApplicationScreen = () => {
     );
 
     setShowDeleteModal(false);
+    setSelectedJob(null);
   };
 
-  // console.log("LOG:", isJobLoading, jobData?.length);
+  const handleEdit = (job: IJobApplicationRes) => {
+    router.navigate({
+      pathname: "/(tabs)/add-application",
+      params: { id: job.id, job: JSON.stringify(job) },
+    });
+  };
 
   // conditionally variables
   const listData = searchResult.isSearching ? searchResult.data : jobData;
@@ -145,9 +151,10 @@ const ApplicationScreen = () => {
             <JobCard
               item={item}
               onDelete={(job: IJobApplicationRes) => {
-                setSelectedJob(job);
                 setShowDeleteModal(true);
+                setSelectedJob(job);
               }}
+              onEdit={handleEdit}
             />
           )}
           showsVerticalScrollIndicator={false}

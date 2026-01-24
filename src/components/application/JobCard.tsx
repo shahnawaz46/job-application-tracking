@@ -14,9 +14,10 @@ import type { IJobApplicationRes } from "../../../app/(tabs)/application";
 interface IJobCardProps {
   item: IJobApplicationRes;
   onDelete: (job: IJobApplicationRes) => void;
+  onEdit: (job: IJobApplicationRes) => void;
 }
 
-const JobCard = ({ item, onDelete }: IJobCardProps) => {
+const JobCard = ({ item, onDelete, onEdit }: IJobCardProps) => {
   return (
     <Card className="py-3 gap-3">
       {/* header */}
@@ -107,7 +108,8 @@ const JobCard = ({ item, onDelete }: IJobCardProps) => {
         <View className="flex-row gap-3 justify-end">
           <Pressable
             onPress={() => {
-              console.log("edit");
+              lightHaptic();
+              onEdit(item);
             }}
             className="w-7 h-7 bg-blue-100 rounded-md items-center justify-center"
           >

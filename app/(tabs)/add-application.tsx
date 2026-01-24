@@ -38,7 +38,9 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { yupResolver } from "@hookform/resolvers/yup";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
-import { useMemo, useRef, useState } from "react";
+import { useFocusEffect } from "expo-router";
+import { useLocalSearchParams } from "expo-router/build/hooks";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Platform, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -57,6 +59,18 @@ const AddApplicationScreen = () => {
   const salaryRangeInputRef = useRef<TextInput>(null);
 
   const [showDatePicker, setShowDatePicker] = useState<boolean>(false);
+  const params = useLocalSearchParams();
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    reset,
+    getValues,
+  } = useForm({
+    defaultValues: jobApplicationInitialState,
+    resolver: yupResolver(jobApplicationSchema),
+  });
 
   const insets = useSafeAreaInsets();
   const contentInsets = {
@@ -68,17 +82,6 @@ const AddApplicationScreen = () => {
     left: 16,
     right: 16,
   };
-
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-
-    reset,
-  } = useForm({
-    defaultValues: jobApplicationInitialState,
-    resolver: yupResolver(jobApplicationSchema),
-  });
 
   const onSubmit = (applicationData: IJobApplication) => {
     execute(async () => {
@@ -107,6 +110,70 @@ const AddApplicationScreen = () => {
       invalidateQuery("job-application");
     });
   };
+
+  const onEditing = (applicationData: IJobApplication) => {
+    execute(async () => {
+      const { data: authDate } = await supabase.auth.getUser();
+      const { error } = await supabase
+        .from("job_applications")
+        .update({ ...applicationData })
+        .eq("id", params.id);
+
+      if (error) {
+        ToastMessage({
+          type: "error",
+          text1:
+            error?.message ||
+            "Something went wrong while saving your job application. Please try again.",
+        });
+        return;
+      }
+
+      ToastMessage({
+        type: "success",
+        text1: "Your job application has been edited successfully.",
+      });
+
+      reset(jobApplicationInitialState); // reset form data
+      invalidateQuery("application-stats");
+      invalidateQuery("job-application");
+    });
+  };
+
+  // defaultValues in useForm are only applied on mount, so we call reset() here
+  // to update the form with the desired values when the screen get focus
+  const isEditing = typeof params?.job === "string";
+  useFocusEffect(
+    useCallback(() => {
+      if (isEditing) {
+        try {
+          const parsed = JSON.parse(params.job as string);
+          let {
+            id,
+            user_id,
+            created_at,
+            updated_at,
+            search_text,
+            ...desiredValues
+          } = parsed;
+
+          // tranform data for validation
+          for (let key in desiredValues) {
+            const k = key as keyof IJobApplication;
+            if (!desiredValues[k]) {
+              desiredValues[k] = "";
+            }
+          }
+
+          reset(desiredValues as IJobApplication);
+        } catch {
+          reset(jobApplicationInitialState);
+        }
+      } else {
+        reset(jobApplicationInitialState);
+      }
+    }, [params.job, reset]),
+  );
 
   // convert array into object for Select Options
   const applicationStatusDropDown = useMemo(
@@ -436,7 +503,11 @@ const AddApplicationScreen = () => {
                       placeholder="e.g. 10-15 LPA, ₹8-12 LPA"
                       returnKeyType="send"
                       submitBehavior="submit"
-                      onSubmitEditing={handleSubmit(onSubmit)}
+                      onSubmitEditing={
+                        isEditing
+                          ? handleSubmit(onEditing)
+                          : handleSubmit(onSubmit)
+                      }
                       value={value}
                       onChangeText={onChange}
                     />
@@ -449,13 +520,23 @@ const AddApplicationScreen = () => {
 
               <Button
                 className="w-full"
-                onPress={handleSubmit(onSubmit)}
+                onPress={
+                  isEditing ? handleSubmit(onEditing) : handleSubmit(onSubmit)
+                }
                 disabled={isPending}
               >
                 {isPending ? (
-                  <ButtonLoading text="Adding application..." />
+                  <ButtonLoading
+                    text={
+                      isEditing
+                        ? "Editing application..."
+                        : "Adding application..."
+                    }
+                  />
                 ) : (
-                  <Text>Add Application</Text>
+                  <Text>
+                    {isEditing ? "Edit Application" : "Add Application"}
+                  </Text>
                 )}
               </Button>
             </View>
