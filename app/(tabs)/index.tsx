@@ -2,6 +2,7 @@ import AnalyticsCard from "@/components/dashboard/AnalyticsCard";
 import Header from "@/components/dashboard/Header";
 import StatCard from "@/components/dashboard/StatCard";
 import WorkModeCard from "@/components/dashboard/WorkModeCard";
+import StateMessage from "@/components/fallback/StateMessge";
 import { Text } from "@/components/ui/text";
 import PageWrapper from "@/components/wrapper/PageWrapper";
 import { useAuthContext } from "@/hooks/useAuthContext";
@@ -9,7 +10,6 @@ import useQuery from "@/hooks/useQuery";
 import { supabase } from "@/lib/supabase";
 import { percent } from "@/utils/number";
 import { AntDesign, Ionicons } from "@expo/vector-icons";
-import React from "react";
 import { ScrollView, View } from "react-native";
 
 // types/interface
@@ -30,8 +30,19 @@ const DashboardScreen = () => {
     queryKey: "application-stats",
     queryFn: async () => await supabase.rpc("get_application_status_stats"),
   });
+
   const applicationStatusStatsData = data?.[0];
-  // console.log("useQuery: ", isLoading, applicationStatusStatsData, error);
+
+  if (error) {
+    return (
+      <StateMessage
+        iconName="warning-outline"
+        iconColor="#EF4444"
+        title="Something went wrong"
+        description="We couldn't load your stats. Please try again."
+      />
+    );
+  }
 
   return (
     <PageWrapper safeAreaViewClassName="px-4 pt-3 pb-10">
@@ -43,7 +54,7 @@ const DashboardScreen = () => {
         />
 
         {/* Stats Cards */}
-        <View className="mb-4">
+        <View className="my-4">
           <View className="flex-row gap-3 mb-3">
             <StatCard
               icon={<Ionicons name={"briefcase"} size={15} color={"#6366F1"} />}

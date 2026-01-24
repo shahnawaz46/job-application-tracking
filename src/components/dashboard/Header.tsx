@@ -8,7 +8,7 @@ interface IHeaderProps {
 
 const Header = ({ text, subText }: IHeaderProps) => {
   return (
-    <View className="mb-4">
+    <View>
       <Text variant={"large"} numberOfLines={1}>
         {text}
       </Text>

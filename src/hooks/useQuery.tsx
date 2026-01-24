@@ -43,7 +43,9 @@ function useQuery<T extends unknown[]>({
       cache.set(queryKey, { ...result, isStale: false });
 
       setDataState(result);
-    } finally {
+      setIsLoading(false);
+    } catch (error) {
+      console.log("Query FetchDate:", error);
       setIsLoading(false);
     }
   };

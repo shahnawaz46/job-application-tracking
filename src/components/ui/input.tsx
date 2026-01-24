@@ -1,19 +1,18 @@
 import { cn } from "@/lib/utils";
-import {
-  Platform,
-  Pressable,
-  TextInput,
-  View,
-  type TextInputProps,
-} from "react-native";
+import { Platform, Pressable, TextInput, View } from "react-native";
 import { Text } from "./text";
 
+// types/interface
+import type { TextInputProps } from "react-native";
+
 interface IInputCustomProps {
+  containerClassName?: string;
   asText?: boolean;
   onPress?: () => void;
 }
 
 function Input({
+  containerClassName,
   className,
   asText = false,
   onPress,
@@ -31,9 +30,10 @@ function Input({
           web: cn(
             "transition-[color,box-shadow]",
             "focus-within:border-ring focus-within:ring-ring/50 focus-within:ring-[3px]",
-            "has-[:invalid]:ring-destructive/20 dark:has-[:invalid]:ring-destructive/40 has-[:invalid]:border-destructive"
+            "has-[:invalid]:ring-destructive/20 dark:has-[:invalid]:ring-destructive/40 has-[:invalid]:border-destructive",
           ),
-        })
+        }),
+        containerClassName,
       )}
     >
       {!asText ? (
@@ -42,11 +42,11 @@ function Input({
             "text-foreground flex-1 px-3 py-1 text-base leading-5",
             Platform.select({
               web: cn(
-                "placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground outline-none md:text-sm"
+                "placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground outline-none md:text-sm",
               ),
               native: "placeholder:text-muted-foreground/50",
             }),
-            className
+            className,
           )}
           {...props}
         />
@@ -55,7 +55,7 @@ function Input({
           className={cn(
             "text-foreground flex-1 px-3 py-1 text-base leading-5",
             !props.value && "text-muted-foreground/50",
-            className
+            className,
           )}
         >
           {props.value || props.placeholder}
