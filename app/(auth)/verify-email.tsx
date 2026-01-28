@@ -103,7 +103,7 @@ const VerifyEmail = () => {
   return (
     <PageWrapper>
       <FormWrapper>
-        <Card className="border-border/0 pb-4 shadow-none">
+        <Card className="border-border/0 pb-4 shadow-none bg-background">
           <CardHeader>
             <CardTitle className="text-center text-xl">
               Verify your email

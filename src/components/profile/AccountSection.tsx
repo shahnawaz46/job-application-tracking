@@ -61,7 +61,7 @@ const AccountSection = () => {
               disabled={!isClickable}
               android_ripple={isClickable ? { color: "rgba(0,0,0,0.1)" } : null}
               accessibilityRole={isClickable ? "button" : undefined}
-              className="bg-white"
+              // className="bg-white"
               onPress={() => {
                 if (!isClickable) return;
                 lightHaptic();

@@ -123,7 +123,7 @@ const ApplicationScreen = () => {
   }
 
   return (
-    <PageWrapper safeAreaViewClassName="px-4 pt-3">
+    <PageWrapper safeAreaViewClassName="px-4 pt-3 pb-10">
       <View className="flex-1">
         <Header
           text="Job Applications"

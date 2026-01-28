@@ -108,7 +108,7 @@ const EditProfile = () => {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
       >
         <ScrollView>
-          <View className="flex-1 bg-white">
+          <View className="flex-1">
             {/* Header */}
             <Header title="Edit Profile" />
 

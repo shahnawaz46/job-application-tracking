@@ -20,7 +20,7 @@ const PageWrapper = ({
   return (
     <SafeAreaView
       edges={["top"]}
-      className={cn("flex-1 bg-white", safeAreaViewClassName)}
+      className={cn("flex-1 bg-background", safeAreaViewClassName)}
     >
       <CustomStatusBar style={statusBarStyle} />
       {children}

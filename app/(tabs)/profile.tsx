@@ -34,7 +34,7 @@ const ProfileScreen = () => {
   return (
     <PageWrapper safeAreaViewClassName="px-4 pt-3 pb-10">
       <ScrollView showsVerticalScrollIndicator={false}>
-        <View className="flex-1 bg-white">
+        <View className="flex-1">
           {/* Header */}
           <Header title="Profile" />
 

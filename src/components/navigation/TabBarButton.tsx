@@ -16,7 +16,7 @@ interface ITabBarButton {
   routeParams?: object;
   isFocused: boolean;
   onPress?: (
-    e: React.MouseEvent<HTMLAnchorElement, MouseEvent> | GestureResponderEvent
+    e: React.MouseEvent<HTMLAnchorElement, MouseEvent> | GestureResponderEvent,
   ) => void;
   onLongPress: ((event: GestureResponderEvent) => void) | null;
   label: string;
