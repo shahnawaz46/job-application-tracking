@@ -28,7 +28,7 @@ export const APPLICATION_STATUS = [
   "applied",
   // "shortlisted",
   // "not shortlisted",
-  // "hr interview / PI",
+  "telephonic interview",
   "interview",
   "rejected",
   "offer received",

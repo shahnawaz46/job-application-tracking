@@ -28,7 +28,7 @@ const DashboardScreen = () => {
   const { profile } = useAuthContext();
   const { isLoading, data, error } = useQuery<TApplicationStats[]>({
     queryKey: getApplicationStats.QUERY_KEY,
-    queryFn: async () => getApplicationStats.QUERY_FN,
+    queryFn: getApplicationStats.QUERY_FN,
   });
 
   const applicationStatusStatsData = data?.[0];
@@ -54,8 +54,8 @@ const DashboardScreen = () => {
         />
 
         {/* Stats Cards */}
-        <View className="my-4">
-          <View className="flex-row gap-3 mb-3">
+        <View className="my-4 gap-3">
+          <View className="flex-row gap-3">
             <StatCard
               icon={<Ionicons name={"briefcase"} size={15} color={"#6366F1"} />}
               label="Applied"
@@ -63,6 +63,17 @@ const DashboardScreen = () => {
               bgColor="bg-blue-100"
               isLoading={isLoading}
             />
+            <StatCard
+              icon={
+                <Ionicons name={"call-outline"} size={15} color={"#0EA5E9"} />
+              }
+              label="Phone/HR"
+              value={applicationStatusStatsData?.telephonic_interview ?? 0}
+              bgColor="bg-sky-100"
+              isLoading={isLoading}
+            />
+          </View>
+          <View className="flex-row gap-3">
             <StatCard
               icon={
                 <Ionicons
@@ -76,8 +87,6 @@ const DashboardScreen = () => {
               bgColor="bg-yellow-100"
               isLoading={isLoading}
             />
-          </View>
-          <View className="flex-row gap-3">
             <StatCard
               icon={
                 <Ionicons
@@ -91,6 +100,9 @@ const DashboardScreen = () => {
               bgColor="bg-purple-100"
               isLoading={isLoading}
             />
+          </View>
+
+          <View>
             <StatCard
               icon={<Ionicons name={"checkmark"} size={15} color={"#10B981"} />}
               label="Offers"

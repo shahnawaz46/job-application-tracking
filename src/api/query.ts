@@ -2,7 +2,7 @@ import { supabase } from "@/lib/supabase";
 
 export const getApplicationStats = {
   QUERY_KEY: "application-stats",
-  QUERY_FN: supabase.rpc("get_application_status_stats"),
+  QUERY_FN: async () => supabase.rpc("get_application_status_stats"),
 };
 
 export const getAllApplications = {
