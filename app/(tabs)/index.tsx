@@ -63,6 +63,8 @@ const DashboardScreen = () => {
               bgColor="bg-blue-100"
               isLoading={isLoading}
             />
+          </View>
+          <View className="flex-row gap-3">
             <StatCard
               icon={
                 <Ionicons name={"call-outline"} size={15} color={"#0EA5E9"} />
@@ -72,8 +74,6 @@ const DashboardScreen = () => {
               bgColor="bg-sky-100"
               isLoading={isLoading}
             />
-          </View>
-          <View className="flex-row gap-3">
             <StatCard
               icon={
                 <Ionicons
@@ -87,6 +87,9 @@ const DashboardScreen = () => {
               bgColor="bg-yellow-100"
               isLoading={isLoading}
             />
+          </View>
+
+          <View className="flex-row gap-3">
             <StatCard
               icon={
                 <Ionicons
@@ -100,9 +103,6 @@ const DashboardScreen = () => {
               bgColor="bg-purple-100"
               isLoading={isLoading}
             />
-          </View>
-
-          <View>
             <StatCard
               icon={<Ionicons name={"checkmark"} size={15} color={"#10B981"} />}
               label="Offers"
@@ -129,15 +129,15 @@ const DashboardScreen = () => {
               applicationStatusStatsData?.interview ?? 0,
               applicationStatusStatsData?.applied ?? 0,
             )}
-            bottomText="Applied to Interivews"
+            bottomText="Applied to Interviews"
             isLoading={isLoading}
           />
           <AnalyticsCard
             icon={<AntDesign name={"bar-chart"} size={18} color={"#10B981"} />}
             label="Offer Rate"
             value={percent(
-              applicationStatusStatsData?.interview ?? 0,
               applicationStatusStatsData?.offer_received ?? 0,
+              applicationStatusStatsData?.interview ?? 0,
             )}
             bottomText="Interviews to Offers"
             isLoading={isLoading}

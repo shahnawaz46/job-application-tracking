@@ -5,6 +5,7 @@ import JobCard from "@/components/application/JobCard";
 import Header from "@/components/dashboard/Header";
 import StateMessage from "@/components/fallback/StateMessge";
 import JobCardLoading from "@/components/loaders/JobCardLoading";
+import { ToastMessage } from "@/components/Toast";
 import PageWrapper from "@/components/wrapper/PageWrapper";
 import { useAuthContext } from "@/hooks/useAuthContext";
 import useQuery from "@/hooks/useQuery";
@@ -20,6 +21,9 @@ import type { IJobApplication } from "@/validation/jobApplication.yup";
 export interface IJobApplicationRes extends IJobApplication {
   id: string;
   user_id: string;
+  created_at: string;
+  updated_at: string;
+  search_text: string;
 }
 
 const ApplicationScreen = () => {
@@ -67,6 +71,10 @@ const ApplicationScreen = () => {
 
     setShowDeleteModal(false);
     setSelectedJob(null);
+    ToastMessage({
+      type: "success",
+      text1: "Job Application deleted successfully",
+    });
   };
 
   const handleEdit = (job: IJobApplicationRes) => {
