@@ -1,4 +1,3 @@
-import PageLoading from "@/components/loaders/PageLoading";
 import SplashScreenController from "@/components/SplashScreenController";
 import ToastSetup from "@/components/Toast";
 import { useAuthContext } from "@/hooks/useAuthContext";
@@ -8,12 +7,7 @@ import { Stack } from "expo-router";
 import "./global.css";
 
 function RootRoute() {
-  const { isAuthenticated, isLoading } = useAuthContext();
-
-  // console.log("RootRoute", isLoading, isAuthenticated);
-  if (isLoading) {
-    return <PageLoading />;
-  }
+  const { isAuthenticated } = useAuthContext();
 
   return (
     <Stack screenOptions={{ headerShown: false }}>
