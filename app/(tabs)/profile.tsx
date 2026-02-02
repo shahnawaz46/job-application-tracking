@@ -13,6 +13,7 @@ import useAsyncAction from "@/hooks/useAsyncAction";
 import { useAuthContext } from "@/hooks/useAuthContext";
 import { invalidateQuery } from "@/hooks/useQuery";
 import { supabase } from "@/lib/supabase";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { ScrollView, View } from "react-native";
 
 const ProfileScreen = () => {
@@ -27,6 +28,7 @@ const ProfileScreen = () => {
         return;
       }
 
+      GoogleSignin.signOut();
       invalidateQuery(getApplicationStats.QUERY_KEY);
     });
   };
