@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 import { textTransform } from "@/utils/text-transform";
 import { Ionicons } from "@expo/vector-icons";
-import { View } from "react-native";
+import { ScrollView, View } from "react-native";
 import { Text } from "../ui/text";
 
 // types/interface
@@ -31,16 +31,22 @@ const LabelCard = ({
   return (
     <View
       className={cn(
-        "flex-row items-center gap-1.5 bg-muted/80 px-3 py-1.5 rounded-md",
+        "px-3 py-[0.313rem] bg-muted/80 rounded-md",
         containerClassName,
       )}
     >
-      {iconName && (
-        <Ionicons name={iconName} size={iconSize} color={iconColor} />
-      )}
-      <Text variant={textVariant} className={cn("leading-none", textClassName)}>
-        {isTransform ? textTransform(label) : label}
-      </Text>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerClassName="flex-row items-center gap-1.5"
+      >
+        {iconName && (
+          <Ionicons name={iconName} size={iconSize} color={iconColor} />
+        )}
+        <Text variant={textVariant} className={cn("", textClassName)}>
+          {isTransform ? textTransform(label) : label}
+        </Text>
+      </ScrollView>
     </View>
   );
 };

@@ -27,7 +27,7 @@ const WorkModeCard = ({ onsite, hybrid, remote, isLoading }: IWorkModeCard) => {
               Onsite
             </Text>
             {isLoading ? (
-              <Skeleton className="w-8 h-4 rounded-sm" />
+              <Skeleton className="w-20 h-4 rounded-sm" />
             ) : (
               <Text variant={"xs"} className="font-semibold text-foreground">
                 {onsite}
@@ -39,7 +39,7 @@ const WorkModeCard = ({ onsite, hybrid, remote, isLoading }: IWorkModeCard) => {
               Hybrid
             </Text>
             {isLoading ? (
-              <Skeleton className="w-8 h-4 rounded-sm" />
+              <Skeleton className="w-20 h-4 rounded-sm" />
             ) : (
               <Text variant={"xs"} className="font-semibold text-foreground">
                 {hybrid}
@@ -51,7 +51,7 @@ const WorkModeCard = ({ onsite, hybrid, remote, isLoading }: IWorkModeCard) => {
               Remote
             </Text>
             {isLoading ? (
-              <Skeleton className="w-8 h-4 rounded-sm" />
+              <Skeleton className="w-20 h-4 rounded-sm" />
             ) : (
               <Text variant={"xs"} className="font-semibold text-foreground">
                 {remote}

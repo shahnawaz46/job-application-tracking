@@ -19,7 +19,7 @@ export const LOCATION_MIN = 2;
 export const LOCATION_MAX = 200;
 
 export const SOURCE_MIN = 2;
-export const SOURCE_MAX = 50;
+export const SOURCE_MAX = 100;
 
 export const SALARY_MIN = 2;
 export const SALARY_MAX = 50;

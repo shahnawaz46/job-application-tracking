@@ -75,15 +75,13 @@ const JobCard = ({ item, onDelete, onEdit }: IJobCardProps) => {
         </View>
 
         {item.application_source && (
-          <View className="items-end">
-            {item.application_source && (
-              <LabelCard
-                label={`via ${item.application_source}`}
-                isTransform={false}
-                containerClassName="bg-primary/10"
-                textClassName="font-medium"
-              />
-            )}
+          <View className="flex-row justify-end">
+            <LabelCard
+              label={`via ${item.application_source}`}
+              isTransform={false}
+              containerClassName="bg-primary/10"
+              textClassName="font-medium"
+            />
           </View>
         )}
       </CardContent>
