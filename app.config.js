@@ -1,0 +1,78 @@
+import pkg from "./package.json";
+
+export default {
+  expo: {
+    name: "Job Track",
+    slug: "job-track",
+    version: pkg.version,
+    orientation: "portrait",
+    icon: "./assets/images/icon.png",
+    userInterfaceStyle: "automatic",
+    newArchEnabled: true,
+    scheme: "jobtrack",
+    ios: {
+      supportsTablet: true,
+      bundleIdentifier: "com.bundlevate.jobtrack",
+      icon: {
+        dark: "./assets/icons/ios-dark.png",
+        light: "./assets/icons/ios-light.png",
+        tinted: "./assets/icons/ios-tinted.png",
+      },
+      infoPlist: {
+        ITSAppUsesNonExemptEncryption: false,
+      },
+    },
+    android: {
+      adaptiveIcon: {
+        foregroundImage: "./assets/icons/adaptive-icon.png",
+        monochromeImage: "./assets/icons/adaptive-icon.png",
+        backgroundColor: "#FFFFFF",
+      },
+      edgeToEdgeEnabled: true,
+      predictiveBackGestureEnabled: false,
+      softwareKeyboardLayoutMode: "pan",
+      package: "com.bundlevate.jobtrack",
+    },
+    web: {
+      output: "static",
+      favicon: "./assets/images/favicon.png",
+      bundler: "metro",
+    },
+    plugins: [
+      "expo-router",
+      [
+        "expo-splash-screen",
+        {
+          image: "./assets/icons/splash-icon-light.png",
+          imageWidth: 200,
+          resizeMode: "contain",
+          backgroundColor: "#FFFFFF",
+          dark: {
+            backgroundColor: "#FFFFFF",
+            image: "./assets/icons/splash-icon-dark.png",
+          },
+        },
+      ],
+      "expo-secure-store",
+      [
+        "@react-native-google-signin/google-signin",
+        {
+          iosUrlScheme:
+            "com.googleusercontent.apps.1089341677318-8c6n2meihmokmvdof2r9s6vk28c0daq3",
+        },
+      ],
+      "@react-native-community/datetimepicker",
+    ],
+    experiments: {
+      typedRoutes: true,
+      reactCompiler: true,
+    },
+    extra: {
+      router: {},
+      eas: {
+        projectId: "1f861b07-cefa-4bb1-b554-96b0e55ac260",
+      },
+    },
+    owner: "bundlevate",
+  },
+};

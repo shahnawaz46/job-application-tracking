@@ -1,11 +1,16 @@
 import { lightHaptic } from "@/utils/haptics";
 import { Feather } from "@expo/vector-icons";
+import Constants from "expo-constants";
 import { useRouter } from "expo-router";
 import { Pressable, View } from "react-native";
 import { Text } from "../ui/text";
 
 // types/interface
 import type { Href } from "expo-router";
+
+// getting app version from expo config and
+// inside expo config getting version from package.json
+const appVersion = Constants.expoConfig?.version;
 
 const accountItems: {
   icon: keyof typeof Feather.glyphMap;
@@ -42,13 +47,14 @@ const accountItems: {
   {
     icon: "info",
     title: "About",
-    subtitle: "App version 1.0.0",
+    subtitle: appVersion || "1.0.0",
     hasPage: false,
   },
 ];
 
 const AccountSection = () => {
   const router = useRouter();
+
   return (
     <View className="mt-2">
       <View>
