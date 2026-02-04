@@ -158,9 +158,18 @@ function useQuery<T extends unknown[]>({
 export default useQuery;
 
 // logic related to invalidate query
-export function invalidateQuery(key: string) {
-  const cached = cache.get(key);
-  if (!cached) return;
+export function invalidateQuery(keys: string[]) {
+  if (keys.length === 0) return;
 
-  cache.set(key, { ...cached, isStale: true });
+  for (let i = 0; i < keys.length; i++) {
+    const key = keys[i];
+    const cached = cache.get(key);
+    if (!cached) continue;
+
+    cache.set(key, { ...cached, isStale: true });
+  }
+}
+
+export function clearQuery() {
+  cache.clear();
 }

@@ -107,8 +107,10 @@ const AddApplicationScreen = () => {
       });
 
       reset(jobApplicationInitialState); // reset form data
-      invalidateQuery(getApplicationStats.QUERY_KEY);
-      invalidateQuery(getAllApplications.QUERY_KEY);
+      invalidateQuery([
+        getApplicationStats.QUERY_KEY,
+        getAllApplications.QUERY_KEY,
+      ]);
     });
   };
 
@@ -136,8 +138,10 @@ const AddApplicationScreen = () => {
       });
 
       reset(jobApplicationInitialState); // reset form data
-      invalidateQuery(getApplicationStats.QUERY_KEY);
-      invalidateQuery(getAllApplications.QUERY_KEY);
+      invalidateQuery([
+        getApplicationStats.QUERY_KEY,
+        getAllApplications.QUERY_KEY,
+      ]);
     });
   };
 

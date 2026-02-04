@@ -1,4 +1,3 @@
-import { getApplicationStats } from "@/api/query";
 import ButtonLoading from "@/components/loaders/ButtonLoading";
 import AccountSection from "@/components/profile/AccountSection";
 import Header from "@/components/profile/Header";
@@ -11,7 +10,7 @@ import { Text } from "@/components/ui/text";
 import PageWrapper from "@/components/wrapper/PageWrapper";
 import useAsyncAction from "@/hooks/useAsyncAction";
 import { useAuthContext } from "@/hooks/useAuthContext";
-import { invalidateQuery } from "@/hooks/useQuery";
+import { clearQuery } from "@/hooks/useQuery";
 import { supabase } from "@/lib/supabase";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { ScrollView, View } from "react-native";
@@ -29,7 +28,7 @@ const ProfileScreen = () => {
       }
 
       GoogleSignin.signOut();
-      invalidateQuery(getApplicationStats.QUERY_KEY);
+      clearQuery();
     });
   };
 
