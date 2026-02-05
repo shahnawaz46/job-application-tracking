@@ -67,7 +67,6 @@ const AddApplicationScreen = () => {
     handleSubmit,
     formState: { errors },
     reset,
-    getValues,
   } = useForm({
     defaultValues: jobApplicationInitialState,
     resolver: yupResolver(jobApplicationSchema),
@@ -115,6 +114,20 @@ const AddApplicationScreen = () => {
   };
 
   const onEditing = (applicationData: IJobApplication) => {
+    // logic for check field edited or not
+    let isFieldChanged: boolean = false;
+    const parsed = JSON.parse(params.job as string);
+
+    for (let key in applicationData) {
+      const k = key as keyof IJobApplication;
+      if (applicationData[k] !== parsed[k]) {
+        isFieldChanged = true;
+        break;
+      }
+    }
+
+    if (!isFieldChanged) return;
+
     execute(async () => {
       const { error } = await supabase
         .from("job_applications")

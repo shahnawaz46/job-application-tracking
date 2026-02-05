@@ -72,7 +72,8 @@ export const jobApplicationSchema = Yup.object({
     .oneOf(APPLICATION_STATUS, APPLICATION_STATUS_MESSAGES.INVALID),
 
   job_location: Yup.string()
-    .transform((value) => (value === "" ? undefined : value))
+    .nullable()
+    .transform((value) => (value === "" ? null : value))
     .min(LOCATION_MIN, LOCATION_MESSAGES.MIN)
     .max(LOCATION_MAX, LOCATION_MESSAGES.MAX)
     .optional(),
@@ -86,13 +87,15 @@ export const jobApplicationSchema = Yup.object({
     .oneOf(WORK_MODE, WORK_MODE_MESSAGES.INVALID),
 
   application_source: Yup.string()
-    .transform((value) => (value === "" ? undefined : value))
+    .nullable()
+    .transform((value) => (value === "" ? null : value))
     .min(SOURCE_MIN, SOURCE_MESSAGES.MIN)
     .max(SOURCE_MAX, SOURCE_MESSAGES.MAX)
     .optional(),
 
   salary_range: Yup.string()
-    .transform((value) => (value === "" ? undefined : value))
+    .nullable()
+    .transform((value) => (value === "" ? null : value))
     .min(SALARY_MIN, SALARY_MESSAGES.MIN)
     .max(SALARY_MAX, SALARY_MESSAGES.MAX)
     .optional(),
