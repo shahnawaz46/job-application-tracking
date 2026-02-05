@@ -116,7 +116,6 @@ const AddApplicationScreen = () => {
 
   const onEditing = (applicationData: IJobApplication) => {
     execute(async () => {
-      const { data: authDate } = await supabase.auth.getUser();
       const { error } = await supabase
         .from("job_applications")
         .update({ ...applicationData })
@@ -213,7 +212,7 @@ const AddApplicationScreen = () => {
   return (
     <PageWrapper safeAreaViewClassName="pt-3 pb-10">
       <FormWrapper>
-        <Card className="border-border/0 shadow-none pb-14 bg-background">
+        <Card className="border-border/0 shadow-none bg-background pb-12">
           <CardHeader>
             <CardTitle className="text-center text-xl">
               Add Job Application

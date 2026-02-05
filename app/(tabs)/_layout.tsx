@@ -4,7 +4,7 @@ import { Tabs } from "expo-router";
 const TabsLayout = () => {
   return (
     <Tabs
-      screenOptions={{ headerShown: false }}
+      screenOptions={{ headerShown: false, tabBarHideOnKeyboard: true }}
       tabBar={(props) => <TabBar {...(props as any)} />}
     >
       <Tabs.Screen name="index" />

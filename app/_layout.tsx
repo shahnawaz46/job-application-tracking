@@ -4,6 +4,7 @@ import { useAuthContext } from "@/hooks/useAuthContext";
 import AuthProvider from "@/providers/AuthProvider";
 import { PortalHost } from "@rn-primitives/portal";
 import { Stack } from "expo-router";
+import { KeyboardProvider } from "react-native-keyboard-controller";
 import "./global.css";
 
 function RootRoute() {
@@ -29,10 +30,12 @@ function RootRoute() {
 export default function RootLayout() {
   return (
     <AuthProvider>
-      <SplashScreenController />
-      <RootRoute />
-      <ToastSetup />
-      <PortalHost />
+      <KeyboardProvider>
+        <SplashScreenController />
+        <RootRoute />
+        <ToastSetup />
+        <PortalHost />
+      </KeyboardProvider>
     </AuthProvider>
   );
 }

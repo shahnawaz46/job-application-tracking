@@ -143,7 +143,7 @@ const ApplicationScreen = () => {
         </View>
 
         <FlatList
-          contentContainerClassName="flex-grow pb-24"
+          contentContainerClassName="flex-grow pb-12"
           data={listData ?? []}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (

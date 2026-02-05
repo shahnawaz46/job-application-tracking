@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Text } from "@/components/ui/text";
+import FormWrapper from "@/components/wrapper/FormWrapper";
 import PageWrapper from "@/components/wrapper/PageWrapper";
 import useAsyncAction from "@/hooks/useAsyncAction";
 import { useAuthContext } from "@/hooks/useAuthContext";
@@ -26,7 +27,7 @@ import { profileSchema, TGender } from "@/validation/profile.yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useMemo, useRef } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { KeyboardAvoidingView, Platform, ScrollView, View } from "react-native";
+import { Platform, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 // types/interface
@@ -103,134 +104,122 @@ const EditProfile = () => {
 
   return (
     <PageWrapper safeAreaViewClassName="px-4 pt-3 pb-10">
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-      >
-        <ScrollView>
-          <View className="flex-1">
-            {/* Header */}
-            <Header title="Edit Profile" />
+      <FormWrapper>
+        <View className="flex-1">
+          {/* Header */}
+          <Header title="Edit Profile" />
 
-            {/* Proflie Picture */}
-            <ProfilePic
-              full_name={profile.full_name}
-              profile_pic={profile.profile_pic}
-              isLoading={isLoading}
-            />
+          {/* Proflie Picture */}
+          <ProfilePic
+            full_name={profile.full_name}
+            profile_pic={profile.profile_pic}
+            isLoading={isLoading}
+          />
 
-            {/* Profile Info */}
-            <ProfileInfo
-              full_name={profile.full_name}
-              email={profile.email}
-              joined={profile.created_at}
-              isLoading={isLoading}
-            />
+          {/* Profile Info */}
+          <ProfileInfo
+            full_name={profile.full_name}
+            email={profile.email}
+            joined={profile.created_at}
+            isLoading={isLoading}
+          />
 
-            <Separator />
+          <Separator />
 
-            <View className="gap-6 mt-4">
-              <View className="gap-1.5">
-                <Label htmlFor="full_name">Full Name</Label>
-                <Controller
-                  control={control}
-                  name="full_name"
-                  render={({ field: { value, onChange } }) => (
-                    <Input
-                      id="full_name"
-                      placeholder="Your Name"
-                      autoCapitalize="words"
-                      returnKeyType="next"
-                      submitBehavior="submit"
-                      onSubmitEditing={() => phoneNoRef.current?.focus()}
-                      value={value}
-                      onChangeText={onChange}
-                    />
-                  )}
-                />
+          <View className="gap-6 mt-4">
+            <View className="gap-1.5">
+              <Label htmlFor="full_name">Full Name</Label>
+              <Controller
+                control={control}
+                name="full_name"
+                render={({ field: { value, onChange } }) => (
+                  <Input
+                    id="full_name"
+                    placeholder="Your Name"
+                    autoCapitalize="words"
+                    returnKeyType="next"
+                    submitBehavior="submit"
+                    onSubmitEditing={() => phoneNoRef.current?.focus()}
+                    value={value}
+                    onChangeText={onChange}
+                  />
+                )}
+              />
 
-                <ReactHookFormError errorMessage={errors?.full_name?.message} />
-              </View>
-
-              <View className="gap-1.5">
-                <Label htmlFor="phone_no">Phone No</Label>
-                <Controller
-                  control={control}
-                  name="phone_no"
-                  render={({ field: { value, onChange } }) => (
-                    <Input
-                      ref={phoneNoRef}
-                      id="phone_no"
-                      placeholder="+1234567890"
-                      autoCapitalize="words"
-                      returnKeyType="send"
-                      value={value}
-                      onChangeText={onChange}
-                    />
-                  )}
-                />
-
-                <ReactHookFormError errorMessage={errors?.phone_no?.message} />
-              </View>
-
-              <View className="gap-1.5">
-                <Label htmlFor="gender">Gender</Label>
-                <Controller
-                  control={control}
-                  name="gender"
-                  render={({ field: { value, onChange } }) => {
-                    const optionValue = genderDropdown.find(
-                      (val) => val.value === value,
-                    );
-
-                    return (
-                      <Select
-                        value={optionValue}
-                        onValueChange={(val) => onChange(val?.value)}
-                      >
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Select a gender" />
-                        </SelectTrigger>
-                        <SelectContent
-                          insets={contentInsets}
-                          className="w-full"
-                        >
-                          <SelectGroup>
-                            {genderDropdown.map((item, index) => (
-                              <SelectItem
-                                key={item.value}
-                                label={item.label}
-                                value={item.value}
-                              >
-                                {item.label}
-                              </SelectItem>
-                            ))}
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
-                    );
-                  }}
-                />
-
-                <ReactHookFormError errorMessage={errors?.gender?.message} />
-              </View>
+              <ReactHookFormError errorMessage={errors?.full_name?.message} />
             </View>
 
-            <Button
-              className="w-full mt-8"
-              size={"lg"}
-              onPress={handleSubmit(onSubmit)}
-              disabled={isPending}
-            >
-              {isPending ? (
-                <ButtonLoading text="Saving..." />
-              ) : (
-                <Text>Save</Text>
-              )}
-            </Button>
+            <View className="gap-1.5">
+              <Label htmlFor="phone_no">Phone No</Label>
+              <Controller
+                control={control}
+                name="phone_no"
+                render={({ field: { value, onChange } }) => (
+                  <Input
+                    ref={phoneNoRef}
+                    id="phone_no"
+                    placeholder="+1234567890"
+                    autoCapitalize="words"
+                    returnKeyType="send"
+                    value={value}
+                    onChangeText={onChange}
+                  />
+                )}
+              />
+
+              <ReactHookFormError errorMessage={errors?.phone_no?.message} />
+            </View>
+
+            <View className="gap-1.5">
+              <Label htmlFor="gender">Gender</Label>
+              <Controller
+                control={control}
+                name="gender"
+                render={({ field: { value, onChange } }) => {
+                  const optionValue = genderDropdown.find(
+                    (val) => val.value === value,
+                  );
+
+                  return (
+                    <Select
+                      value={optionValue}
+                      onValueChange={(val) => onChange(val?.value)}
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select a gender" />
+                      </SelectTrigger>
+                      <SelectContent insets={contentInsets} className="w-full">
+                        <SelectGroup>
+                          {genderDropdown.map((item, index) => (
+                            <SelectItem
+                              key={item.value}
+                              label={item.label}
+                              value={item.value}
+                            >
+                              {item.label}
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  );
+                }}
+              />
+
+              <ReactHookFormError errorMessage={errors?.gender?.message} />
+            </View>
           </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
+
+          <Button
+            className="w-full mt-8"
+            size={"lg"}
+            onPress={handleSubmit(onSubmit)}
+            disabled={isPending}
+          >
+            {isPending ? <ButtonLoading text="Saving..." /> : <Text>Save</Text>}
+          </Button>
+        </View>
+      </FormWrapper>
     </PageWrapper>
   );
 };

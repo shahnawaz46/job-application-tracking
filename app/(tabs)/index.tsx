@@ -46,7 +46,10 @@ const DashboardScreen = () => {
 
   return (
     <PageWrapper safeAreaViewClassName="px-4 pt-3 pb-10">
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerClassName="pb-12"
+      >
         {/* Header */}
         <Header
           text={`Welcome back, ${profile?.full_name}`}
