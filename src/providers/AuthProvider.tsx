@@ -1,4 +1,5 @@
 import { AuthContext } from "@/hooks/useAuthContext";
+import useNetworkInfo from "@/hooks/useNetworkInfo";
 import { supabase } from "@/lib/supabase";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
@@ -12,14 +13,14 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const { isOnline } = useNetworkInfo();
 
   // initial session fetch and subscribe to auth state changes
   useEffect(() => {
     const init = async () => {
       const { data, error } = await supabase.auth.getSession();
-      // if (error) console.log("getSession Error: ", error);
+      // console.log("getSession: ", { data, error });
       if (!error) setSession(data.session);
-      // console.log("getSession Data: ", data);
       setIsLoading(false);
     };
 
@@ -51,6 +52,8 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
 
   // fetch profile
   useEffect(() => {
+    if (!isOnline) return;
+
     if (!session) {
       setProfile(null);
       return;
@@ -66,7 +69,7 @@ const AuthProvider = ({ children }: PropsWithChildren) => {
           setProfile(data);
         });
     }
-  }, [session]);
+  }, [session, isOnline]);
 
   const updateProfileData = (newValue: any) => {
     setProfile(newValue);

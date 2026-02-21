@@ -1,4 +1,5 @@
 import { useAuthContext } from "@/hooks/useAuthContext";
+import useNetworkInfo from "@/hooks/useNetworkInfo";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 
@@ -13,10 +14,11 @@ SplashScreen.setOptions({
 
 const SplashScreenController = () => {
   const { isLoading } = useAuthContext();
+  const { isNetworkUnknown } = useNetworkInfo();
 
   useEffect(() => {
     // If auth loading is finished, Hide the splash screen
-    if (!isLoading) {
+    if (!isLoading && !isNetworkUnknown) {
       SplashScreen.hideAsync();
     }
   }, [isLoading]);

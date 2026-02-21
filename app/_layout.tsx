@@ -1,3 +1,4 @@
+import NetworkError from "@/components/NetworkError";
 import SplashScreenController from "@/components/SplashScreenController";
 import ToastSetup from "@/components/Toast";
 import { useAuthContext } from "@/hooks/useAuthContext";
@@ -32,6 +33,7 @@ export default function RootLayout() {
     <AuthProvider>
       <KeyboardProvider>
         <SplashScreenController />
+        <NetworkError />
         <RootRoute />
         <ToastSetup />
         <PortalHost />

@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils";
 import { Ionicons } from "@expo/vector-icons";
 import { View } from "react-native";
 import { Button } from "../ui/button";
@@ -5,18 +6,20 @@ import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "../ui/card";
 import { Text } from "../ui/text";
 
 interface StateMessageProps {
-  title: string;
+  title?: string;
   description?: string;
   iconName?: keyof typeof Ionicons.glyphMap;
   iconColor?: string;
   actionLabel?: string;
   onActionPress?: () => void;
+  cardClassName?: string;
 }
 
 const StateMessage = ({
@@ -26,33 +29,36 @@ const StateMessage = ({
   iconColor = "#9CA3AF",
   actionLabel,
   onActionPress,
+  cardClassName,
 }: StateMessageProps) => {
   return (
     <View className="flex-1 justify-center items-center px-4">
-      <Card className="items-center w-full max-w-md">
-        <CardHeader className="px-3 items-center">
+      <Card className={cn("items-center w-full max-w-md gap-3", cardClassName)}>
+        <CardHeader className="px-3 items-center gap-3">
           <Ionicons name={iconName} size={64} color={iconColor} />
 
-          <CardTitle variant="large" className="mt-2 text-center">
+          <CardTitle variant="large" className="text-center">
             {title}
           </CardTitle>
+        </CardHeader>
 
+        <CardContent>
           {description ? (
             <CardDescription
               variant="small"
-              className="text-center mt-2 text-muted-foreground"
+              className="text-center text-muted-foreground"
             >
               {description}
             </CardDescription>
           ) : null}
-        </CardHeader>
+        </CardContent>
 
         {actionLabel && onActionPress ? (
-          <CardContent>
+          <CardFooter>
             <Button onPress={onActionPress}>
               <Text>{actionLabel}</Text>
             </Button>
-          </CardContent>
+          </CardFooter>
         ) : null}
       </Card>
     </View>

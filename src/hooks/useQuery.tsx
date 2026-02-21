@@ -1,6 +1,7 @@
 import { DATA_LIMIT } from "@/validation/constants";
 import { useFocusEffect } from "expo-router";
 import { useCallback, useState } from "react";
+import useNetworkInfo from "./useNetworkInfo";
 
 interface IUseQueryProps<T extends unknown[]> {
   queryKey: string;
@@ -21,6 +22,8 @@ function useQuery<T extends unknown[]>({
   queryKey,
   queryFn,
 }: IUseQueryProps<T>) {
+  const { isOnline } = useNetworkInfo();
+
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [dataState, setDataState] = useState<IQueryResult<T>>({
     data: null,
@@ -136,6 +139,8 @@ function useQuery<T extends unknown[]>({
 
   useFocusEffect(
     useCallback(() => {
+      if (!isOnline) return;
+
       const cached = cache.get(queryKey) as IQueryResult<T> | undefined;
 
       if (!cached || cached.isStale) {
@@ -144,7 +149,7 @@ function useQuery<T extends unknown[]>({
       }
 
       setDataState(cached);
-    }, [queryKey]),
+    }, [queryKey, isOnline]),
   );
 
   return {
