@@ -1,5 +1,4 @@
 import { cn } from "@/lib/utils";
-import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CustomStatusBar from "../CustomStatusBar";
 
@@ -19,7 +18,7 @@ const PageWrapper = ({
 }: IPageWrapper) => {
   return (
     <SafeAreaView
-      edges={["top"]}
+      edges={["top", "bottom", "left", "right"]}
       className={cn("flex-1 bg-background", safeAreaViewClassName)}
     >
       <CustomStatusBar style={statusBarStyle} />

@@ -56,3 +56,13 @@
     --chart-5: 340 75% 55%;
   }
 }
+
+@layer components {
+  .wrapper-space {
+    @apply pt-3 pb-10;
+  }
+
+  .wrapper-space-x {
+    @apply px-4;
+  }
+}

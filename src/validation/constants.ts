@@ -30,8 +30,8 @@ export const APPLICATION_STATUS = [
   // "not shortlisted",
   "telephonic interview",
   "interview",
-  "rejected",
   "offer received",
+  "rejected",
   // "withdrawn",
 ] as const;
 

@@ -103,7 +103,7 @@ const EditProfile = () => {
   );
 
   return (
-    <PageWrapper safeAreaViewClassName="px-4 pt-3 pb-10">
+    <PageWrapper safeAreaViewClassName="wrapper-space wrapper-space-x">
       <FormWrapper>
         <View className="flex-1">
           {/* Header */}

@@ -1,4 +1,5 @@
 import { StyleSheet, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { TabBarLabelTitle } from "./Constants";
 import TabBarButton from "./TabBarButton";
 
@@ -15,8 +16,10 @@ export interface IRoute {
 }
 
 const TabBar = ({ state, descriptors, navigation }: ITabBarProps) => {
+  const inset = useSafeAreaInsets();
+
   return (
-    <View style={styles.tabBar}>
+    <View style={[styles.tabBar, { bottom: inset.bottom + 4 }]}>
       {state.routes.map((route: IRoute, index: any) => {
         const { options } = descriptors[route.key];
         // console.log("options:", options);

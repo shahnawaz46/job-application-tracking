@@ -33,8 +33,11 @@ const ProfileScreen = () => {
   };
 
   return (
-    <PageWrapper safeAreaViewClassName="px-4 pt-3 pb-10">
-      <ScrollView showsVerticalScrollIndicator={false}>
+    <PageWrapper safeAreaViewClassName="wrapper-space wrapper-space-x">
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerClassName="pb-8"
+      >
         <View className="flex-1">
           {/* Header */}
           <Header title="Profile" />
@@ -62,7 +65,7 @@ const ProfileScreen = () => {
         <AccountSection />
 
         {/* Logout Button */}
-        <View className="px-4 py-6">
+        <View className="px-4 pt-6">
           <Button
             size={"lg"}
             className="bg-red-50 active:bg-red-200 border border-red-200"
@@ -79,8 +82,6 @@ const ProfileScreen = () => {
             )}
           </Button>
         </View>
-
-        <View className="h-8" />
       </ScrollView>
     </PageWrapper>
   );

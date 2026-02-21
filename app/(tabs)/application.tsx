@@ -110,8 +110,14 @@ const ApplicationScreen = () => {
     return (
       <StateMessage
         iconName="document-text-outline"
-        title="No Applications Yet"
-        description="Start tracking your job applications by adding your first entry"
+        title={
+          searchResult.isSearching ? "No results found" : "No Applications Yet"
+        }
+        description={
+          searchResult.isSearching
+            ? "We couldn't find any applications matching your search. Try different keywords or add a new application."
+            : "Start tracking your job applications by adding your first entry"
+        }
         actionLabel="Add Application"
         onActionPress={() => router.navigate("/(tabs)/add-application")}
       />
@@ -131,7 +137,7 @@ const ApplicationScreen = () => {
   }
 
   return (
-    <PageWrapper safeAreaViewClassName="px-4 pt-3 pb-10">
+    <PageWrapper safeAreaViewClassName="wrapper-space wrapper-space-x">
       <View className="flex-1">
         <Header
           text="Job Applications"
@@ -143,7 +149,7 @@ const ApplicationScreen = () => {
         </View>
 
         <FlatList
-          contentContainerClassName="flex-grow pb-12"
+          contentContainerClassName="flex-grow pb-8"
           data={listData ?? []}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (

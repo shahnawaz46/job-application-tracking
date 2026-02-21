@@ -45,10 +45,10 @@ const DashboardScreen = () => {
   }
 
   return (
-    <PageWrapper safeAreaViewClassName="px-4 pt-3 pb-10">
+    <PageWrapper safeAreaViewClassName="wrapper-space wrapper-space-x">
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerClassName="pb-12"
+        contentContainerClassName="pb-8"
       >
         {/* Header */}
         <Header
