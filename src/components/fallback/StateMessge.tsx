@@ -19,6 +19,7 @@ interface StateMessageProps {
   iconColor?: string;
   actionLabel?: string;
   onActionPress?: () => void;
+  containerClass?: string;
   cardClassName?: string;
 }
 
@@ -29,10 +30,13 @@ const StateMessage = ({
   iconColor = "#9CA3AF",
   actionLabel,
   onActionPress,
+  containerClass,
   cardClassName,
 }: StateMessageProps) => {
   return (
-    <View className="flex-1 justify-center items-center px-4">
+    <View
+      className={cn("flex-1 justify-center items-center px-4", containerClass)}
+    >
       <Card className={cn("items-center w-full max-w-md gap-3", cardClassName)}>
         <CardHeader className="px-3 items-center gap-3">
           <Ionicons name={iconName} size={64} color={iconColor} />

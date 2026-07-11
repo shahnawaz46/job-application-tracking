@@ -5,6 +5,12 @@ export const getApplicationStats = {
   QUERY_FN: async () => supabase.rpc("get_application_status_stats"),
 };
 
+export const getMonthlyApplicationStats = {
+  QUERY_KEY: (year: number) => `monthly-application-stats-${year}`,
+  QUERY_FN: async (year: number) =>
+    supabase.rpc("get_monthly_application_stats", { selected_year: year }),
+};
+
 export const getAllApplications = {
   QUERY_KEY: "job-application",
   QUERY_FN: (profileId: string, range: number[]) => async () => {

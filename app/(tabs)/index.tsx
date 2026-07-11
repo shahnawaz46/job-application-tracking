@@ -1,6 +1,7 @@
 import { getApplicationStats } from "@/api/query";
 import AnalyticsCard from "@/components/dashboard/AnalyticsCard";
 import Header from "@/components/dashboard/Header";
+import MonthlyJobsChart from "@/components/dashboard/MonthlyJobsChart";
 import StatCard from "@/components/dashboard/StatCard";
 import WorkModeCard from "@/components/dashboard/WorkModeCard";
 import StateMessage from "@/components/fallback/StateMessge";
@@ -18,8 +19,13 @@ import type {
   TWorkMode,
 } from "@/validation/jobApplication.yup";
 
+// convert strings with spaces into snake_case.
+// Example: "In Review" -> "In_Review"
 type ToSnakeCase<T> = T extends `${infer A} ${infer B}` ? `${A}_${B}` : T;
 
+// build the application stats object automatically
+// TWorkMode keys (Remote, Hybrid, Onsite, etc.) -> number
+// TApplicationStatus keys are converted to snake_case
 type TApplicationStats = { [J in TWorkMode]: number } & {
   [K in ToSnakeCase<TApplicationStatus>]: number;
 };
@@ -148,12 +154,17 @@ const DashboardScreen = () => {
         </View>
 
         {/* work mode card */}
-        <WorkModeCard
-          onsite={applicationStatusStatsData?.onsite ?? 0}
-          hybrid={applicationStatusStatsData?.hybrid ?? 0}
-          remote={applicationStatusStatsData?.remote ?? 0}
-          isLoading={isLoading}
-        />
+        <View className="mb-3">
+          <WorkModeCard
+            onsite={applicationStatusStatsData?.onsite ?? 0}
+            hybrid={applicationStatusStatsData?.hybrid ?? 0}
+            remote={applicationStatusStatsData?.remote ?? 0}
+            isLoading={isLoading}
+          />
+        </View>
+
+        {/* monthly bar chart */}
+        <MonthlyJobsChart />
       </ScrollView>
     </PageWrapper>
   );
