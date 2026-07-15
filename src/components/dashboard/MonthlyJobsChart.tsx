@@ -1,7 +1,7 @@
 import { getMonthlyApplicationStats } from "@/api/query";
 import useQuery from "@/hooks/useQuery";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import React, { useState } from "react";
+import { useState } from "react";
 import { View } from "react-native";
 import { BarChart } from "react-native-gifted-charts";
 import StateMessage from "../fallback/StateMessge";

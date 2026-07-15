@@ -1,5 +1,7 @@
-import { PlatformPressable } from "@react-navigation/elements";
-import { useLinkBuilder } from "@react-navigation/native";
+import {
+  PlatformPressable,
+  useLinkBuilder,
+} from "expo-router/react-navigation";
 import React, { useEffect } from "react";
 import { StyleSheet, type GestureResponderEvent } from "react-native";
 import Animated, {

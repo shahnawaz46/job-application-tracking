@@ -62,6 +62,10 @@ export default {
         },
       ],
       "@react-native-community/datetimepicker",
+      "expo-font",
+      "expo-image",
+      "expo-status-bar",
+      "expo-web-browser",
     ],
     experiments: {
       typedRoutes: true,

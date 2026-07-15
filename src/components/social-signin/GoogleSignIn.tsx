@@ -1,7 +1,6 @@
 import useAsyncAction from "@/hooks/useAsyncAction";
 import { supabase } from "@/lib/supabase";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
-import React from "react";
 import { Image } from "react-native";
 import { ToastMessage } from "../Toast";
 import { Button } from "../ui/button";
