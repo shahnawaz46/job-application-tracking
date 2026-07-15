@@ -65,6 +65,7 @@ const TabBarButton = ({
       href={buildHref(routeName, routeParams)}
       onPress={onPress}
       onLongPress={onLongPress}
+      pressColor="#fff"
       style={[
         styles.tabBarItem,
         isFocused && {

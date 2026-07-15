@@ -1,4 +1,8 @@
-import { getAllApplications, getApplicationStats } from "@/api/query";
+import {
+  getAllApplications,
+  getApplicationStats,
+  getMonthlyApplicationStats,
+} from "@/api/query";
 import ReactHookFormError from "@/components/fallback/ReactHookFormError";
 import ButtonLoading from "@/components/loaders/ButtonLoading";
 import { ToastMessage } from "@/components/Toast";
@@ -109,6 +113,7 @@ const AddApplicationScreen = () => {
       invalidateQuery([
         getApplicationStats.QUERY_KEY,
         getAllApplications.QUERY_KEY,
+        getMonthlyApplicationStats.QUERY_KEY(new Date().getFullYear()),
       ]);
     });
   };

@@ -77,6 +77,7 @@ const MonthlyJobsChart = () => {
               <Text variant="large">Monthly Applications</Text>
 
               <Text
+                variant={"small"}
                 style={{
                   color: "#6B7280",
                   marginTop: -2,

@@ -1,4 +1,8 @@
-import { getAllApplications } from "@/api/query";
+import {
+  getAllApplications,
+  getApplicationStats,
+  getMonthlyApplicationStats,
+} from "@/api/query";
 import DebounceSearch from "@/components/application/DebounceSearch";
 import DeleteConfirmationModal from "@/components/application/DeleteConfirmationModal";
 import JobCard from "@/components/application/JobCard";
@@ -8,7 +12,7 @@ import JobCardLoading from "@/components/loaders/JobCardLoading";
 import { ToastMessage } from "@/components/Toast";
 import PageWrapper from "@/components/wrapper/PageWrapper";
 import { useAuthContext } from "@/hooks/useAuthContext";
-import useQuery from "@/hooks/useQuery";
+import useQuery, { invalidateQuery } from "@/hooks/useQuery";
 import { supabase } from "@/lib/supabase";
 import { DATA_LIMIT } from "@/validation/constants";
 import { useRouter } from "expo-router";
@@ -75,6 +79,12 @@ const ApplicationScreen = () => {
       type: "success",
       text1: "Job Application deleted successfully",
     });
+
+    invalidateQuery([
+      getApplicationStats.QUERY_KEY,
+      getAllApplications.QUERY_KEY,
+      getMonthlyApplicationStats.QUERY_KEY(new Date().getFullYear()),
+    ]);
   };
 
   const handleEdit = (job: IJobApplicationRes) => {

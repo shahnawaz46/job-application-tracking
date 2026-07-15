@@ -13,18 +13,15 @@ const JobCardLoading = ({
       {/* header skeleton */}
       <CardHeader className="flex-row justify-between items-start px-4 gap-3">
         <View className="items-start flex-1 gap-1">
-          <Skeleton className="w-full h-6" />
-
-          <Skeleton className="w-full h-5" />
+          <Skeleton className="w-full h-11" />
         </View>
         <View className="items-end gap-1 w-16">
-          <Skeleton className="w-full h-6" />
-
-          <Skeleton className="w-full h-5" />
+          <Skeleton className="w-full h-11" />
         </View>
       </CardHeader>
 
       <CardContent className="px-4 gap-3">
+        <Skeleton className="w-full h-8" />
         {/* status badge and  optional details skeleton */}
         <Skeleton className="w-full h-[67px]" />
       </CardContent>
