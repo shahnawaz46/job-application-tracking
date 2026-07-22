@@ -100,6 +100,13 @@ const DashboardScreen = () => {
 
           <View className="flex-row gap-3">
             <StatCard
+              icon={<Ionicons name={"checkmark"} size={15} color={"#10B981"} />}
+              label="Offers"
+              value={applicationStatusStatsData?.offer_received ?? 0}
+              bgColor="bg-green-100"
+              isLoading={isLoading}
+            />
+            <StatCard
               icon={
                 <Ionicons
                   name={"alert-circle-outline"}
@@ -110,13 +117,6 @@ const DashboardScreen = () => {
               label="Rejected"
               value={applicationStatusStatsData?.rejected ?? 0}
               bgColor="bg-purple-100"
-              isLoading={isLoading}
-            />
-            <StatCard
-              icon={<Ionicons name={"checkmark"} size={15} color={"#10B981"} />}
-              label="Offers"
-              value={applicationStatusStatsData?.offer_received ?? 0}
-              bgColor="bg-green-100"
               isLoading={isLoading}
             />
           </View>
