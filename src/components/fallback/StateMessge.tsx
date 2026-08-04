@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { COLORS } from "@/theme/color";
 import { Ionicons } from "@expo/vector-icons";
 import { View } from "react-native";
 import { Button } from "../ui/button";
@@ -27,7 +28,7 @@ const StateMessage = ({
   title,
   description,
   iconName = "alert-circle-outline",
-  iconColor = "#9CA3AF",
+  iconColor = COLORS.success,
   actionLabel,
   onActionPress,
   containerClass,

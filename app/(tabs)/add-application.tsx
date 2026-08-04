@@ -230,7 +230,7 @@ const AddApplicationScreen = () => {
   return (
     <PageWrapper safeAreaViewClassName="wrapper-space">
       <FormWrapper>
-        <Card className="border-border/0 shadow-none bg-background pb-8">
+        <Card className="border-0 shadow-none bg-background pb-12">
           <CardHeader>
             <CardTitle className="text-center text-xl">
               Add Job Application

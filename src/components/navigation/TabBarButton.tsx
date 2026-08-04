@@ -3,13 +3,14 @@ import {
   useLinkBuilder,
 } from "expo-router/react-navigation";
 import React, { useEffect } from "react";
-import { StyleSheet, type GestureResponderEvent } from "react-native";
+import { GestureResponderEvent } from "react-native";
 import Animated, {
   interpolate,
   useAnimatedStyle,
   useSharedValue,
   withSpring,
 } from "react-native-reanimated";
+import { COLORS } from "../../theme/color";
 import { TabBarIcons } from "./Constants";
 import { IRoute } from "./TabBar";
 
@@ -34,74 +35,81 @@ const TabBarButton = ({
 }: ITabBarButton) => {
   const { buildHref } = useLinkBuilder();
 
-  const scale = useSharedValue(0);
-
-  const animatedIconStyle = useAnimatedStyle(() => {
-    const scaleValue = interpolate(scale.value, [0, 1], [1, 1.1]);
-    const top = interpolate(scale.value, [0, 1], [2, 9]);
-
-    return {
-      transform: [
-        {
-          scale: scaleValue,
-        },
-      ],
-      top,
-    };
-  });
-
-  const animatedTextStyle = useAnimatedStyle(() => {
-    const opacity = interpolate(scale.value, [0, 1], [1, 0]);
-
-    return { opacity };
-  });
+  const scale = useSharedValue(isFocused ? 1 : 0);
 
   useEffect(() => {
-    scale.value = withSpring(isFocused ? 1 : 0, { duration: 350 });
-  }, [scale, isFocused]);
+    scale.value = withSpring(isFocused ? 1 : 0, {
+      damping: 16,
+      stiffness: 180,
+      mass: 0.8,
+    });
+  }, [isFocused]);
+
+  const animatedContainerStyle = useAnimatedStyle(() => ({
+    transform: [
+      {
+        scale: interpolate(scale.value, [0, 1], [1, 1.04]),
+      },
+    ],
+  }));
+
+  const animatedIconStyle = useAnimatedStyle(() => ({
+    transform: [
+      {
+        translateY: interpolate(scale.value, [0, 1], [0, -2]),
+      },
+    ],
+  }));
+
+  const animatedLabelStyle = useAnimatedStyle(() => ({
+    opacity: interpolate(scale.value, [0, 1], [0.8, 1]),
+    transform: [
+      {
+        translateY: interpolate(scale.value, [0, 1], [0, -1]),
+      },
+    ],
+  }));
 
   return (
     <PlatformPressable
       href={buildHref(routeName, routeParams)}
       onPress={onPress}
       onLongPress={onLongPress}
-      pressColor="#fff"
-      style={[
-        styles.tabBarItem,
-        isFocused && {
-          backgroundColor: "#723FEB",
-          padding: 0,
-          height: 45,
-          borderRadius: 30,
-          justifyContent: "center",
-          alignItems: "center",
-        },
-      ]}
+      pressColor={COLORS.primarySoft}
+      className="flex-1"
     >
-      <Animated.View style={[animatedIconStyle]}>
-        {TabBarIcons[routeName]({
-          isFocused,
-          color: isFocused ? "#FFF" : "#222",
-        })}
+      <Animated.View
+        className="h-12 items-center justify-center gap-0.5 rounded-xl"
+        style={[
+          animatedContainerStyle,
+          isFocused && {
+            backgroundColor: COLORS.primarySoft,
+          },
+        ]}
+      >
+        <Animated.View style={animatedIconStyle}>
+          {TabBarIcons[routeName]({
+            isFocused,
+            color: isFocused ? COLORS.primary : COLORS.foreground,
+          })}
+        </Animated.View>
+
+        <Animated.Text
+          numberOfLines={1}
+          className="text-[11px]"
+          style={[
+            animatedLabelStyle,
+            {
+              color: isFocused ? COLORS.primary : COLORS.foreground,
+              fontWeight: isFocused ? "700" : "500",
+            },
+          ]}
+        >
+          {label}
+        </Animated.Text>
       </Animated.View>
-      <Animated.Text style={[styles.tabBarLabel, animatedTextStyle]}>
-        {label}
-      </Animated.Text>
     </PlatformPressable>
   );
 };
 
 export default TabBarButton;
-
-const styles = StyleSheet.create({
-  tabBarItem: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    gap: 3,
-    height: 52,
-  },
-  tabBarLabel: {
-    fontSize: 11,
-  },
-});

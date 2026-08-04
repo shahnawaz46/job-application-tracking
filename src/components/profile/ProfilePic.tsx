@@ -15,30 +15,22 @@ const ProfilePic = ({
   isLoading,
 }: IProfilePicProps) => {
   return (
-    <View className="relative items-center pt-6 mb-1">
-      <View className="relative h-28 w-28">
-        {profile_pic ? (
-          isLoading ? (
-            <Skeleton className="w-full h-full rounded-full" />
-          ) : (
-            <Image
-              source={{ uri: profile_pic }}
-              className="w-full h-full rounded-full"
-            />
-          )
-        ) : isLoading ? (
-          <Skeleton className="w-full h-full rounded-full" />
+    <View className="items-center pt-8">
+      <View className="relative">
+        {isLoading ? (
+          <Skeleton className="h-24 w-24 rounded-full" />
+        ) : profile_pic ? (
+          <Image
+            source={{ uri: profile_pic }}
+            className="h-24 w-24 rounded-full"
+          />
         ) : (
-          <View className="w-full h-full rounded-full bg-gray-100 justify-center items-center">
-            <Text variant={"large"} className="uppercase text-center">
+          <View className="h-24 w-24 items-center justify-center rounded-full bg-secondary">
+            <Text variant="xl" className="font-semibold uppercase text-primary">
               {getNameInitial(full_name)}
             </Text>
           </View>
         )}
-
-        {/* <View className="absolute bottom-2 right-4">
-          <Camera size={20} onPress={() => console.log("done")} />
-        </View> */}
       </View>
     </View>
   );

@@ -1,8 +1,9 @@
-import { StyleSheet, View } from "react-native";
+import { View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { TabBarLabelTitle } from "./Constants";
 import TabBarButton from "./TabBarButton";
 
+// types/interface
 interface ITabBarProps {
   state: any;
   descriptors: any;
@@ -19,10 +20,21 @@ const TabBar = ({ state, descriptors, navigation }: ITabBarProps) => {
   const inset = useSafeAreaInsets();
 
   return (
-    <View style={[styles.tabBar, { bottom: inset.bottom + 4 }]}>
-      {state.routes.map((route: IRoute, index: any) => {
+    <View
+      className="absolute left-4 right-4 h-16 flex-row items-center justify-between gap-2 rounded-lg border border-border bg-card px-2 py-2 shadow-sm shadow-black/10"
+      style={{
+        bottom: inset.bottom + 10,
+        shadowOffset: {
+          width: 0,
+          height: 8,
+        },
+        shadowOpacity: 0.08,
+        shadowRadius: 18,
+        elevation: 18,
+      }}
+    >
+      {state.routes.map((route: IRoute, index: number) => {
         const { options } = descriptors[route.key];
-        // console.log("options:", options);
         const label = TabBarLabelTitle[route.name];
 
         const isFocused = state.index === index;
@@ -35,7 +47,6 @@ const TabBar = ({ state, descriptors, navigation }: ITabBarProps) => {
           });
 
           if (!isFocused && !event.defaultPrevented) {
-            // navigation.navigate(route.name, route.params);
             navigation.navigate(route.name); // while navigate via tabs then remove existing params(if any)
           }
         };
@@ -49,13 +60,10 @@ const TabBar = ({ state, descriptors, navigation }: ITabBarProps) => {
 
         return (
           <TabBarButton
-            key={index}
+            key={route.key}
             routeName={route.name}
             routeParams={route.params}
             isFocused={isFocused}
-            // accessibilityState={isFocused ? { selected: true } : {}}
-            // accessibilityLabel={options.tabBarAccessibilityLabel}
-            // testID={options.tabBarButtonTestID}
             onPress={onPress}
             onLongPress={onLongPress}
             label={label}
@@ -67,25 +75,3 @@ const TabBar = ({ state, descriptors, navigation }: ITabBarProps) => {
 };
 
 export default TabBar;
-
-const styles = StyleSheet.create({
-  tabBar: {
-    position: "absolute",
-    bottom: 20,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    gap: 3,
-    marginHorizontal: 16,
-    paddingVertical: 2,
-    paddingHorizontal: 12,
-    backgroundColor: "#fff",
-    borderRadius: 16,
-
-    shadowOffset: { width: 0, height: 1 },
-    shadowColor: "#000",
-    shadowRadius: 10,
-    shadowOpacity: 0.1,
-    elevation: 10,
-  },
-});

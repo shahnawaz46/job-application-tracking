@@ -1,3 +1,4 @@
+import { COLORS } from "@/theme/color";
 import { Ionicons } from "@expo/vector-icons";
 import { View } from "react-native";
 import { Card, CardContent } from "../ui/card";
@@ -16,7 +17,7 @@ const WorkModeCard = ({ onsite, hybrid, remote, isLoading }: IWorkModeCard) => {
     <Card className="p-3">
       <CardContent className="p-0">
         <View className="flex-row items-center mb-3 gap-3">
-          <Ionicons name="desktop-outline" size={18} color="#3b82f6" />
+          <Ionicons name="desktop-outline" size={18} color={COLORS.info} />
           <Text variant={"small"} className="font-medium">
             Work Mode
           </Text>

@@ -14,6 +14,7 @@ import PageWrapper from "@/components/wrapper/PageWrapper";
 import { useAuthContext } from "@/hooks/useAuthContext";
 import useQuery, { invalidateQuery } from "@/hooks/useQuery";
 import { supabase } from "@/lib/supabase";
+import { COLORS } from "@/theme/color";
 import { DATA_LIMIT } from "@/validation/constants";
 import { useRouter } from "expo-router";
 import { useRef, useState } from "react";
@@ -128,6 +129,7 @@ const ApplicationScreen = () => {
             ? "We couldn't find any applications matching your search. Try different keywords or add a new application."
             : "Start tracking your job applications by adding your first entry"
         }
+        iconColor={COLORS.info}
         actionLabel="Add Application"
         onActionPress={() => router.navigate("/(tabs)/add-application")}
       />
@@ -139,7 +141,7 @@ const ApplicationScreen = () => {
     return (
       <StateMessage
         iconName="warning-outline"
-        iconColor="#EF4444"
+        iconColor={COLORS.danger}
         title="Something went wrong"
         description="We couldn't load your applications. Please try again."
       />
@@ -159,7 +161,7 @@ const ApplicationScreen = () => {
         </View>
 
         <FlatList
-          contentContainerClassName="flex-grow pb-8"
+          contentContainerClassName="flex-grow pb-12"
           data={listData ?? []}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (

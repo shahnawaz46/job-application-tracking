@@ -34,15 +34,16 @@ const InputWithIcon = ({
     <Wrapper
       onPress={asText ? onPress : undefined}
       className={cn(
-        "dark:bg-input/30 border-input bg-background flex h-10 w-full min-w-0 flex-row items-center rounded-md border shadow-sm shadow-black/5 sm:h-9",
+        "flex h-11 w-full min-w-0 flex-row items-center rounded-md border border-border bg-input",
         props.editable === false && "opacity-50",
         Platform.select({
           web: cn(
-            "transition-[color,box-shadow]",
-            "focus-within:border-ring focus-within:ring-ring/50 focus-within:ring-[3px]",
-            "has-[:invalid]:ring-destructive/20 dark:has-[:invalid]:ring-destructive/40 has-[:invalid]:border-destructive"
+            "transition-colors duration-200",
+            "has-[:invalid]:border-destructive",
+            "has-[:invalid]:ring-2",
+            "has-[:invalid]:ring-destructive/20",
           ),
-        })
+        }),
       )}
     >
       {leftIcon && (
@@ -58,25 +59,27 @@ const InputWithIcon = ({
       {!asText ? (
         <TextInput
           className={cn(
-            "text-foreground flex-1 px-3 py-1 text-base leading-5",
-            !leftIcon && "pl-3",
-            !rightIcon && "pr-3",
+            "flex-1 text-sm text-foreground px-3",
             Platform.select({
               web: cn(
-                "placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground outline-none md:text-sm"
+                "outline-none",
+                "placeholder:text-muted-foreground",
+                "selection:bg-primary",
+                "selection:text-primary-foreground",
+                "md:text-sm",
               ),
-              native: "placeholder:text-muted-foreground/50",
+              native: "placeholder:text-muted-foreground",
             }),
-            className
+            className,
           )}
           {...props}
         />
       ) : (
         <Text
           className={cn(
-            "text-foreground flex-1 px-3 py-1 text-base leading-5",
-            !props.value && "text-muted-foreground/50",
-            className
+            "flex-1 text-sm text-foreground px-3",
+            !props.value && "text-muted-foreground",
+            className,
           )}
         >
           {props.value || props.placeholder}

@@ -1,5 +1,6 @@
 import { getMonthlyApplicationStats } from "@/api/query";
 import useQuery from "@/hooks/useQuery";
+import { COLORS } from "@/theme/color";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useState } from "react";
 import { View } from "react-native";
@@ -42,7 +43,7 @@ const MonthlyJobsChart = () => {
     return (
       <StateMessage
         iconName="warning-outline"
-        iconColor="#EF4444"
+        iconColor={COLORS.danger}
         title="Something went wrong"
         description="We couldn't load your stats. Please try again."
         containerClass="px-0"
@@ -57,32 +58,22 @@ const MonthlyJobsChart = () => {
         <CardHeader className="px-0 gap-4">
           <View className="flex-row items-center gap-3">
             <View
+              className="h-10 w-10 items-center justify-center rounded-xl"
               style={{
-                width: 42,
-                height: 42,
-                borderRadius: 12,
-                backgroundColor: "#F3EEFF",
-                justifyContent: "center",
-                alignItems: "center",
+                backgroundColor: COLORS.primary + 20,
               }}
             >
               <MaterialCommunityIcons
                 name="chart-bar"
-                size={24}
-                color="#723FEB"
+                size={22}
+                color={COLORS.primary}
               />
             </View>
 
             <View>
               <Text variant="large">Monthly Applications</Text>
 
-              <Text
-                variant={"small"}
-                style={{
-                  color: "#6B7280",
-                  marginTop: -2,
-                }}
-              >
+              <Text variant="small" className="mt-[-2px] text-muted-foreground">
                 Job applications by month
               </Text>
             </View>
@@ -103,7 +94,7 @@ const MonthlyJobsChart = () => {
             key={JSON.stringify(chartData)}
             data={chartData.map((item, index) => ({
               ...item,
-              frontColor: selected === index ? "#723FEB" : "#A78BFA",
+              frontColor: COLORS.primary,
               onPress: () => setSelected(index),
             }))}
             barWidth={22}
@@ -116,10 +107,10 @@ const MonthlyJobsChart = () => {
             xAxisThickness={0}
             yAxisThickness={0}
             yAxisTextStyle={{
-              color: "#888",
+              color: COLORS.mutedForeground,
             }}
             xAxisLabelTextStyle={{
-              color: "#666",
+              color: COLORS.mutedForeground,
               fontSize: 12,
             }}
             noOfSections={5}
@@ -127,39 +118,10 @@ const MonthlyJobsChart = () => {
             animationDuration={900}
             showValuesAsTopLabel
             topLabelTextStyle={{
-              color: "#222",
+              color: COLORS.foreground,
               fontWeight: "600",
             }}
           />
-        )}
-
-        {selected !== null && (
-          <View
-            style={{
-              marginTop: 20,
-              padding: 12,
-              backgroundColor: "#F3F4F6",
-              borderRadius: 12,
-            }}
-          >
-            <Text
-              style={{
-                fontWeight: "700",
-                fontSize: 16,
-              }}
-            >
-              {chartData[selected].label}
-            </Text>
-
-            <Text
-              style={{
-                marginTop: 4,
-                color: "#555",
-              }}
-            >
-              {chartData[selected].value} jobs applied
-            </Text>
-          </View>
         )}
       </CardContent>
     </Card>

@@ -1,4 +1,5 @@
 import useNetworkInfo from "@/hooks/useNetworkInfo";
+import { COLORS } from "@/theme/color";
 import { useEffect } from "react";
 import { Text, View } from "react-native";
 import Animated, {
@@ -31,7 +32,7 @@ const NetworkError = () => {
         <View className="bg-white absolute top-0 bottom-0 left-0 right-0 z-50">
           <StateMessage
             iconName={"cloud-offline-outline"}
-            iconColor="#EF4444"
+            iconColor={COLORS.danger}
             title={"You're Offline"}
             description={
               "Looks like you lost your internet connection. Check your connection."

@@ -65,7 +65,6 @@ const DebounceSearch = ({ setSearchResult }: IDebounceSearchProps) => {
   return (
     <Input
       placeholder="Enter Company name, job title, work mode, location"
-      containerClassName="h-9"
       className="text-sm"
       onChangeText={setValue}
     />

@@ -1,3 +1,4 @@
+import { COLORS } from "@/theme/color";
 import { textTransform } from "@/utils/text-transform";
 import { APPLICATION_STATUS } from "@/validation/constants";
 import { TApplicationStatus } from "@/validation/jobApplication.yup";
@@ -5,13 +6,26 @@ import { ScrollView, View } from "react-native";
 import { Text } from "../ui/text";
 
 const getStatusStyle = (status: TApplicationStatus) => {
-  if (status === "applied") return "bg-blue-100 text-blue-700";
+  if (status === "applied")
+    return {
+      backgroundColor: COLORS.primary + 40,
+      color: COLORS.primary,
+    };
   else if (status === "interview" || status === "telephonic interview")
-    return "bg-yellow-100 text-yellow-700";
-  else if (status === "rejected") return "bg-red-100 text-red-700";
-  else if (status === "offer received") return "bg-green-100 text-green-700";
+    return {
+      backgroundColor: COLORS.warning + 40,
+      color: COLORS.warning,
+    };
+  else if (status === "rejected")
+    return { backgroundColor: COLORS.danger + 40, color: COLORS.danger };
+  else if (status === "offer received")
+    return { backgroundColor: COLORS.success + 40, color: COLORS.success };
   //  else if(status === "shortlisted") return "bg-purple-100 text-purple-700";
-  else return "bg-gray-100 text-gray-700";
+  else
+    return {
+      backgroundColor: COLORS.mutedForeground + 40,
+      color: COLORS.mutedForeground,
+    };
 };
 
 const getCurrentStatus = (status: TApplicationStatus) => {
@@ -51,7 +65,7 @@ const getCurrentStatus = (status: TApplicationStatus) => {
 
 const StatusBadge = ({ status }: { status: TApplicationStatus }) => {
   return (
-    <View className={`px-3 py-2 rounded-md ${getStatusStyle(status)}`}>
+    <View className={`px-3 py-2 rounded-md`} style={getStatusStyle(status)}>
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
         <View className="flex-1">
           <Text

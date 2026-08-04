@@ -28,7 +28,8 @@ const StatCard = ({
           {label}
         </CardTitle>
         <View
-          className={`w-7 h-7 ${bgColor} rounded-full items-center justify-center`}
+          className={`w-7 h-7 rounded-full items-center justify-center`}
+          style={{ backgroundColor: bgColor }}
         >
           {icon}
         </View>

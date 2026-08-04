@@ -27,7 +27,7 @@ const JobCardLoading = ({
       </CardContent>
 
       {/* additional info skeleton */}
-      <CardFooter className="px-4 pt-3 flex-row justify-between items-center border-t border-border/50">
+      <CardFooter className="px-4 pt-3 flex-row justify-between items-center border-t border-border">
         <Skeleton className="w-28 h-6" />
 
         <Skeleton className="w-28 h-6" />

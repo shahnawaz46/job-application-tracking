@@ -73,7 +73,7 @@ const YearDropDown = ({
                 <SelectValue placeholder="Year" />
               </SelectTrigger>
 
-              <SelectContent insets={contentInsets} className="w-28">
+              <SelectContent insets={contentInsets} className="w-28 min-w-28">
                 <SelectGroup>
                   {yearOptions.map((item) => (
                     <SelectItem

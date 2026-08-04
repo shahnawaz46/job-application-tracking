@@ -5,7 +5,6 @@ import ProfileInfo from "@/components/profile/ProfileInfo";
 import ProfilePic from "@/components/profile/ProfilePic";
 import { ToastMessage } from "@/components/Toast";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
 import { Text } from "@/components/ui/text";
 import PageWrapper from "@/components/wrapper/PageWrapper";
 import useAsyncAction from "@/hooks/useAsyncAction";
@@ -36,49 +35,45 @@ const ProfileScreen = () => {
     <PageWrapper safeAreaViewClassName="wrapper-space wrapper-space-x">
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerClassName="pb-8"
+        contentContainerClassName="pb-14"
       >
-        <View className="flex-1">
-          {/* Header */}
-          <Header title="Profile" />
+        {/* Header */}
+        <Header title="Profile" />
 
-          {/* Proflie Picture */}
-          <ProfilePic
-            full_name={profile.full_name}
-            profile_pic={profile.profile_pic}
-            isLoading={isLoading}
-          />
+        {/* Proflie Picture */}
+        <ProfilePic
+          full_name={profile.full_name}
+          profile_pic={profile.profile_pic}
+          isLoading={isLoading}
+        />
 
-          {/* Profile Info */}
-          <ProfileInfo
-            full_name={profile.full_name}
-            email={profile.email}
-            joined={profile.created_at}
-            isLoading={isLoading}
-          />
-        </View>
-
-        {/* separator */}
-        <Separator />
+        {/* Profile Info */}
+        <ProfileInfo
+          full_name={profile.full_name}
+          email={profile.email}
+          joined={profile.created_at}
+          isLoading={isLoading}
+        />
 
         {/* Account Section */}
         <AccountSection />
 
         {/* Logout Button */}
-        <View className="px-4 pt-6">
+        <View className="mt-6">
           <Button
-            size={"lg"}
-            className="bg-red-50 active:bg-red-200 border border-red-200"
+            variant="outline"
+            size="lg"
+            className="border-red-200 bg-red-50"
             onPress={handleLogout}
             disabled={isPending}
           >
             {isPending ? (
               <ButtonLoading
-                text="Logging out..."
-                textClassName="text-red-600"
+                text="Signing out..."
+                textClassName="text-danger"
               />
             ) : (
-              <Text className="text-red-600 font-semibold">Log Out</Text>
+              <Text className="font-semibold text-danger">Log Out</Text>
             )}
           </Button>
         </View>

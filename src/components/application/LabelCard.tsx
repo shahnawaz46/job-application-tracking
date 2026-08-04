@@ -20,7 +20,7 @@ interface ILabelCardProps {
 
 const LabelCard = ({
   iconName,
-  iconColor = "#6B7280",
+  iconColor,
   iconSize = 14,
   label,
   textVariant = "xs",
@@ -30,10 +30,7 @@ const LabelCard = ({
 }: ILabelCardProps) => {
   return (
     <View
-      className={cn(
-        "px-3 py-[0.313rem] bg-muted/80 rounded-md",
-        containerClassName,
-      )}
+      className={cn("rounded-sm bg-secondary px-3 py-1.5", containerClassName)}
     >
       <ScrollView
         horizontal
@@ -43,7 +40,7 @@ const LabelCard = ({
         {iconName && (
           <Ionicons name={iconName} size={iconSize} color={iconColor} />
         )}
-        <Text variant={textVariant} className={cn("", textClassName)}>
+        <Text variant={textVariant} className={cn(textClassName)}>
           {isTransform ? textTransform(label) : label}
         </Text>
       </ScrollView>

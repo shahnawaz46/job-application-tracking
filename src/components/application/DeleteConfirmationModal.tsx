@@ -1,3 +1,4 @@
+import { COLORS } from "@/theme/color";
 import { Ionicons } from "@expo/vector-icons";
 import { View } from "react-native";
 import { Button } from "../ui/button";
@@ -27,8 +28,11 @@ const DeleteConfirmationModal = ({
   return (
     <ModalWrapper>
       {/* icon */}
-      <View className="w-16 h-16 bg-red-100 rounded-full items-center justify-center self-center mb-4">
-        <Ionicons name="warning" size={32} color="#EF4444" />
+      <View
+        className="w-16 h-16 rounded-full items-center justify-center self-center mb-4"
+        style={{ backgroundColor: COLORS.danger + 30 }}
+      >
+        <Ionicons name="warning" size={32} color={COLORS.danger} />
       </View>
 
       {/* title */}

@@ -1,8 +1,10 @@
+import { cn } from "@/lib/utils";
+import { COLORS } from "@/theme/color";
 import { lightHaptic } from "@/utils/haptics";
 import { Feather } from "@expo/vector-icons";
 import Constants from "expo-constants";
 import { useRouter } from "expo-router";
-import { Pressable, View } from "react-native";
+import { Pressable, StyleSheet, View } from "react-native";
 import { Text } from "../ui/text";
 
 // types/interface
@@ -23,31 +25,14 @@ const accountItems: {
   {
     icon: "user",
     title: "Edit Profile",
-    subtitle: "Update your info",
+    subtitle: "Manage your personal information",
     route: "/(protected)/edit-profile",
     hasPage: true,
   },
-  //   {
-  //     icon: "bell",
-  //     title: "Notifications",
-  //     subtitle: "Manage alerts",
-  //     showBadge: true,
-  //   },
-  //   {
-  //     icon: "lock",
-  //     title: "Privacy & Security",
-  //     subtitle: "Control your data",
-  //   },
-  //   { icon: "settings", title: "Settings", subtitle: "App preferences" },
-  //   {
-  //     icon: "help-circle",
-  //     title: "Help & Support",
-  //     subtitle: "Get assistance",
-  //   },
   {
     icon: "info",
     title: "About",
-    subtitle: appVersion || "1.0.0",
+    subtitle: `Version ${appVersion || "1.0.0"}`,
     hasPage: false,
   },
 ];
@@ -56,67 +41,90 @@ const AccountSection = () => {
   const router = useRouter();
 
   return (
-    <View className="mt-2">
-      <View>
-        {accountItems.map((item, index) => {
-          const isClickable = item.hasPage;
+    <View className="mt-6">
+      <Text
+        variant="xs"
+        className="px-2 pb-3 font-semibold uppercase tracking-widest text-muted-foreground"
+      >
+        Account
+      </Text>
 
-          return (
-            <Pressable
-              key={index}
-              disabled={!isClickable}
-              android_ripple={isClickable ? { color: "rgba(0,0,0,0.1)" } : null}
-              accessibilityRole={isClickable ? "button" : undefined}
-              // className="bg-white"
-              onPress={() => {
-                if (!isClickable) return;
-                lightHaptic();
+      {accountItems.map((item, index) => {
+        const isClickable = item.hasPage;
 
-                if (item.route) {
-                  router.navigate(item.route);
-                }
-              }}
-            >
-              {({ pressed }) => (
+        return (
+          <Pressable
+            key={index}
+            disabled={!isClickable}
+            android_ripple={
+              isClickable
+                ? {
+                    color: COLORS.primary + 10,
+                  }
+                : undefined
+            }
+            onPress={() => {
+              if (!isClickable) return;
+              lightHaptic();
+
+              if (item.route) {
+                router.navigate(item.route);
+              }
+            }}
+          >
+            {({ pressed }) => (
+              <View
+                className="flex-row items-center px-2 py-4"
+                style={{
+                  opacity: pressed ? 0.75 : 1,
+                  borderBottomWidth:
+                    index === accountItems.length - 1
+                      ? 0
+                      : StyleSheet.hairlineWidth,
+                  borderBottomColor: COLORS.border,
+                }}
+              >
                 <View
-                  className="flex-row items-center px-4 py-4 border-b border-gray-100"
-                  style={{
-                    opacity: isClickable && pressed ? 0.6 : 1,
-                  }}
+                  className={cn(
+                    "h-11 w-11 items-center justify-center rounded-md",
+                  )}
+                  style={{ backgroundColor: COLORS.mutedForeground + 20 }}
                 >
-                  <View className="w-10 h-10 bg-gray-100 rounded-full items-center justify-center">
-                    <Feather name={item.icon} size={20} color="#6B7280" />
-                  </View>
-
-                  <View className="flex-1 ml-4">
-                    <Text className="font-semibold text-gray-900">
-                      {item.title}
-                    </Text>
-
-                    {item.subtitle && (
-                      <Text variant={"xs"} className="text-gray-500">
-                        {item.subtitle}
-                      </Text>
-                    )}
-                  </View>
-
-                  {item?.showBadge && (
-                    <View className="bg-red-500 w-5 h-5 rounded-full items-center justify-center mr-2">
-                      <Text variant={"xs"} className="text-white font-bold">
-                        3
-                      </Text>
-                    </View>
-                  )}
-
-                  {item.hasPage && (
-                    <Feather name="chevron-right" size={20} color="#9CA3AF" />
-                  )}
+                  <Feather
+                    name={item.icon}
+                    size={19}
+                    color={COLORS.mutedForeground}
+                  />
                 </View>
-              )}
-            </Pressable>
-          );
-        })}
-      </View>
+
+                <View className="ml-4 flex-1">
+                  <Text className="font-semibold">{item.title}</Text>
+
+                  <Text variant="xs" className="mt-1 text-muted-foreground">
+                    {item.subtitle}
+                  </Text>
+                </View>
+
+                {item.showBadge && (
+                  <View className="mr-3 rounded-full bg-danger px-2 py-0.5">
+                    <Text variant="xs" className="font-semibold text-white">
+                      3
+                    </Text>
+                  </View>
+                )}
+
+                {item.hasPage && (
+                  <Feather
+                    name="chevron-right"
+                    size={18}
+                    color={COLORS.mutedForeground}
+                  />
+                )}
+              </View>
+            )}
+          </Pressable>
+        );
+      })}
     </View>
   );
 };

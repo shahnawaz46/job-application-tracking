@@ -9,6 +9,7 @@ import { Text } from "@/components/ui/text";
 import PageWrapper from "@/components/wrapper/PageWrapper";
 import { useAuthContext } from "@/hooks/useAuthContext";
 import useQuery from "@/hooks/useQuery";
+import { COLORS } from "@/theme/color";
 import { percent } from "@/utils/number";
 import { AntDesign, Ionicons } from "@expo/vector-icons";
 import { ScrollView, View } from "react-native";
@@ -43,7 +44,7 @@ const DashboardScreen = () => {
     return (
       <StateMessage
         iconName="warning-outline"
-        iconColor="#EF4444"
+        iconColor={COLORS.danger}
         title="Something went wrong"
         description="We couldn't load your stats. Please try again."
       />
@@ -54,7 +55,7 @@ const DashboardScreen = () => {
     <PageWrapper safeAreaViewClassName="wrapper-space wrapper-space-x">
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerClassName="pb-8"
+        contentContainerClassName="pb-12"
       >
         {/* Header */}
         <Header
@@ -66,21 +67,23 @@ const DashboardScreen = () => {
         <View className="my-4 gap-3">
           <View className="flex-row gap-3">
             <StatCard
-              icon={<Ionicons name={"briefcase"} size={15} color={"#6366F1"} />}
+              icon={
+                <Ionicons name={"briefcase"} size={15} color={COLORS.primary} />
+              }
               label="Applied"
               value={applicationStatusStatsData?.applied ?? 0}
-              bgColor="bg-blue-100"
+              bgColor={COLORS.primary + 20}
               isLoading={isLoading}
             />
           </View>
           <View className="flex-row gap-3">
             <StatCard
               icon={
-                <Ionicons name={"call-outline"} size={15} color={"#0EA5E9"} />
+                <Ionicons name={"call-outline"} size={15} color={COLORS.info} />
               }
               label="Phone/HR"
               value={applicationStatusStatsData?.telephonic_interview ?? 0}
-              bgColor="bg-sky-100"
+              bgColor={COLORS.info + 20}
               isLoading={isLoading}
             />
             <StatCard
@@ -88,22 +91,24 @@ const DashboardScreen = () => {
                 <Ionicons
                   name={"calendar-outline"}
                   size={15}
-                  color={"#F59E0B"}
+                  color={COLORS.warning}
                 />
               }
               label="Interviews"
               value={applicationStatusStatsData?.interview ?? 0}
-              bgColor="bg-yellow-100"
+              bgColor={COLORS.warning + 20}
               isLoading={isLoading}
             />
           </View>
 
           <View className="flex-row gap-3">
             <StatCard
-              icon={<Ionicons name={"checkmark"} size={15} color={"#10B981"} />}
+              icon={
+                <Ionicons name={"checkmark"} size={15} color={COLORS.success} />
+              }
               label="Offers"
               value={applicationStatusStatsData?.offer_received ?? 0}
-              bgColor="bg-green-100"
+              bgColor={COLORS.success + 20}
               isLoading={isLoading}
             />
             <StatCard
@@ -111,12 +116,12 @@ const DashboardScreen = () => {
                 <Ionicons
                   name={"alert-circle-outline"}
                   size={15}
-                  color={"#8B5CF6"}
+                  color={COLORS.danger}
                 />
               }
               label="Rejected"
               value={applicationStatusStatsData?.rejected ?? 0}
-              bgColor="bg-purple-100"
+              bgColor={COLORS.danger + 20}
               isLoading={isLoading}
             />
           </View>
@@ -132,7 +137,9 @@ const DashboardScreen = () => {
         {/* success and offer rate cards */}
         <View className="flex-row gap-3 mb-3">
           <AnalyticsCard
-            icon={<AntDesign name={"bar-chart"} size={18} color={"#10B981"} />}
+            icon={
+              <AntDesign name={"bar-chart"} size={18} color={COLORS.success} />
+            }
             label="Success Rate"
             value={percent(
               applicationStatusStatsData?.interview ?? 0,
@@ -142,7 +149,9 @@ const DashboardScreen = () => {
             isLoading={isLoading}
           />
           <AnalyticsCard
-            icon={<AntDesign name={"bar-chart"} size={18} color={"#10B981"} />}
+            icon={
+              <AntDesign name={"bar-chart"} size={18} color={COLORS.success} />
+            }
             label="Offer Rate"
             value={percent(
               applicationStatusStatsData?.offer_received ?? 0,

@@ -15,7 +15,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
 import { Text } from "@/components/ui/text";
 import FormWrapper from "@/components/wrapper/FormWrapper";
 import PageWrapper from "@/components/wrapper/PageWrapper";
@@ -124,9 +123,7 @@ const EditProfile = () => {
             isLoading={isLoading}
           />
 
-          <Separator />
-
-          <View className="gap-6 mt-4">
+          <View className="gap-4">
             <View className="gap-1.5">
               <Label htmlFor="full_name">Full Name</Label>
               <Controller
@@ -216,7 +213,11 @@ const EditProfile = () => {
             onPress={handleSubmit(onSubmit)}
             disabled={isPending}
           >
-            {isPending ? <ButtonLoading text="Saving..." /> : <Text>Save</Text>}
+            {isPending ? (
+              <ButtonLoading text="Saving..." />
+            ) : (
+              <Text>Save Changes</Text>
+            )}
           </Button>
         </View>
       </FormWrapper>

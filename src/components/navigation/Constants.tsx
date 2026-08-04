@@ -10,26 +10,26 @@ interface IIconsProps {
 
 export const TabBarIcons = {
   index: ({ isFocused, color }: IIconsProps) => (
-    <Octicons name={isFocused ? "home-fill" : "home"} size={18} color={color} />
+    <Octicons name={isFocused ? "home-fill" : "home"} size={17} color={color} />
   ),
   application: ({ isFocused, color }: IIconsProps) => (
     <MaterialCommunityIcons
       name={isFocused ? "application" : "application-outline"}
-      size={18}
+      size={17}
       color={color}
     />
   ),
   "add-application": ({ isFocused, color }: IIconsProps) => (
-    <FontAwesome6 name={"add"} size={18} color={color} />
+    <FontAwesome6 name={"add"} size={17} color={color} />
   ),
   profile: ({ isFocused, color }: IIconsProps) => (
-    <Feather name={"user"} size={18} color={color} />
+    <Feather name={"user"} size={17} color={color} />
   ),
 };
 
 export enum TabBarLabelTitle {
-  "index" = "Dashboard",
-  "application" = "Application",
+  index = "Dashboard",
+  application = "Application",
   "add-application" = "Add",
-  "profile" = "Profile",
+  profile = "Profile",
 }

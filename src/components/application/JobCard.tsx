@@ -1,3 +1,4 @@
+import { COLORS } from "@/theme/color";
 import { formatDate } from "@/utils/date";
 import { lightHaptic } from "@/utils/haptics";
 import { Ionicons } from "@expo/vector-icons";
@@ -50,27 +51,15 @@ const JobCard = ({ item, onDelete, onEdit }: IJobCardProps) => {
         <StatusBadge status={item.application_status} />
 
         <View className="flex-row flex-wrap gap-2">
-          <LabelCard
-            iconName="desktop-outline"
-            label={item.work_mode}
-            textClassName="text-muted-foreground"
-          />
+          <LabelCard iconName="desktop-outline" label={item.work_mode} />
 
           {/* optional details */}
           {item.job_location && (
-            <LabelCard
-              iconName="location-outline"
-              label={item.job_location}
-              textClassName="text-muted-foreground"
-            />
+            <LabelCard iconName="location-outline" label={item.job_location} />
           )}
 
           {item.job_type && (
-            <LabelCard
-              iconName="briefcase-outline"
-              label={item.job_type}
-              textClassName="text-muted-foreground"
-            />
+            <LabelCard iconName="briefcase-outline" label={item.job_type} />
           )}
         </View>
 
@@ -79,19 +68,18 @@ const JobCard = ({ item, onDelete, onEdit }: IJobCardProps) => {
             <LabelCard
               label={`via ${item.application_source}`}
               isTransform={false}
-              containerClassName="bg-primary/10"
               textClassName="font-medium"
             />
           </View>
         )}
       </CardContent>
 
-      <CardFooter className="px-4 pt-3 flex-row gap-3 justify-between items-center border-t border-border/50">
+      <CardFooter className="px-4 pt-3 flex-row gap-3 justify-between items-center border-t border-border">
         {/* salray range */}
         {item.salary_range ? (
           <LabelCard
             iconName="cash-outline"
-            iconColor={"#10B981"}
+            iconColor={COLORS.success}
             label={item.salary_range}
             isTransform={false}
             textVariant={"small"}
@@ -109,18 +97,20 @@ const JobCard = ({ item, onDelete, onEdit }: IJobCardProps) => {
               lightHaptic();
               onEdit(item);
             }}
-            className="w-7 h-7 bg-blue-100 rounded-md items-center justify-center"
+            className="w-7 h-7 rounded-md items-center justify-center"
+            style={{ backgroundColor: COLORS.primary + 20 }}
           >
-            <Ionicons name="create-outline" size={16} color="#6366F1" />
+            <Ionicons name="create-outline" size={16} color={COLORS.primary} />
           </Pressable>
           <Pressable
             onPress={() => {
               lightHaptic();
               onDelete(item);
             }}
-            className="w-7 h-7 bg-red-100 rounded-md items-center justify-center"
+            className="w-7 h-7 rounded-md items-center justify-center"
+            style={{ backgroundColor: COLORS.danger + 20 }}
           >
-            <Ionicons name="trash-outline" size={16} color="#EF4444" />
+            <Ionicons name="trash-outline" size={16} color={COLORS.danger} />
           </Pressable>
         </View>
       </CardFooter>

@@ -84,7 +84,7 @@ const Signup = () => {
   return (
     <PageWrapper>
       <FormWrapper>
-        <Card className="border-border/0 shadow-none bg-background">
+        <Card className="border-0 shadow-none bg-background">
           <CardHeader>
             <CardTitle className="text-center text-xl">
               Create your account

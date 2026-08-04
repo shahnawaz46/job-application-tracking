@@ -1,27 +1,31 @@
-import Ionicons from "@expo/vector-icons/Ionicons";
+import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import React from "react";
 import { View } from "react-native";
 import { Button } from "../ui/button";
 import { Text } from "../ui/text";
 
-const Header = ({ title }: { title: string }) => {
+interface HeaderProps {
+  title: string;
+}
+
+const Header = ({ title }: HeaderProps) => {
   const router = useRouter();
   return (
     <View className="flex-row justify-between items-center">
       <Button
-        variant={"outline"}
-        size={"xs"}
-        className="w-10 p-0"
+        variant="secondary"
+        size="icon"
+        className="h-11 w-11"
         onPress={() => router.back()}
       >
-        <Ionicons name="arrow-back-outline" size={20} color="black" />
+        <Ionicons name="arrow-back" size={20} color="#475569" />
       </Button>
-      <Text variant={"xl"} className="text-center">
+
+      <Text variant="xl" className="font-semibold">
         {title}
       </Text>
 
-      <View className="w-10"></View>
+      <View className="h-11 w-11" />
     </View>
   );
 };

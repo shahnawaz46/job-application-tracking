@@ -16,7 +16,6 @@ interface IAnalyticsCardProps {
   icon: ReactNode;
   label: string;
   value: string;
-  bgColor?: string;
   bottomText: string;
   isLoading: boolean;
 }
@@ -25,16 +24,13 @@ const AnalyticsCard = ({
   icon,
   label,
   value,
-  bgColor,
   bottomText,
   isLoading,
 }: IAnalyticsCardProps) => {
   return (
     <Card className="flex-1 gap-1 p-3">
       <CardHeader className="flex-row items-center p-0 gap-0">
-        <View
-          className={`w-7 h-7 ${bgColor} rounded-full items-center justify-center`}
-        >
+        <View className={`w-7 h-7 rounded-full items-center justify-center`}>
           {icon}
         </View>
         <CardTitle variant={"small"} className="font-normal">
