@@ -1,3 +1,4 @@
+import { resendOTP, verifyAccount } from "@/api/auth.api";
 import { ToastMessage } from "@/components/Toast";
 import ReactHookFormError from "@/components/fallback/ReactHookFormError";
 import ButtonLoading from "@/components/loaders/ButtonLoading";
@@ -14,23 +15,20 @@ import { Label } from "@/components/ui/label";
 import { Text } from "@/components/ui/text";
 import FormWrapper from "@/components/wrapper/FormWrapper";
 import PageWrapper from "@/components/wrapper/PageWrapper";
-import useAsyncAction from "@/hooks/useAsyncAction";
 import useCountdown from "@/hooks/useCountdown";
-import { supabase } from "@/lib/supabase";
 import { otpSchema } from "@/validation/auth.yup";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useMutation } from "@tanstack/react-query";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useRef } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Pressable, View } from "react-native";
 
 const VerifyEmail = () => {
-  const resendOtpRef = useRef(30);
+  const resendOtpRef = useRef(60);
   const { countdown, restartCountdown } = useCountdown({
     seconds: resendOtpRef.current,
   });
-  const { isPending, execute } = useAsyncAction();
-  const { isPending: isOTPPending, execute: otpExecute } = useAsyncAction();
   const { email } = useLocalSearchParams<{ email: string }>();
   const router = useRouter();
 
@@ -43,6 +41,21 @@ const VerifyEmail = () => {
     resolver: yupResolver(otpSchema),
   });
 
+  const { mutate: verifyAccountMutate, isPending: isVerifyAccountPending } =
+    useMutation({
+      mutationFn: verifyAccount,
+      onSuccess: () => {
+        router.push("/(tabs)");
+      },
+      onError: (error) => {
+        ToastMessage({
+          type: "error",
+          text1: error?.message || "Otp verification failed",
+        });
+      },
+    });
+
+  // submit handler (pre-mutation validation)
   const onSubmit = ({ otp }: { otp: string }) => {
     if (!email) {
       ToastMessage({
@@ -53,52 +66,31 @@ const VerifyEmail = () => {
       return;
     }
 
-    execute(async () => {
-      const { error } = await supabase.auth.verifyOtp({
-        email: email,
-        token: otp,
-        type: "email",
-      });
-
-      if (error) {
-        ToastMessage({
-          type: "error",
-          text1: error?.message || "Otp verification failed",
-        });
-        return;
-      }
-
-      router.push("/(tabs)");
-    });
+    verifyAccountMutate({ email, otp, type: "email" });
   };
 
-  const resendOTP = () => {
-    otpExecute(async () => {
-      const { error, data } = await supabase.auth.resend({
-        type: "signup",
-        email: email,
-      });
+  const { mutate: resendOTPMutate, isPending: isResendOtpPending } =
+    useMutation({
+      mutationFn: resendOTP,
+      onSuccess: () => {
+        ToastMessage({
+          type: "success",
+          text1:
+            "We've sent you a new verification code. Please check your email.",
+        });
 
-      if (error) {
+        resendOtpRef.current *= 3;
+        restartCountdown(resendOtpRef.current);
+      },
+      onError: (error) => {
         ToastMessage({
           type: "error",
           text1:
             error?.message ||
             "We couldn't resend the verification code right now. Please try again shortly.",
         });
-        return;
-      }
-
-      ToastMessage({
-        type: "success",
-        text1:
-          "We've sent you a new verification code. Please check your email.",
-      });
-
-      resendOtpRef.current *= 3;
-      restartCountdown(resendOtpRef.current);
+      },
     });
-  };
 
   return (
     <PageWrapper>
@@ -141,10 +133,10 @@ const VerifyEmail = () => {
                 <Button
                   variant="link"
                   size="xs"
-                  disabled={countdown > 0 || isOTPPending}
-                  onPress={resendOTP}
+                  disabled={countdown > 0 || isResendOtpPending}
+                  onPress={() => resendOTPMutate(email)}
                 >
-                  {isOTPPending ? (
+                  {isResendOtpPending ? (
                     <Text className="text-center">
                       Resending verification code...
                     </Text>
@@ -160,9 +152,9 @@ const VerifyEmail = () => {
                 <Button
                   className="w-full"
                   onPress={handleSubmit(onSubmit)}
-                  disabled={isPending}
+                  disabled={isVerifyAccountPending}
                 >
-                  {isPending ? (
+                  {isVerifyAccountPending ? (
                     <ButtonLoading text="Verifying..." />
                   ) : (
                     <Text>Continue</Text>

@@ -1,114 +1,118 @@
 import {
+  deleteJobApplication,
   getAllApplications,
   getApplicationStats,
   getMonthlyApplicationStats,
-} from "@/api/query";
-import DebounceSearch from "@/components/application/DebounceSearch";
+  searchApplications,
+} from "@/api/application.api";
+import { ToastMessage } from "@/components/Toast";
 import DeleteConfirmationModal from "@/components/application/DeleteConfirmationModal";
 import JobCard from "@/components/application/JobCard";
 import Header from "@/components/dashboard/Header";
 import StateMessage from "@/components/fallback/StateMessge";
 import JobCardLoading from "@/components/loaders/JobCardLoading";
-import { ToastMessage } from "@/components/Toast";
+import { Input } from "@/components/ui/input";
 import PageWrapper from "@/components/wrapper/PageWrapper";
 import { useAuthContext } from "@/hooks/useAuthContext";
-import useQuery, { invalidateQuery } from "@/hooks/useQuery";
-import { supabase } from "@/lib/supabase";
+import useDebounce from "@/hooks/useDebounce";
 import { COLORS } from "@/theme/color";
 import { DATA_LIMIT } from "@/validation/constants";
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { useRouter } from "expo-router";
-import { useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import { FlatList, View } from "react-native";
 
 // types/interface
-import type { IJobApplication } from "@/validation/jobApplication.yup";
-
-export interface IJobApplicationRes extends IJobApplication {
-  id: string;
-  user_id: string;
-  created_at: string;
-  updated_at: string;
-  search_text: string;
-}
+import type { IJobApplicationRes } from "@/types/interface";
 
 const ApplicationScreen = () => {
   const { profile } = useAuthContext();
   const router = useRouter();
-  const pageRef = useRef<number>(0);
 
   const {
     isLoading: isJobLoading,
-    data: jobData,
-    error: jobError,
-    fetchMoreData,
-    hasMore: jobHasMore,
-    onDelete: onDeleteJob,
-  } = useQuery<IJobApplicationRes[]>({
-    queryKey: getAllApplications.QUERY_KEY,
-    queryFn: getAllApplications.QUERY_FN(profile.id, [
-      pageRef.current * DATA_LIMIT,
-      pageRef.current * DATA_LIMIT + DATA_LIMIT,
-    ]),
+    data,
+    isError,
+    isFetchingNextPage,
+    fetchNextPage,
+    hasNextPage,
+  } = useInfiniteQuery<IJobApplicationRes[]>({
+    queryKey: [getAllApplications.QUERY_KEY],
+    queryFn: ({ pageParam }) =>
+      getAllApplications.QUERY_FN(profile.id, pageParam as number),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage, allPage) => {
+      return lastPage.length < DATA_LIMIT ? undefined : allPage.length;
+    },
   });
 
-  // search date
-  const [searchResult, setSearchResult] = useState<{
-    isSearching: boolean;
-    isLoading: boolean;
-    data: IJobApplicationRes[];
-  }>({ isSearching: false, isLoading: false, data: [] });
+  const applications = useMemo(() => data?.pages.flat() ?? [], [data]);
 
-  // state for model
+  const queryClient = useQueryClient();
+
+  // delete job application
   const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
   const [selectedJob, setSelectedJob] = useState<IJobApplicationRes | null>(
     null,
   );
 
-  const handleDelete = async () => {
-    if (!selectedJob) return;
+  const {
+    mutate: deleteJobApplicationMutate,
+    isPending: isDeleteJobApplicationPending,
+  } = useMutation({
+    mutationFn: deleteJobApplication,
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: [getAllApplications.QUERY_KEY],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: [getApplicationStats.QUERY_KEY],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: [getMonthlyApplicationStats.QUERY_KEY],
+        }),
+      ]);
 
-    onDeleteJob(
-      getAllApplications.QUERY_KEY,
-      async () =>
-        supabase.from("job_applications").delete().eq("id", selectedJob?.id),
-      selectedJob.id,
-    );
+      setShowDeleteModal(false);
+      setSelectedJob(null);
+      ToastMessage({
+        type: "success",
+        text1: "Job Application deleted successfully",
+      });
+    },
+    onError: (error) => {
+      ToastMessage({ type: "error", text1: error.message });
+    },
+  });
 
-    setShowDeleteModal(false);
-    setSelectedJob(null);
-    ToastMessage({
-      type: "success",
-      text1: "Job Application deleted successfully",
-    });
+  // search query
+  const [search, setSearch] = useState("");
+  const debouncedSearch = useDebounce(search, 600);
+  const isSearching = debouncedSearch.trim().length > 0;
 
-    invalidateQuery([
-      getApplicationStats.QUERY_KEY,
-      getAllApplications.QUERY_KEY,
-      getMonthlyApplicationStats.QUERY_KEY(new Date().getFullYear()),
-    ]);
-  };
+  const { data: searchData, isLoading: isSearchLoading } = useQuery<
+    IJobApplicationRes[]
+  >({
+    queryKey: [searchApplications.QUERY_KEY, debouncedSearch],
+    queryFn: () => searchApplications.QUERY_FN(profile.id, debouncedSearch),
+    enabled: isSearching,
+  });
+
+  // conditionally variables
+  const listData = isSearching ? (searchData ?? []) : applications;
+  const isLoading = isJobLoading || isSearchLoading;
 
   const handleEdit = (job: IJobApplicationRes) => {
     router.navigate({
       pathname: "/(tabs)/add-application",
-      params: { id: job.id, job: JSON.stringify(job) },
+      params: { jobId: job.id, job: JSON.stringify(job) },
     });
-  };
-
-  // conditionally variables
-  const listData = searchResult.isSearching ? searchResult.data : jobData;
-  const isLoading = isJobLoading || searchResult.isLoading;
-  const hasMore = searchResult.isSearching ? false : jobHasMore;
-
-  const fetchMoreApplication = () => {
-    pageRef.current += 1;
-    fetchMoreData(
-      getAllApplications.QUERY_KEY,
-      getAllApplications.QUERY_FN(profile.id, [
-        pageRef.current * DATA_LIMIT,
-        pageRef.current * DATA_LIMIT + DATA_LIMIT,
-      ]),
-    );
   };
 
   // for loading and empty message
@@ -121,11 +125,9 @@ const ApplicationScreen = () => {
     return (
       <StateMessage
         iconName="document-text-outline"
-        title={
-          searchResult.isSearching ? "No results found" : "No Applications Yet"
-        }
+        title={isSearching ? "No results found" : "No Applications Yet"}
         description={
-          searchResult.isSearching
+          isSearching
             ? "We couldn't find any applications matching your search. Try different keywords or add a new application."
             : "Start tracking your job applications by adding your first entry"
         }
@@ -137,7 +139,7 @@ const ApplicationScreen = () => {
   };
 
   // for show error
-  if (jobError) {
+  if (isError) {
     return (
       <StateMessage
         iconName="warning-outline"
@@ -157,7 +159,12 @@ const ApplicationScreen = () => {
         />
 
         <View className="mt-2 mb-3">
-          <DebounceSearch setSearchResult={setSearchResult} />
+          <Input
+            placeholder="Enter Company name, job title, location..."
+            value={search}
+            onChangeText={setSearch}
+            className="text-sm"
+          />
         </View>
 
         <FlatList
@@ -176,14 +183,22 @@ const ApplicationScreen = () => {
           )}
           showsVerticalScrollIndicator={false}
           ItemSeparatorComponent={() => <View className="h-3" />}
-          initialNumToRender={5}
-          maxToRenderPerBatch={10}
+          initialNumToRender={8}
+          maxToRenderPerBatch={8}
+          windowSize={11}
           updateCellsBatchingPeriod={100}
           ListEmptyComponent={ListEmtpy}
           ListFooterComponent={
-            hasMore ? <JobCardLoading containerClassName="mt-3" /> : null
+            !isSearching && hasNextPage ? (
+              <JobCardLoading containerClassName="mt-3" />
+            ) : null
           }
-          onEndReached={hasMore ? fetchMoreApplication : null}
+
+          onEndReached={() => {
+            if (!isSearching && hasNextPage && !isFetchingNextPage) {
+              fetchNextPage();
+            }
+          }}
           onEndReachedThreshold={0.5}
         />
       </View>
@@ -191,11 +206,14 @@ const ApplicationScreen = () => {
       <DeleteConfirmationModal
         open={showDeleteModal}
         job={selectedJob}
-        onConfirm={handleDelete}
+        onConfirm={() =>
+          selectedJob?.id && deleteJobApplicationMutate(selectedJob?.id)
+        }
         onCancel={() => {
           setShowDeleteModal(false);
           setSelectedJob(null);
         }}
+        isPending={isDeleteJobApplicationPending}
       />
     </PageWrapper>
   );

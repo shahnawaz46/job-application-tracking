@@ -1,3 +1,4 @@
+import { signIn } from "@/api/auth.api";
 import { ToastMessage } from "@/components/Toast";
 import ReactHookFormError from "@/components/fallback/ReactHookFormError";
 import ButtonLoading from "@/components/loaders/ButtonLoading";
@@ -17,25 +18,28 @@ import { Separator } from "@/components/ui/separator";
 import { Text } from "@/components/ui/text";
 import FormWrapper from "@/components/wrapper/FormWrapper";
 import PageWrapper from "@/components/wrapper/PageWrapper";
-import useAsyncAction from "@/hooks/useAsyncAction";
-import { supabase } from "@/lib/supabase";
-import { signInInitialState, signInSchema } from "@/validation/auth.yup";
+import { signInSchema } from "@/validation/auth.yup";
 import { Ionicons } from "@expo/vector-icons";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import { useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Pressable, View } from "react-native";
 
 // types/interfaces
-import type { ISignIn } from "@/validation/auth.yup";
+import type { ISignIn } from "@/types/interface";
 import type { TextInput } from "react-native";
+
+const signInInitialState: ISignIn = {
+  email: "",
+  password: "",
+};
 
 const SignIn = () => {
   const router = useRouter();
   const passwordInputRef = useRef<TextInput>(null);
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  const { isPending, execute } = useAsyncAction();
 
   const {
     control,
@@ -46,20 +50,17 @@ const SignIn = () => {
     resolver: yupResolver(signInSchema),
   });
 
-  const onSubmit = (userData: ISignIn) => {
-    execute(async () => {
-      const { error } = await supabase.auth.signInWithPassword(userData);
+  const { mutate: signInMutate, isPending } = useMutation({
+    mutationFn: signIn,
+    onError: (error) => {
+      ToastMessage({
+        type: "error",
+        text1:
+          error?.message || "Login failed, please try again after some time!",
+      });
+    },
+  });
 
-      if (error) {
-        ToastMessage({
-          type: "error",
-          text1:
-            error?.message || "Login failed, please try again after some time!",
-        });
-        return;
-      }
-    });
-  };
   return (
     <PageWrapper>
       <FormWrapper>
@@ -125,7 +126,9 @@ const SignIn = () => {
                       returnKeyType="send"
                       value={value}
                       onChangeText={onChange}
-                      onSubmitEditing={handleSubmit(onSubmit)}
+                      onSubmitEditing={handleSubmit((data: ISignIn) =>
+                        signInMutate(data),
+                      )}
                       rightIcon={
                         <Ionicons
                           name={showPassword ? "eye-off" : "eye"}
@@ -141,7 +144,7 @@ const SignIn = () => {
               </View>
               <Button
                 className="w-full"
-                onPress={handleSubmit(onSubmit)}
+                onPress={handleSubmit((data: ISignIn) => signInMutate(data))}
                 disabled={isPending}
               >
                 {isPending ? (

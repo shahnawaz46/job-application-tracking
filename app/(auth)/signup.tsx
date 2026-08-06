@@ -1,3 +1,4 @@
+import { signUp } from "@/api/auth.api";
 import ReactHookFormError from "@/components/fallback/ReactHookFormError";
 import ButtonLoading from "@/components/loaders/ButtonLoading";
 import { SocialConnections } from "@/components/social-signin/SocialConnections";
@@ -17,26 +18,31 @@ import { Separator } from "@/components/ui/separator";
 import { Text } from "@/components/ui/text";
 import FormWrapper from "@/components/wrapper/FormWrapper";
 import PageWrapper from "@/components/wrapper/PageWrapper";
-import useAsyncAction from "@/hooks/useAsyncAction";
-import { supabase } from "@/lib/supabase";
-import { signUpInitialState, signUpSchema } from "@/validation/auth.yup";
+import { signUpSchema } from "@/validation/auth.yup";
 import { Ionicons } from "@expo/vector-icons";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import { useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Pressable, View } from "react-native";
 
 // types/interfaces
-import type { ISignUp } from "@/validation/auth.yup";
+import type { ISignUp } from "@/types/interface";
 import type { TextInput } from "react-native";
+
+export const signUpInitialState: ISignUp = {
+  full_name: "",
+  email: "",
+  password: "",
+  confirm_password: "",
+};
 
 const Signup = () => {
   const router = useRouter();
   const emailInputRef = useRef<TextInput>(null);
   const passwordInputRef = useRef<TextInput>(null);
   const confirmPasswordInputRef = useRef<TextInput>(null);
-  const { isPending, execute } = useAsyncAction();
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
   const {
@@ -48,27 +54,13 @@ const Signup = () => {
     resolver: yupResolver(signUpSchema),
   });
 
-  const onSubmit = (userData: ISignUp) => {
-    execute(async () => {
-      const {
-        data: { user },
-        error,
-      } = await supabase.auth.signUp({
-        email: userData.email,
-        password: userData.password,
-        options: { data: { full_name: userData.full_name } },
-      });
-
-      if (error) {
-        ToastMessage({
-          type: "error",
-          text1:
-            error?.message ||
-            "Signup failed, please try again after some time!",
-        });
-        return;
-      }
-
+  const { mutate: signupMutate, isPending } = useMutation<
+    { email: string },
+    Error,
+    ISignUp
+  >({
+    mutationFn: signUp,
+    onSuccess: (data, payload) => {
       ToastMessage({
         type: "success",
         text1:
@@ -76,10 +68,17 @@ const Signup = () => {
       });
       router.push({
         pathname: "/(auth)/verify-email",
-        params: { email: user?.user_metadata?.email || userData.email },
+        params: { email: data.email || payload.email },
       });
-    });
-  };
+    },
+    onError: (error) => {
+      ToastMessage({
+        type: "error",
+        text1:
+          error?.message || "Signup failed, please try again after some time!",
+      });
+    },
+  });
 
   return (
     <PageWrapper>
@@ -182,7 +181,9 @@ const Signup = () => {
                       id="confirm_password"
                       secureTextEntry={!showPassword}
                       returnKeyType="send"
-                      onSubmitEditing={handleSubmit(onSubmit)}
+                      onSubmitEditing={handleSubmit((data) =>
+                        signupMutate(data),
+                      )}
                       value={value}
                       onChangeText={onChange}
                       rightIcon={
@@ -202,7 +203,7 @@ const Signup = () => {
               </View>
               <Button
                 className="w-full"
-                onPress={handleSubmit(onSubmit)}
+                onPress={handleSubmit((data) => signupMutate(data))}
                 disabled={isPending}
               >
                 {isPending ? (

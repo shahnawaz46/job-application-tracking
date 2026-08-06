@@ -1,3 +1,4 @@
+import { resetPassword, verifyAccount } from "@/api/auth.api";
 import ReactHookFormError from "@/components/fallback/ReactHookFormError";
 import ButtonLoading from "@/components/loaders/ButtonLoading";
 import { ToastMessage } from "@/components/Toast";
@@ -14,25 +15,24 @@ import { Label } from "@/components/ui/label";
 import { Text } from "@/components/ui/text";
 import FormWrapper from "@/components/wrapper/FormWrapper";
 import PageWrapper from "@/components/wrapper/PageWrapper";
-import useAsyncAction from "@/hooks/useAsyncAction";
-import { supabase } from "@/lib/supabase";
-import {
-  forgotPasswordInitialState,
-  forgotPasswordSchema,
-} from "@/validation/auth.yup";
+import { forgotPasswordSchema } from "@/validation/auth.yup";
 import { EMAIL_REGEX } from "@/validation/regex";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import { Controller, useForm } from "react-hook-form";
 import { Pressable, View } from "react-native";
 
 // types/interfaces
-import type { IForgotPasswordState } from "@/validation/auth.yup";
+import type { IForgotPasswordState } from "@/types/interface";
+
+export const forgotPasswordInitialState: IForgotPasswordState = {
+  email: "",
+  otp: "",
+};
 
 const ForgotPassword = () => {
   const router = useRouter();
-  const { isPending: isOtpPending, execute: otpExecute } = useAsyncAction();
-  const { isPending, execute } = useAsyncAction();
 
   const {
     control,
@@ -46,57 +46,56 @@ const ForgotPassword = () => {
     resolver: yupResolver(forgotPasswordSchema),
   });
 
+  const { mutate: resetPasswordMutate, isPending: isResetPasswordPending } =
+    useMutation({
+      mutationFn: resetPassword,
+      onSuccess: () => {
+        ToastMessage({
+          type: "success",
+          text1:
+            "We've sent a verification code to your email. Please check your inbox",
+        });
+      },
+      onError: (error) => {
+        ToastMessage({
+          type: "error",
+          text1: error?.message || "Something went wrong. Please try again",
+        });
+      },
+    });
+
+  // reset password otp handler (pre-mutation validation)
   const handleOTP = () => {
-    otpExecute(async () => {
-      const email = getValues("email");
+    const email = getValues("email");
 
-      if (!email) {
-        setError("email", { message: "Email is required" });
-        return;
-      }
+    if (!email) {
+      setError("email", { message: "Email is required" });
+      return;
+    }
 
-      if (!EMAIL_REGEX.test(email)) {
-        setError("email", { message: "Please provide a valid email address" });
-        return;
-      }
+    if (!EMAIL_REGEX.test(email)) {
+      setError("email", { message: "Please provide a valid email address" });
+      return;
+    }
 
-      clearErrors("email");
-      const { error } = await supabase.auth.resetPasswordForEmail(email);
+    clearErrors("email");
 
-      if (error) {
+    resetPasswordMutate(email);
+  };
+
+  const { mutate: verifyAccountMutate, isPending: isVerifyAccountPending } =
+    useMutation({
+      mutationFn: verifyAccount,
+      onSuccess: () => {
+        router.replace("/(protected)/update-password");
+      },
+      onError: (error) => {
         ToastMessage({
           type: "error",
           text1: error?.message || "Something went wrong. Please try again",
         });
-        return;
-      }
-
-      ToastMessage({
-        type: "success",
-        text1:
-          "We've sent a verification code to your email. Please check your inbox",
-      });
+      },
     });
-  };
-
-  const onSubmit = ({ email, otp }: IForgotPasswordState) => {
-    execute(async () => {
-      const { error } = await supabase.auth.verifyOtp({
-        email: email,
-        token: otp,
-        type: "recovery",
-      });
-
-      if (error) {
-        ToastMessage({
-          type: "error",
-          text1: error?.message || "Something went wrong. Please try again",
-        });
-      }
-
-      router.replace("/(protected)/update-password");
-    });
-  };
 
   return (
     <PageWrapper>
@@ -115,6 +114,7 @@ const ForgotPassword = () => {
             {/* form */}
 
             <View className="gap-6">
+              {/* resent password input */}
               <View className="gap-1.5">
                 <Label htmlFor="email">Email</Label>
                 <Controller
@@ -141,15 +141,16 @@ const ForgotPassword = () => {
               <Button
                 className="w-full"
                 onPress={handleOTP}
-                disabled={isOtpPending}
+                disabled={isResetPasswordPending}
               >
-                {isOtpPending ? (
+                {isResetPasswordPending ? (
                   <ButtonLoading text="Sending code..." />
                 ) : (
                   <Text>Send reset code</Text>
                 )}
               </Button>
 
+              {/* verification otp input */}
               <View className="gap-1.5">
                 <Label htmlFor="code">Enter verification code</Label>
 
@@ -167,7 +168,9 @@ const ForgotPassword = () => {
                       maxLength={6}
                       value={value}
                       onChangeText={onChange}
-                      onSubmitEditing={handleSubmit(onSubmit)}
+                      onSubmitEditing={handleSubmit((data) =>
+                        verifyAccountMutate({ ...data, type: "recovery" }),
+                      )}
                     />
                   )}
                 />
@@ -177,10 +180,12 @@ const ForgotPassword = () => {
 
               <Button
                 className="w-full"
-                onPress={handleSubmit(onSubmit)}
-                disabled={isPending}
+                onPress={handleSubmit((data) =>
+                  verifyAccountMutate({ ...data, type: "recovery" }),
+                )}
+                disabled={isVerifyAccountPending}
               >
-                {isPending ? (
+                {isVerifyAccountPending ? (
                   <ButtonLoading text="Verifying..." />
                 ) : (
                   <Text>Verify code</Text>

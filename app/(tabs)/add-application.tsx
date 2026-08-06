@@ -1,8 +1,10 @@
 import {
+  addApplication,
+  editApplication,
   getAllApplications,
   getApplicationStats,
   getMonthlyApplicationStats,
-} from "@/api/query";
+} from "@/api/application.api";
 import ReactHookFormError from "@/components/fallback/ReactHookFormError";
 import ButtonLoading from "@/components/loaders/ButtonLoading";
 import { ToastMessage } from "@/components/Toast";
@@ -28,21 +30,16 @@ import {
 import { Text } from "@/components/ui/text";
 import FormWrapper from "@/components/wrapper/FormWrapper";
 import PageWrapper from "@/components/wrapper/PageWrapper";
-import useAsyncAction from "@/hooks/useAsyncAction";
-import { invalidateQuery } from "@/hooks/useQuery";
-import { supabase } from "@/lib/supabase";
 import {
   APPLICATION_STATUS,
   JOB_TYPE,
   WORK_MODE,
 } from "@/validation/constants";
-import {
-  jobApplicationInitialState,
-  jobApplicationSchema,
-} from "@/validation/jobApplication.yup";
+import { jobApplicationSchema } from "@/validation/jobApplication.yup";
 import { Ionicons } from "@expo/vector-icons";
 import { yupResolver } from "@hookform/resolvers/yup";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useFocusEffect } from "expo-router";
 import { useLocalSearchParams } from "expo-router/build/hooks";
 import { useCallback, useMemo, useRef, useState } from "react";
@@ -51,12 +48,22 @@ import { Platform, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 // types/interfaces
-import type { IJobApplication } from "@/validation/jobApplication.yup";
+import type { IJobApplication } from "@/types/interface";
 import type { TextInput } from "react-native";
 
-const AddApplicationScreen = () => {
-  const { isPending, execute } = useAsyncAction();
+export const jobApplicationInitialState: IJobApplication = {
+  company_name: "",
+  job_title: "",
+  applied_date: "",
+  application_status: "applied",
+  job_location: "",
+  job_type: "full-time",
+  work_mode: "onsite",
+  application_source: "",
+  salary_range: "",
+};
 
+const AddApplicationScreen = () => {
   // refs for input focus management
   const jobTitleInputRef = useRef<TextInput>(null);
   const jobLocationInputRef = useRef<TextInput>(null);
@@ -87,37 +94,75 @@ const AddApplicationScreen = () => {
     right: 16,
   };
 
-  const onSubmit = (applicationData: IJobApplication) => {
-    execute(async () => {
-      const { data: authDate } = await supabase.auth.getUser();
-      const { error } = await supabase
-        .from("job_applications")
-        .insert({ user_id: authDate.user?.id, ...applicationData });
+  const queryClient = useQueryClient();
 
-      if (error) {
+  const { mutate: addApplicationMutate, isPending: isAddApplicationPending } =
+    useMutation({
+      mutationFn: addApplication,
+      onSuccess: async () => {
+        reset(jobApplicationInitialState); // reset form data
+
+        await Promise.all([
+          queryClient.invalidateQueries({
+            queryKey: [getAllApplications.QUERY_KEY],
+          }),
+          queryClient.invalidateQueries({
+            queryKey: [getApplicationStats.QUERY_KEY],
+          }),
+          queryClient.invalidateQueries({
+            queryKey: [getMonthlyApplicationStats.QUERY_KEY],
+          }),
+        ]);
+
+        ToastMessage({
+          type: "success",
+          text1: "Your job application has been added successfully.",
+        });
+      },
+      onError: (error) => {
         ToastMessage({
           type: "error",
           text1:
             error?.message ||
             "Something went wrong while saving your job application. Please try again.",
         });
-        return;
-      }
-
-      ToastMessage({
-        type: "success",
-        text1: "Your job application has been added successfully.",
-      });
-
-      reset(jobApplicationInitialState); // reset form data
-      invalidateQuery([
-        getApplicationStats.QUERY_KEY,
-        getAllApplications.QUERY_KEY,
-        getMonthlyApplicationStats.QUERY_KEY(new Date().getFullYear()),
-      ]);
+      },
     });
-  };
 
+  const { mutate: editApplicationMutate, isPending: isEditApplicationPending } =
+    useMutation({
+      mutationFn: editApplication,
+      onSuccess: async () => {
+        reset(jobApplicationInitialState); // reset form data
+
+        await Promise.all([
+          queryClient.invalidateQueries({
+            queryKey: [getAllApplications.QUERY_KEY],
+          }),
+          queryClient.invalidateQueries({
+            queryKey: [getApplicationStats.QUERY_KEY],
+          }),
+          queryClient.invalidateQueries({
+            queryKey: [getMonthlyApplicationStats.QUERY_KEY],
+          }),
+        ]);
+
+        ToastMessage({
+          type: "success",
+          text1: "Your job application has been edited successfully.",
+        });
+      },
+      onError: (error) => {
+        ToastMessage({
+          type: "error",
+          text1:
+            error?.message ||
+            "Something went wrong while saving your job application. Please try again.",
+        });
+      },
+    });
+
+  // application editing handler (pre-mutation validation)
   const onEditing = (applicationData: IJobApplication) => {
     // logic for check field edited or not
     let isFieldChanged: boolean = false;
@@ -133,34 +178,10 @@ const AddApplicationScreen = () => {
 
     if (!isFieldChanged) return;
 
-    execute(async () => {
-      const { error } = await supabase
-        .from("job_applications")
-        .update({ ...applicationData })
-        .eq("id", params.id);
-
-      if (error) {
-        ToastMessage({
-          type: "error",
-          text1:
-            error?.message ||
-            "Something went wrong while saving your job application. Please try again.",
-        });
-        return;
-      }
-
-      ToastMessage({
-        type: "success",
-        text1: "Your job application has been edited successfully.",
-      });
-
-      reset(jobApplicationInitialState); // reset form data
-      invalidateQuery([
-        getApplicationStats.QUERY_KEY,
-        getAllApplications.QUERY_KEY,
-      ]);
-    });
+    editApplicationMutate({ applicationData, jobId: params.jobId as string });
   };
+
+  const isPending = isAddApplicationPending || isEditApplicationPending;
 
   // defaultValues in useForm are only applied on mount, so we call reset() here
   // to update the form with the desired values when the screen get focus
@@ -525,11 +546,13 @@ const AddApplicationScreen = () => {
                       placeholder="e.g. 10-15 LPA, ₹8-12 LPA"
                       returnKeyType="send"
                       submitBehavior="submit"
-                      onSubmitEditing={
-                        isEditing
-                          ? handleSubmit(onEditing)
-                          : handleSubmit(onSubmit)
-                      }
+                      onSubmitEditing={handleSubmit((data) => {
+                        if (isEditing) {
+                          onEditing(data);
+                        } else {
+                          addApplicationMutate(data);
+                        }
+                      })}
                       value={value}
                       onChangeText={onChange}
                     />
@@ -542,9 +565,13 @@ const AddApplicationScreen = () => {
 
               <Button
                 className="w-full"
-                onPress={
-                  isEditing ? handleSubmit(onEditing) : handleSubmit(onSubmit)
-                }
+                onPress={handleSubmit((data) => {
+                  if (isEditing) {
+                    onEditing(data);
+                  } else {
+                    addApplicationMutate(data);
+                  }
+                })}
                 disabled={isPending}
               >
                 {isPending ? (

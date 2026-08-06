@@ -1,3 +1,4 @@
+import { updatePassword } from "@/api/auth.api";
 import ReactHookFormError from "@/components/fallback/ReactHookFormError";
 import ButtonLoading from "@/components/loaders/ButtonLoading";
 import { ToastMessage } from "@/components/Toast";
@@ -15,22 +16,24 @@ import { Label } from "@/components/ui/label";
 import { Text } from "@/components/ui/text";
 import FormWrapper from "@/components/wrapper/FormWrapper";
 import PageWrapper from "@/components/wrapper/PageWrapper";
-import useAsyncAction from "@/hooks/useAsyncAction";
 import { supabase } from "@/lib/supabase";
-import {
-  updatePasswordInitialState,
-  updatePasswordSchema,
-} from "@/validation/auth.yup";
+import { updatePasswordSchema } from "@/validation/auth.yup";
 import { Ionicons } from "@expo/vector-icons";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import { useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { View } from "react-native";
 
 // types/interfaces
-import type { IUpdatePassword } from "@/validation/auth.yup";
+import type { IUpdatePassword } from "@/types/interface";
 import type { TextInput } from "react-native";
+
+export const updatePasswordInitialState: IUpdatePassword = {
+  newPassword: "",
+  confirmPassword: "",
+};
 
 const UpdatePassword = () => {
   const router = useRouter();
@@ -44,36 +47,31 @@ const UpdatePassword = () => {
     defaultValues: updatePasswordInitialState,
     resolver: yupResolver(updatePasswordSchema),
   });
-  const { isPending, execute } = useAsyncAction();
 
   const onPasswordSubmit = () => {
     passwordInputRef.current?.focus();
   };
 
-  const onSubmit = ({ newPassword }: IUpdatePassword) => {
-    execute(async () => {
-      const { error } = await supabase.auth.updateUser({
-        password: newPassword,
+  const { mutate: updatePasswordMutate, isPending } = useMutation({
+    mutationFn: updatePassword,
+    onSuccess: async () => {
+      ToastMessage({
+        type: "success",
+        text1: "Your password has been updated. Please sign in again.",
       });
-
-      if (error) {
-        ToastMessage({
-          type: "error",
-          text1: error.message || "Unable to update password. Try again.",
-        });
-      }
-
-      if (!error) {
-        ToastMessage({
-          type: "success",
-          text1: "Your password has been updated. Please sign in again.",
-        });
-        await supabase.auth.signOut();
-      }
+      await supabase.auth.signOut();
 
       router.replace("/(auth)/signin");
-    });
-  };
+    },
+    onError: (error) => {
+      ToastMessage({
+        type: "error",
+        text1: error.message || "Unable to update password. Try again.",
+      });
+
+      router.replace("/(auth)/signin");
+    },
+  });
 
   return (
     <PageWrapper>
@@ -126,7 +124,9 @@ const UpdatePassword = () => {
                       id="c-password"
                       secureTextEntry={!showPassword}
                       returnKeyType="send"
-                      onSubmitEditing={handleSubmit(onSubmit)}
+                      onSubmitEditing={handleSubmit((data) =>
+                        updatePasswordMutate(data.confirmPassword),
+                      )}
                       rightIcon={
                         <Ionicons
                           name={showPassword ? "eye-off" : "eye"}
@@ -146,7 +146,9 @@ const UpdatePassword = () => {
               </View>
               <Button
                 className="w-full"
-                onPress={handleSubmit(onSubmit)}
+                onPress={handleSubmit((data) =>
+                  updatePasswordMutate(data.confirmPassword),
+                )}
                 disabled={isPending}
               >
                 {isPending ? (

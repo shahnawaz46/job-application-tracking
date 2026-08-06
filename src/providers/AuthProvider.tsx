@@ -5,13 +5,14 @@ import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 
 // types/interfaces
+import type { IUserProfile } from "@/types/interface";
 import type { Session } from "@supabase/supabase-js";
 import type { PropsWithChildren } from "react";
 
 const AuthProvider = ({ children }: PropsWithChildren) => {
   const router = useRouter();
   const [session, setSession] = useState<Session | null>(null);
-  const [profile, setProfile] = useState<any>(null);
+  const [profile, setProfile] = useState<IUserProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const { isOnline } = useNetworkInfo();
 

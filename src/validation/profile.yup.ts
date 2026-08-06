@@ -3,13 +3,8 @@ import { GENDER_OPTIONS, NAME_MAX, NAME_MIN } from "./constants";
 import { GENDER_MESSAGES, NAME_MESSAGES, PHONE_MESSAGES } from "./messages";
 import { PHONE_REGEX } from "./regex";
 
-export type TGender = (typeof GENDER_OPTIONS)[number];
-
-export interface IInitialState {
-  full_name: string;
-  phone_no: string;
-  gender: TGender;
-}
+// types/interface
+import type { TGender } from "@/types/type";
 
 export const profileSchema = Yup.object({
   full_name: Yup.string()

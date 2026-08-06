@@ -1,3 +1,4 @@
+import { logoutUser } from "@/api/user.api";
 import ButtonLoading from "@/components/loaders/ButtonLoading";
 import AccountSection from "@/components/profile/AccountSection";
 import Header from "@/components/profile/Header";
@@ -7,29 +8,25 @@ import { ToastMessage } from "@/components/Toast";
 import { Button } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
 import PageWrapper from "@/components/wrapper/PageWrapper";
-import useAsyncAction from "@/hooks/useAsyncAction";
 import { useAuthContext } from "@/hooks/useAuthContext";
-import { clearQuery } from "@/hooks/useQuery";
-import { supabase } from "@/lib/supabase";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ScrollView, View } from "react-native";
 
 const ProfileScreen = () => {
   const { profile, isLoading } = useAuthContext();
-  const { isPending, execute } = useAsyncAction();
+  const queryClient = useQueryClient();
 
-  const handleLogout = () => {
-    execute(async () => {
-      const { error } = await supabase.auth.signOut();
-      if (error) {
-        ToastMessage({ type: "error", text1: error?.message });
-        return;
-      }
-
+  const { mutate: logoutUserMutate, isPending } = useMutation({
+    mutationFn: logoutUser,
+    onSuccess: () => {
       GoogleSignin.signOut();
-      clearQuery();
-    });
-  };
+      queryClient.clear();
+    },
+    onError: (error) => {
+      ToastMessage({ type: "error", text1: error?.message });
+    },
+  });
 
   return (
     <PageWrapper safeAreaViewClassName="wrapper-space wrapper-space-x">
@@ -64,7 +61,7 @@ const ProfileScreen = () => {
             variant="outline"
             size="lg"
             className="border-red-200 bg-red-50"
-            onPress={handleLogout}
+            onPress={() => logoutUserMutate()}
             disabled={isPending}
           >
             {isPending ? (

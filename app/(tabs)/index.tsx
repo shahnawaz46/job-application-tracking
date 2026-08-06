@@ -1,4 +1,4 @@
-import { getApplicationStats } from "@/api/query";
+import { getApplicationStats } from "@/api/application.api";
 import AnalyticsCard from "@/components/dashboard/AnalyticsCard";
 import Header from "@/components/dashboard/Header";
 import MonthlyJobsChart from "@/components/dashboard/MonthlyJobsChart";
@@ -8,39 +8,28 @@ import StateMessage from "@/components/fallback/StateMessge";
 import { Text } from "@/components/ui/text";
 import PageWrapper from "@/components/wrapper/PageWrapper";
 import { useAuthContext } from "@/hooks/useAuthContext";
-import useQuery from "@/hooks/useQuery";
 import { COLORS } from "@/theme/color";
 import { percent } from "@/utils/number";
 import { AntDesign, Ionicons } from "@expo/vector-icons";
+import { useQuery } from "@tanstack/react-query";
 import { ScrollView, View } from "react-native";
 
 // types/interface
-import type {
-  TApplicationStatus,
-  TWorkMode,
-} from "@/validation/jobApplication.yup";
-
-// convert strings with spaces into snake_case.
-// Example: "In Review" -> "In_Review"
-type ToSnakeCase<T> = T extends `${infer A} ${infer B}` ? `${A}_${B}` : T;
-
-// build the application stats object automatically
-// TWorkMode keys (Remote, Hybrid, Onsite, etc.) -> number
-// TApplicationStatus keys are converted to snake_case
-type TApplicationStats = { [J in TWorkMode]: number } & {
-  [K in ToSnakeCase<TApplicationStatus>]: number;
-};
+import type { TApplicationStats } from "@/types/type";
 
 const DashboardScreen = () => {
   const { profile } = useAuthContext();
-  const { isLoading, data, error } = useQuery<TApplicationStats[]>({
-    queryKey: getApplicationStats.QUERY_KEY,
+
+  const {
+    isLoading,
+    data: applicationStatusStatsData,
+    isError,
+  } = useQuery<TApplicationStats>({
+    queryKey: [getApplicationStats.QUERY_KEY],
     queryFn: getApplicationStats.QUERY_FN,
   });
 
-  const applicationStatusStatsData = data?.[0];
-
-  if (error) {
+  if (isError) {
     return (
       <StateMessage
         iconName="warning-outline"

@@ -8,21 +8,6 @@ import {
 } from "./messages";
 import { EMAIL_REGEX, OTP_REGEX, PASSWORD_REGEX } from "./regex";
 
-// SIGN UP
-export interface ISignUp {
-  full_name: string;
-  email: string;
-  password: string;
-  confirm_password: string;
-}
-
-export const signUpInitialState: ISignUp = {
-  full_name: "",
-  email: "",
-  password: "",
-  confirm_password: "",
-};
-
 export const signUpSchema = Yup.object({
   full_name: Yup.string()
     .required(NAME_MESSAGES.REQUIRED)
@@ -46,17 +31,6 @@ export const signUpSchema = Yup.object({
     .oneOf([Yup.ref("password")], "Passwords do not match"),
 });
 
-// SIGN IN
-export interface ISignIn {
-  email: string;
-  password: string;
-}
-
-export const signInInitialState: ISignIn = {
-  email: "",
-  password: "",
-};
-
 export const signInSchema = Yup.object({
   email: Yup.string()
     .required(EMAIL_MESSAGES.REQUIRED)
@@ -76,16 +50,6 @@ export const otpSchema = Yup.object({
 });
 
 // FORGOT PASSWORD
-export interface IForgotPasswordState {
-  email: string;
-  otp: string;
-}
-
-export const forgotPasswordInitialState: IForgotPasswordState = {
-  email: "",
-  otp: "",
-};
-
 export const forgotPasswordSchema = Yup.object({
   email: Yup.string()
     .required(EMAIL_MESSAGES.REQUIRED)
@@ -98,16 +62,6 @@ export const forgotPasswordSchema = Yup.object({
 });
 
 // Update Password/Reset New Password
-export interface IUpdatePassword {
-  newPassword: string;
-  confirmPassword: string;
-}
-
-export const updatePasswordInitialState: IUpdatePassword = {
-  newPassword: "",
-  confirmPassword: "",
-};
-
 export const updatePasswordSchema = Yup.object({
   newPassword: Yup.string()
     .required(PASSWORD_MESSAGES.REQUIRED)

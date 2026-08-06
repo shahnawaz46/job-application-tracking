@@ -1,7 +1,7 @@
-import { getMonthlyApplicationStats } from "@/api/query";
-import useQuery from "@/hooks/useQuery";
+import { getMonthlyApplicationStats } from "@/api/application.api";
 import { COLORS } from "@/theme/color";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { View } from "react-native";
 import { BarChart } from "react-native-gifted-charts";
@@ -11,22 +11,17 @@ import { Skeleton } from "../ui/skeleton";
 import { Text } from "../ui/text";
 import YearDropDown from "./YearDropDown";
 
-interface IMonthlyApplicationStats {
-  month_number: number;
-  month_name: string;
-  total: number;
-}
+// types/interface
+import type { IMonthlyApplicationStats } from "@/types/interface";
 
 const MonthlyJobsChart = () => {
   const currentYear = new Date().getFullYear();
   const [selectedYear, setSelectedYear] = useState<number>(currentYear);
 
-  const { isLoading, data, error } = useQuery<IMonthlyApplicationStats[]>({
-    queryKey: getMonthlyApplicationStats.QUERY_KEY(selectedYear),
+  const { isLoading, data, isError } = useQuery<IMonthlyApplicationStats[]>({
+    queryKey: [getMonthlyApplicationStats.QUERY_KEY, selectedYear],
     queryFn: () => getMonthlyApplicationStats.QUERY_FN(selectedYear),
   });
-
-  const [selected, setSelected] = useState<number | null>(null);
 
   const chartData =
     data?.map((item) => ({
@@ -39,7 +34,7 @@ const MonthlyJobsChart = () => {
     0,
   );
 
-  if (error) {
+  if (isError) {
     return (
       <StateMessage
         iconName="warning-outline"
@@ -92,10 +87,9 @@ const MonthlyJobsChart = () => {
         ) : (
           <BarChart
             key={JSON.stringify(chartData)}
-            data={chartData.map((item, index) => ({
+            data={chartData.map((item) => ({
               ...item,
               frontColor: COLORS.primary,
-              onPress: () => setSelected(index),
             }))}
             barWidth={22}
             spacing={18}

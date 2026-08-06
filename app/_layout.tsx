@@ -3,6 +3,7 @@ import SplashScreenController from "@/components/SplashScreenController";
 import ToastSetup from "@/components/Toast";
 import { useAuthContext } from "@/hooks/useAuthContext";
 import AuthProvider from "@/providers/AuthProvider";
+import QueryProvider from "@/providers/QueryProvider";
 import { PortalHost } from "@rn-primitives/portal";
 import { Stack } from "expo-router";
 import { KeyboardProvider } from "react-native-keyboard-controller";
@@ -34,7 +35,11 @@ export default function RootLayout() {
       <KeyboardProvider>
         <SplashScreenController />
         <NetworkError />
-        <RootRoute />
+
+        <QueryProvider>
+          <RootRoute />
+        </QueryProvider>
+
         <ToastSetup />
         <PortalHost />
       </KeyboardProvider>

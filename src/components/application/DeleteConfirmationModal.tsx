@@ -1,18 +1,20 @@
 import { COLORS } from "@/theme/color";
 import { Ionicons } from "@expo/vector-icons";
 import { View } from "react-native";
+import ButtonLoading from "../loaders/ButtonLoading";
 import { Button } from "../ui/button";
 import { Text } from "../ui/text";
 import ModalWrapper from "../wrapper/ModalWrapper";
 
 // types/interface
-import type { IJobApplicationRes } from "../../../app/(tabs)/application";
+import type { IJobApplicationRes } from "@/types/interface";
 
 interface IDeleteConfirmationModalProps {
   open: boolean;
   job: IJobApplicationRes | null;
   onConfirm: () => void;
   onCancel: () => void;
+  isPending: boolean;
 }
 
 const DeleteConfirmationModal = ({
@@ -20,6 +22,7 @@ const DeleteConfirmationModal = ({
   job,
   onConfirm,
   onCancel,
+  isPending,
 }: IDeleteConfirmationModalProps) => {
   if (!open) return null;
 
@@ -66,8 +69,13 @@ const DeleteConfirmationModal = ({
           variant={"destructive"}
           className="flex-1"
           onPress={onConfirm}
+          disabled={isPending}
         >
-          <Text>Delete</Text>
+          {isPending ? (
+            <ButtonLoading text="Deleting..." />
+          ) : (
+            <Text>Delete</Text>
+          )}
         </Button>
       </View>
     </ModalWrapper>

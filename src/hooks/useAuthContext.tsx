@@ -1,11 +1,12 @@
 import { createContext, useContext } from "react";
 
 // types/interfaces
+import type { IUserProfile } from "@/types/interface";
 import type { Session } from "@supabase/supabase-js";
 
 export interface IAuthData {
   session: Session | null | undefined;
-  profile: any | null;
+  profile: IUserProfile | null;
   updateProfileData: (newValue: any) => void;
   isLoading: boolean;
   isAuthenticated: boolean;
@@ -13,7 +14,7 @@ export interface IAuthData {
 
 export const AuthContext = createContext<IAuthData>({
   session: undefined,
-  profile: undefined,
+  profile: null,
   updateProfileData: () => {},
   isLoading: true,
   isAuthenticated: false,

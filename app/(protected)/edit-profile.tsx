@@ -1,3 +1,4 @@
+import { updateUserProfile } from "@/api/user.api";
 import ReactHookFormError from "@/components/fallback/ReactHookFormError";
 import ButtonLoading from "@/components/loaders/ButtonLoading";
 import Header from "@/components/profile/Header";
@@ -18,19 +19,19 @@ import {
 import { Text } from "@/components/ui/text";
 import FormWrapper from "@/components/wrapper/FormWrapper";
 import PageWrapper from "@/components/wrapper/PageWrapper";
-import useAsyncAction from "@/hooks/useAsyncAction";
 import { useAuthContext } from "@/hooks/useAuthContext";
-import { supabase } from "@/lib/supabase";
+import { IUserProfile } from "@/types/interface";
 import { GENDER_OPTIONS } from "@/validation/constants";
-import { profileSchema, TGender } from "@/validation/profile.yup";
+import { profileSchema } from "@/validation/profile.yup";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useMutation } from "@tanstack/react-query";
 import { useMemo, useRef } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Platform, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 // types/interface
-import type { IInitialState } from "@/validation/profile.yup";
+import type { IEditUserProfile, TGender } from "@/types/type";
 import type { TextInput } from "react-native";
 
 const EditProfile = () => {
@@ -40,7 +41,7 @@ const EditProfile = () => {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<IInitialState>({
+  } = useForm<IEditUserProfile>({
     defaultValues: {
       full_name: profile.full_name,
       phone_no: profile.phone_no || "",
@@ -48,8 +49,6 @@ const EditProfile = () => {
     },
     resolver: yupResolver(profileSchema),
   });
-
-  const { isPending, execute } = useAsyncAction();
   const phoneNoRef = useRef<TextInput>(null);
 
   const insets = useSafeAreaInsets();
@@ -63,32 +62,35 @@ const EditProfile = () => {
     right: 16,
   };
 
-  const onSubmit = (values: IInitialState) => {
-    execute(async () => {
-      // if all of these fields are same as Input then not calling API
-      if (
-        profile.full_name === values.full_name &&
-        profile.phone_no === values.phone_no &&
-        profile.gender === values.gender
-      )
-        return;
-
-      const { error, data } = await supabase
-        .from("user_profiles")
-        .update({ ...values })
-        .eq("id", profile.id)
-        .select()
-        .single();
-
-      if (error) {
-        ToastMessage({ type: "error", text1: error?.message });
-        return;
-      }
+  const { mutate: updateUserProfileMutate, isPending } = useMutation<
+    IUserProfile,
+    Error,
+    { values: IEditUserProfile; profileId: string }
+  >({
+    mutationFn: updateUserProfile,
+    onSuccess: (data) => {
       // update authContext profile state
       updateProfileData(data);
 
       ToastMessage({ type: "success", text1: "Profile updated successfully" });
-    });
+    },
+    onError: (error) => {
+      ToastMessage({ type: "error", text1: error?.message });
+    },
+  });
+
+  // submit handler (pre-mutation validation)
+  const onSubmit = (values: IEditUserProfile) => {
+    // if all of these fields are same as Input then not calling API
+    if (
+      profile.full_name === values.full_name &&
+      profile.phone_no === values.phone_no &&
+      profile.gender === values.gender
+    ) {
+      return;
+    }
+
+    updateUserProfileMutate({ values, profileId: profile.id });
   };
 
   // convert array into object for Select Options
