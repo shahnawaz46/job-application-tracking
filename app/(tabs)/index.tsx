@@ -12,13 +12,16 @@ import { COLORS } from "@/theme/color";
 import { percent } from "@/utils/number";
 import { AntDesign, Ionicons } from "@expo/vector-icons";
 import { useQuery } from "@tanstack/react-query";
+import { useRouter } from "expo-router";
 import { ScrollView, View } from "react-native";
 
 // types/interface
+import type { IParams } from "@/types/interface";
 import type { TApplicationStats } from "@/types/type";
 
 const DashboardScreen = () => {
   const { profile } = useAuthContext();
+  const router = useRouter();
 
   const {
     isLoading,
@@ -63,6 +66,15 @@ const DashboardScreen = () => {
               value={applicationStatusStatsData?.applied ?? 0}
               bgColor={COLORS.primary + 20}
               isLoading={isLoading}
+              onPress={() => {
+                const param: IParams = {
+                  status: "applied",
+                };
+                router.navigate({
+                  pathname: "/application",
+                  params: param,
+                });
+              }}
             />
           </View>
           <View className="flex-row gap-3">
@@ -74,6 +86,15 @@ const DashboardScreen = () => {
               value={applicationStatusStatsData?.telephonic_interview ?? 0}
               bgColor={COLORS.info + 20}
               isLoading={isLoading}
+              onPress={() => {
+                const param: IParams = {
+                  status: "telephonic interview",
+                };
+                router.navigate({
+                  pathname: "/application",
+                  params: param,
+                });
+              }}
             />
             <StatCard
               icon={
@@ -87,6 +108,15 @@ const DashboardScreen = () => {
               value={applicationStatusStatsData?.interview ?? 0}
               bgColor={COLORS.warning + 20}
               isLoading={isLoading}
+              onPress={() => {
+                const param: IParams = {
+                  status: "interview",
+                };
+                router.navigate({
+                  pathname: "/application",
+                  params: param,
+                });
+              }}
             />
           </View>
 
@@ -99,6 +129,15 @@ const DashboardScreen = () => {
               value={applicationStatusStatsData?.offer_received ?? 0}
               bgColor={COLORS.success + 20}
               isLoading={isLoading}
+              onPress={() => {
+                const param: IParams = {
+                  status: "offer received",
+                };
+                router.navigate({
+                  pathname: "/application",
+                  params: param,
+                });
+              }}
             />
             <StatCard
               icon={
@@ -112,6 +151,15 @@ const DashboardScreen = () => {
               value={applicationStatusStatsData?.rejected ?? 0}
               bgColor={COLORS.danger + 20}
               isLoading={isLoading}
+              onPress={() => {
+                const param: IParams = {
+                  status: "rejected",
+                };
+                router.navigate({
+                  pathname: "/application",
+                  params: param,
+                });
+              }}
             />
           </View>
         </View>

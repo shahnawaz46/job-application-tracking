@@ -23,16 +23,23 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
-import { useRouter } from "expo-router";
-import { useMemo, useState } from "react";
+import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
+import { useCallback, useMemo, useState } from "react";
 import { FlatList, View } from "react-native";
 
 // types/interface
-import type { IJobApplicationRes } from "@/types/interface";
+import type { IJobApplicationRes, IParams } from "@/types/interface";
+import type { TApplicationStatus } from "@/types/type";
 
 const ApplicationScreen = () => {
   const { profile } = useAuthContext();
   const router = useRouter();
+
+  // showing the same data when navigating from the dashboard (status is "applied")
+  // or opening the screen from the tab bar (status is "undefined")
+  // replacing "undefined" to "applied" so both use the same query and cache
+  const { status } = useLocalSearchParams<IParams>();
+  const currentStatus: TApplicationStatus = status ?? "applied";
 
   const {
     isLoading: isJobLoading,
@@ -42,13 +49,18 @@ const ApplicationScreen = () => {
     fetchNextPage,
     hasNextPage,
   } = useInfiniteQuery<IJobApplicationRes[]>({
-    queryKey: [getAllApplications.QUERY_KEY],
+    queryKey: [getAllApplications.QUERY_KEY, currentStatus],
     queryFn: ({ pageParam }) =>
-      getAllApplications.QUERY_FN(profile.id, pageParam as number),
+      getAllApplications.QUERY_FN(
+        profile!.id, // non-null assertion (`!`) is safe here because `enabled` guarantees profile is available
+        currentStatus,
+        pageParam as number,
+      ),
     initialPageParam: 0,
     getNextPageParam: (lastPage, allPage) => {
       return lastPage.length < DATA_LIMIT ? undefined : allPage.length;
     },
+    enabled: !!profile, // run only when the profile is loaded
   });
 
   const applications = useMemo(() => data?.pages.flat() ?? [], [data]);
@@ -99,9 +111,10 @@ const ApplicationScreen = () => {
   const { data: searchData, isLoading: isSearchLoading } = useQuery<
     IJobApplicationRes[]
   >({
-    queryKey: [searchApplications.QUERY_KEY, debouncedSearch],
-    queryFn: () => searchApplications.QUERY_FN(profile.id, debouncedSearch),
-    enabled: isSearching,
+    queryKey: [searchApplications.QUERY_KEY, currentStatus, debouncedSearch],
+    queryFn: () =>
+      searchApplications.QUERY_FN(profile!.id, debouncedSearch, currentStatus), // non-null assertion (`!`) is safe here because `enabled` guarantees profile is available
+    enabled: !!profile && isSearching, // run only when the profile is loaded and the user is searching
   });
 
   // conditionally variables
@@ -150,6 +163,14 @@ const ApplicationScreen = () => {
     );
   }
 
+  // clearning search text when leaving the screen to prevent search results
+  // when returning with a different application status(from dashboard)
+  useFocusEffect(
+    useCallback(() => {
+      // cleanup function
+      return () => setSearch("");
+    }, []),
+  );
   return (
     <PageWrapper safeAreaViewClassName="wrapper-space wrapper-space-x">
       <View className="flex-1">

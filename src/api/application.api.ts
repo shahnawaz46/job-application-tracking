@@ -7,7 +7,7 @@ import type {
   IJobApplicationRes,
   IMonthlyApplicationStats,
 } from "@/types/interface";
-import type { TApplicationStats } from "@/types/type";
+import type { TApplicationStats, TApplicationStatus } from "@/types/type";
 
 export const getApplicationStats = {
   QUERY_KEY: "application-stats",
@@ -42,15 +42,41 @@ export const getAllApplications = {
   QUERY_KEY: "job-application",
   QUERY_FN: async (
     profileId: string,
+    status: TApplicationStatus,
     pageParam: number,
   ): Promise<IJobApplicationRes[]> => {
     const from = pageParam * DATA_LIMIT;
     const to = from + DATA_LIMIT - 1; // i have to do (-1) because supabase return 0-12 (13 items, 0 and 12 both are included)
 
+    if (!status || status === "applied") {
+      const { data, error } = await supabase
+        .from("job_applications")
+        .select("*")
+        .eq("user_id", profileId)
+        .range(from, to)
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        throw error;
+      }
+
+      return data;
+    }
+
+    const updatedStatus: TApplicationStatus[] =
+      status === "telephonic interview"
+        ? ["telephonic interview", "interview", "offer received", "rejected"]
+        : status === "interview"
+          ? ["interview", "offer received", "rejected"]
+          : status === "offer received"
+            ? ["offer received"]
+            : ["rejected"];
+
     const { data, error } = await supabase
       .from("job_applications")
       .select("*")
       .eq("user_id", profileId)
+      .in("application_status", updatedStatus)
       .range(from, to)
       .order("created_at", { ascending: false });
 
@@ -78,6 +104,7 @@ export const searchApplications = {
   QUERY_FN: async (
     profileId: string,
     search: string,
+    status: TApplicationStatus,
   ): Promise<IJobApplicationRes[]> => {
     const input = search
       .trim()
@@ -85,17 +112,41 @@ export const searchApplications = {
       .map((word) => `${word}:*`)
       .join(" & ");
 
+    if (!status || status === "applied") {
+      const { data, error } = await supabase
+        .from("job_applications")
+        .select("*")
+        .eq("user_id", profileId)
+        .textSearch("search_text", input)
+        .order("created_at", { ascending: false })
+        .limit(16);
+
+      if (error) {
+        throw error;
+      }
+
+      return data;
+    }
+
+    const updatedStatus: TApplicationStatus[] =
+      status === "telephonic interview"
+        ? ["telephonic interview", "interview", "offer received", "rejected"]
+        : status === "interview"
+          ? ["interview", "offer received", "rejected"]
+          : status === "offer received"
+            ? ["offer received"]
+            : ["rejected"];
+
     const { data, error } = await supabase
       .from("job_applications")
       .select("*")
       .eq("user_id", profileId)
       .textSearch("search_text", input)
+      .in("application_status", updatedStatus)
       .order("created_at", { ascending: false })
       .limit(16);
 
-    if (error) {
-      throw error;
-    }
+    if (error) throw error;
 
     return data;
   },

@@ -1,4 +1,4 @@
-import { View } from "react-native";
+import { Pressable, View } from "react-native";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Skeleton } from "../ui/skeleton";
 import { Text } from "../ui/text";
@@ -12,6 +12,7 @@ interface IStatCardProps {
   value: number;
   bgColor: string;
   isLoading: boolean;
+  onPress: () => void;
 }
 
 const StatCard = ({
@@ -20,28 +21,31 @@ const StatCard = ({
   value,
   bgColor,
   isLoading,
+  onPress,
 }: IStatCardProps) => {
   return (
     <Card className="flex-1 gap-1 p-3">
-      <CardHeader className="flex-row justify-between p-0">
-        <CardTitle variant={"small"} className="font-normal">
-          {label}
-        </CardTitle>
-        <View
-          className={`w-7 h-7 rounded-full items-center justify-center`}
-          style={{ backgroundColor: bgColor }}
-        >
-          {icon}
-        </View>
-      </CardHeader>
+      <Pressable onPress={onPress}>
+        <CardHeader className="flex-row justify-between p-0">
+          <CardTitle variant={"small"} className="font-normal">
+            {label}
+          </CardTitle>
+          <View
+            className={`w-7 h-7 rounded-full items-center justify-center`}
+            style={{ backgroundColor: bgColor }}
+          >
+            {icon}
+          </View>
+        </CardHeader>
 
-      <CardContent className="p-0">
-        {isLoading ? (
-          <Skeleton className="w-20 h-7" />
-        ) : (
-          <Text variant={"xl"}>{value}</Text>
-        )}
-      </CardContent>
+        <CardContent className="p-0">
+          {isLoading ? (
+            <Skeleton className="w-20 h-7" />
+          ) : (
+            <Text variant={"xl"}>{value}</Text>
+          )}
+        </CardContent>
+      </Pressable>
     </Card>
   );
 };

@@ -28,7 +28,11 @@ export interface IJobApplicationRes extends IJobApplication {
   search_text: string;
 }
 
-// * profile
+export interface IParams extends Record<string, string> {
+  status: TApplicationStatus;
+}
+
+// * user
 export interface IUserProfile {
   id: string;
   full_name: string;
