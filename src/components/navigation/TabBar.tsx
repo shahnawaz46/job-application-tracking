@@ -21,16 +21,19 @@ const TabBar = ({ state, descriptors, navigation }: ITabBarProps) => {
 
   return (
     <View
-      className="absolute left-4 right-4 h-16 flex-row items-center justify-between gap-2 rounded-lg border border-border bg-card px-2 py-2 shadow-sm shadow-black/10"
+      className="absolute left-4 right-4 h-16 flex-row items-center justify-between gap-2 rounded-lg border border-border bg-card px-2 py-2"
       style={{
         bottom: inset.bottom + 10,
+
+        shadowColor: "#000",
         shadowOffset: {
           width: 0,
-          height: 8,
+          height: 1,
         },
-        shadowOpacity: 0.08,
-        shadowRadius: 18,
-        elevation: 18,
+        shadowOpacity: 0.04,
+        shadowRadius: 4,
+
+        elevation: 1,
       }}
     >
       {state.routes.map((route: IRoute, index: number) => {

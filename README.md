@@ -38,17 +38,17 @@ their overall job search through interactive statistics and charts.
 
 ## 📱 App Screenshots
 
-| Dashboard                                                         | Applications                                                         |
-| ----------------------------------------------------------------- | -------------------------------------------------------------------- |
-| <img src=".github/assets/screenshots/dashboard.png" width="250"/> | <img src=".github/assets/screenshots/applications.png" width="250"/> |
+| Dashboard                                                         | Analytics                                                         |
+| ----------------------------------------------------------------- | ----------------------------------------------------------------- |
+| <img src=".github/assets/screenshots/dashboard.png" width="250"/> | <img src=".github/assets/screenshots/analytics.png" width="250"/> |
 
-| Add Application                                                 | Analytics                                                         |
-| --------------------------------------------------------------- | ----------------------------------------------------------------- |
-| <img src=".github/assets/screenshots/add-job.png" width="250"/> | <img src=".github/assets/screenshots/analytics.png" width="250"/> |
+| Applications                                                         | Add Application                                                         |
+| -------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| <img src=".github/assets/screenshots/applications.png" width="250"/> | <img src=".github/assets/screenshots/add-application.png" width="250"/> |
 
-| Profile                                                         |
-| --------------------------------------------------------------- |
-| <img src=".github/assets/screenshots/profile.png" width="250"/> |
+| Profile                                                         | Sign in                                                       |
+| --------------------------------------------------------------- | ------------------------------------------------------------- |
+| <img src=".github/assets/screenshots/profile.png" width="250"/> | <img src=".github/assets/screenshots/login.png" width="250"/> |
 
 ## 🏗️ Architecture
 
