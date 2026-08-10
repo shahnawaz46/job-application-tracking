@@ -60,8 +60,6 @@ const UpdatePassword = () => {
         text1: "Your password has been updated. Please sign in again.",
       });
       await supabase.auth.signOut();
-
-      router.replace("/(auth)/signin");
     },
     onError: (error) => {
       ToastMessage({
