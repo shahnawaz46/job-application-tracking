@@ -1,9 +1,11 @@
 import { COLORS } from "@/theme/color";
 import { textTransform } from "@/utils/text-transform";
 import { APPLICATION_STATUS } from "@/validation/constants";
-import { TApplicationStatus } from "@/validation/jobApplication.yup";
 import { ScrollView, View } from "react-native";
 import { Text } from "../ui/text";
+
+// types/interface
+import type { TApplicationStatus } from "@/types/type";
 
 const getStatusStyle = (status: TApplicationStatus) => {
   if (status === "applied")

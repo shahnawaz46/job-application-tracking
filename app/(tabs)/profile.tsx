@@ -8,13 +8,11 @@ import { ToastMessage } from "@/components/Toast";
 import { Button } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
 import PageWrapper from "@/components/wrapper/PageWrapper";
-import { useAuthContext } from "@/hooks/useAuthContext";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ScrollView, View } from "react-native";
 
 const ProfileScreen = () => {
-  const { profile, isLoading } = useAuthContext();
   const queryClient = useQueryClient();
 
   const { mutate: logoutUserMutate, isPending } = useMutation({
@@ -38,19 +36,10 @@ const ProfileScreen = () => {
         <Header title="Profile" />
 
         {/* Proflie Picture */}
-        <ProfilePic
-          full_name={profile.full_name}
-          profile_pic={profile.profile_pic}
-          isLoading={isLoading}
-        />
+        <ProfilePic />
 
         {/* Profile Info */}
-        <ProfileInfo
-          full_name={profile.full_name}
-          email={profile.email}
-          joined={profile.created_at}
-          isLoading={isLoading}
-        />
+        <ProfileInfo />
 
         {/* Account Section */}
         <AccountSection />

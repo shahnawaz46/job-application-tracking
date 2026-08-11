@@ -7,7 +7,7 @@ import WorkModeCard from "@/components/dashboard/WorkModeCard";
 import StateMessage from "@/components/fallback/StateMessge";
 import { Text } from "@/components/ui/text";
 import PageWrapper from "@/components/wrapper/PageWrapper";
-import { useAuthContext } from "@/hooks/useAuthContext";
+import { useProfile } from "@/hooks/useProfile";
 import { COLORS } from "@/theme/color";
 import { percent } from "@/utils/number";
 import { AntDesign, Ionicons } from "@expo/vector-icons";
@@ -20,7 +20,7 @@ import type { IParams } from "@/types/interface";
 import type { TApplicationStats } from "@/types/type";
 
 const DashboardScreen = () => {
-  const { profile } = useAuthContext();
+  const { data: profile, isLoading: isProfileLoading } = useProfile();
   const router = useRouter();
 
   const {
@@ -51,7 +51,7 @@ const DashboardScreen = () => {
       >
         {/* Header */}
         <Header
-          text={`Welcome back, ${profile?.full_name}`}
+          text={`Welcome back, ${profile?.full_name ?? ""}`}
           subText={"Track and manage your job applications"}
         />
 

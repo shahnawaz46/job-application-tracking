@@ -49,6 +49,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 // types/interfaces
 import type { IJobApplication } from "@/types/interface";
+import type { Resolver } from "react-hook-form";
 import type { TextInput } from "react-native";
 
 export const jobApplicationInitialState: IJobApplication = {
@@ -80,7 +81,7 @@ const AddApplicationScreen = () => {
     reset,
   } = useForm({
     defaultValues: jobApplicationInitialState,
-    resolver: yupResolver(jobApplicationSchema),
+    resolver: yupResolver(jobApplicationSchema) as Resolver<IJobApplication>,
   });
 
   const insets = useSafeAreaInsets();

@@ -13,8 +13,8 @@ import StateMessage from "@/components/fallback/StateMessge";
 import JobCardLoading from "@/components/loaders/JobCardLoading";
 import { Input } from "@/components/ui/input";
 import PageWrapper from "@/components/wrapper/PageWrapper";
-import { useAuthContext } from "@/hooks/useAuthContext";
 import useDebounce from "@/hooks/useDebounce";
+import { useProfile } from "@/hooks/useProfile";
 import { COLORS } from "@/theme/color";
 import { DATA_LIMIT } from "@/validation/constants";
 import {
@@ -32,7 +32,7 @@ import type { IJobApplicationRes, IParams } from "@/types/interface";
 import type { TApplicationStatus } from "@/types/type";
 
 const ApplicationScreen = () => {
-  const { profile } = useAuthContext();
+  const { data: profile } = useProfile();
   const router = useRouter();
 
   // showing the same data when navigating from the dashboard (status is "applied")

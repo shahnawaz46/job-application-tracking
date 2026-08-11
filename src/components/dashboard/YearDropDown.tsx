@@ -1,4 +1,4 @@
-import { useAuthContext } from "@/hooks/useAuthContext";
+import { useProfile } from "@/hooks/useProfile";
 import { Platform, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
@@ -25,10 +25,10 @@ const YearDropDown = ({
   setSelectedYear,
   isLoading,
 }: IYearDropDown) => {
-  const { profile } = useAuthContext();
+  const { data: profile } = useProfile();
 
   const currentYear = new Date().getFullYear();
-  const createdYear = new Date(profile?.created_at).getFullYear();
+  const createdYear = new Date(profile?.created_at ?? "").getFullYear();
 
   const yearLength = currentYear - createdYear + 1;
 

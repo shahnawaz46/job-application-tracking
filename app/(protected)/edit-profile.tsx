@@ -1,4 +1,4 @@
-import { updateUserProfile } from "@/api/user.api";
+import { getUserProfile, updateUserProfile } from "@/api/user.api";
 import ReactHookFormError from "@/components/fallback/ReactHookFormError";
 import ButtonLoading from "@/components/loaders/ButtonLoading";
 import Header from "@/components/profile/Header";
@@ -19,12 +19,12 @@ import {
 import { Text } from "@/components/ui/text";
 import FormWrapper from "@/components/wrapper/FormWrapper";
 import PageWrapper from "@/components/wrapper/PageWrapper";
-import { useAuthContext } from "@/hooks/useAuthContext";
+import { useProfile } from "@/hooks/useProfile";
 import { IUserProfile } from "@/types/interface";
 import { GENDER_OPTIONS } from "@/validation/constants";
 import { profileSchema } from "@/validation/profile.yup";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useRef } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Platform, View } from "react-native";
@@ -35,7 +35,8 @@ import type { IEditUserProfile, TGender } from "@/types/type";
 import type { TextInput } from "react-native";
 
 const EditProfile = () => {
-  const { profile, updateProfileData, isLoading } = useAuthContext();
+  const { data: profile } = useProfile();
+  const queryClient = useQueryClient();
 
   const {
     control,
@@ -43,9 +44,9 @@ const EditProfile = () => {
     formState: { errors },
   } = useForm<IEditUserProfile>({
     defaultValues: {
-      full_name: profile.full_name,
-      phone_no: profile.phone_no || "",
-      gender: profile.gender ?? "other",
+      full_name: profile?.full_name ?? "",
+      phone_no: profile?.phone_no ?? "",
+      gender: profile?.gender ?? "other",
     },
     resolver: yupResolver(profileSchema),
   });
@@ -70,7 +71,7 @@ const EditProfile = () => {
     mutationFn: updateUserProfile,
     onSuccess: (data) => {
       // update authContext profile state
-      updateProfileData(data);
+      queryClient.setQueryData([getUserProfile.QUERY_KEY, data.id], data);
 
       ToastMessage({ type: "success", text1: "Profile updated successfully" });
     },
@@ -81,6 +82,8 @@ const EditProfile = () => {
 
   // submit handler (pre-mutation validation)
   const onSubmit = (values: IEditUserProfile) => {
+    if (!profile) return;
+
     // if all of these fields are same as Input then not calling API
     if (
       profile.full_name === values.full_name &&
@@ -111,19 +114,10 @@ const EditProfile = () => {
           <Header title="Edit Profile" />
 
           {/* Proflie Picture */}
-          <ProfilePic
-            full_name={profile.full_name}
-            profile_pic={profile.profile_pic}
-            isLoading={isLoading}
-          />
+          <ProfilePic />
 
           {/* Profile Info */}
-          <ProfileInfo
-            full_name={profile.full_name}
-            email={profile.email}
-            joined={profile.created_at}
-            isLoading={isLoading}
-          />
+          <ProfileInfo />
 
           <View className="gap-4">
             <View className="gap-1.5">

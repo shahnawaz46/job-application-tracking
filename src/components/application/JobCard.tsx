@@ -10,7 +10,7 @@ import LabelCard from "./LabelCard";
 import StatusBadge from "./StatusBadge";
 
 // types/interface
-import type { IJobApplicationRes } from "../../../app/(tabs)/application";
+import type { IJobApplicationRes } from "@/types/interface";
 
 interface IJobCardProps {
   item: IJobApplicationRes;

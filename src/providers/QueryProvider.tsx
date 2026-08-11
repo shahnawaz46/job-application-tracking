@@ -4,7 +4,7 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       retry: 2,
-      staleTime: 15 * 60 * 1000, // 15 minutes
+      staleTime: 60 * 60 * 1000, // 1 hours (this is user related data and it will only change when user updates)
     },
   },
 });

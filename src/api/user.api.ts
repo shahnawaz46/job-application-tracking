@@ -4,6 +4,23 @@ import { supabase } from "@/lib/supabase";
 import type { IUserProfile } from "@/types/interface";
 import type { IEditUserProfile } from "@/types/type";
 
+export const getUserProfile = {
+  QUERY_KEY: "profile",
+  QUERY_FN: async (userId: string): Promise<IUserProfile> => {
+    const { data, error } = await supabase
+      .from("user_profiles")
+      .select("*")
+      .eq("id", userId)
+      .single();
+
+    if (error) {
+      throw error;
+    }
+
+    return data;
+  },
+};
+
 export const updateUserProfile = async ({
   values,
   profileId,

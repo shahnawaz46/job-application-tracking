@@ -17,13 +17,12 @@ import { StatusBar } from "expo-status-bar";
 import type { StatusBarStyle } from "expo-status-bar";
 
 interface ICustomStatusBarProps {
-  bgColor?: string;
   style: StatusBarStyle;
 }
 
-const CustomStatusBar = ({ bgColor, style }: ICustomStatusBarProps) => {
+const CustomStatusBar = ({ style }: ICustomStatusBarProps) => {
   const isFocused = useIsFocused();
-  return isFocused && <StatusBar backgroundColor={bgColor} style={style} />;
+  return isFocused && <StatusBar style={style} />;
 };
 
 export default CustomStatusBar;

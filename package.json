@@ -10,7 +10,8 @@
     "web": "expo start --web",
     "lint": "expo lint",
     "expo-doctor": "npx expo-doctor",
-    "rn-reusables-doctor": "npx @react-native-reusables/cli@latest doctor"
+    "rn-reusables-doctor": "npx @react-native-reusables/cli@latest doctor",
+    "typecheck": "tsc -noEmit"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
